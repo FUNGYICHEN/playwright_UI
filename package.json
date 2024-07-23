@@ -1,0 +1,28 @@
+{
+  "name": "playrightauto",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "powershell -Command \"npx playwright test --reporter=playwright-ctrf-json-reporter,html; node convertToLineProtocol.js\"",
+    "test_1": "powershell -Command \"npx playwright test --reporter=playwright-ctrf-json-reporter; node convertToLineProtocol.js\"",
+    "test22": "powershell -Command \"npx playwright test --reporter=playwright-ctrf-json-reporter,html; if ($?) { node convertToLineProtocol.js }\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@grafana/plugin-e2e": "^1.6.0",
+    "@playwright/test": "^1.45.1",
+    "@types/node": "^20.14.2",
+    "allure-playwright": "^3.0.0-beta.5",
+    "playwright-ctrf-json-reporter": "^0.0.14"
+  },
+  "dependencies": {
+    "axios": "^0.21.4",
+    "express": "^4.19.2",
+    "fs-extra": "^11.2.0",
+    "jimp": "^0.22.12",
+    "tesseract.js": "^5.1.0"
+  }
+}
