@@ -22,6 +22,242 @@ test.beforeEach(async () => {
 });
 
 
+test('註冊錯誤流程檢查', async () => {
+    const page = await globalThis.context.newPage();
+    const errors = [];
+
+    await page.goto('https://wap-q0-npf2.qit1.net/reg');
+    await page.waitForLoadState('networkidle');
+
+    // 1-1 只輸入英文或數字
+    const usernameInput = page.locator('input[placeholder="請輸入帳號"]');
+    const usernameMessage = page.locator('.message[style*="display: block"]');
+    const usernameIcon = page.locator('svg.icon-canname.am-icon-exclamation-circle[style*="display: block"]');
+
+    // 只輸入英文
+    await usernameInput.fill('wefkrurtty');
+    await usernameInput.press('Tab');
+    await page.waitForTimeout(1000); // 增加等待时间
+    if (!await usernameMessage.isVisible() || !await usernameIcon.isVisible()) {
+        errors.push('只輸入英文: 未顯示 "請輸入6-12個英文字母和數字" 提示或圖標');
+    } else {
+        console.log('只輸入英文: 顯示 "請輸入6-12個英文字母和數字" 提示和圖標');
+    }
+    await usernameInput.fill('');
+
+    // 只輸入數字
+    await usernameInput.fill('76576586');
+    await usernameInput.press('Tab');
+    await page.waitForTimeout(1000); // 增加等待时间
+    if (!await usernameMessage.isVisible() || !await usernameIcon.isVisible()) {
+        errors.push('只輸入數字: 未顯示 "請輸入6-12個英文字母和數字" 提示或圖標');
+    } else {
+        console.log('只輸入數字: 顯示 "請輸入6-12個英文字母和數字" 提示和圖標');
+    }
+    await usernameInput.fill('');
+
+    // 點擊發送驗證碼按鈕
+    const sendCodeButton = page.locator('div.opt-btn#validate');
+    await sendCodeButton.click();
+
+    // 檢查是否出現 "請輸入手機號碼" 提示
+    await page.waitForTimeout(1000); // 增加等待时间
+    const phoneErrorMessage = page.locator('.am-toast-notice-content .am-toast-text div:has-text("請輸入手機號")');
+    if (!await phoneErrorMessage.isVisible()) {
+        errors.push('點擊發送驗證碼: 未顯示 "請輸入手機號碼" 提示');
+    } else {
+        console.log('點擊發送驗證碼: 顯示 "請輸入手機號碼" 提示');
+    }
+
+    // 1-3 輸入錯誤的手機號碼並點擊發送驗證碼
+    const phoneInput = page.locator('input[placeholder="請輸入手機號"]');
+    await phoneInput.fill('284758394857666');
+    await sendCodeButton.click();
+    await page.waitForTimeout(1000); // 增加等待时间
+    const wrongPhoneErrorMessage = page.locator('.am-toast-notice-content .am-toast-text div:has-text("請輸入正確的手機號碼")');
+    if (!await wrongPhoneErrorMessage.isVisible()) {
+        errors.push('輸入錯誤的手機號碼: 未顯示 "請輸入正確的手機號碼" 提示');
+    } else {
+        console.log('輸入錯誤的手機號碼: 顯示 "請輸入正確的手機號碼" 提示');
+    }
+    await phoneInput.fill('');
+
+    // 2-1 輸入錯誤的驗證碼
+    console.log('檢查錯誤驗證碼的提示');
+    const username = randomUsername();
+    await usernameInput.fill(username);
+    const phoneInputHK = randomHongKongPhoneNumber();
+    await phoneInput.fill(phoneInputHK);
+    await sendCodeButton.click();
+    await page.waitForTimeout(1000); // 增加等待时间
+    const otpInput = page.locator('input[placeholder="請輸入手機驗證碼"]');
+    await otpInput.fill('1111');
+    const passwordInput = page.locator('input[placeholder="請輸入登入密碼"]');
+    await passwordInput.fill('123456');
+
+    const registerButton = page.locator('div.submitBtn');
+    await registerButton.click();
+
+    // 等待“加载中”提示消失或“OTP驗証碼錯誤”提示出現
+    try {
+        await page.waitForSelector('.am-toast-text-info:has-text("載入中")', { state: 'hidden', timeout: 10000 });
+    } catch (e) {
+        // 如果没有加载中提示，继续检查错误提示
+    }
+    await page.waitForTimeout(1000); // 增加等待时间
+
+    const otpErrorMessage = page.locator('.am-toast-text-info:has-text("OTP驗証碼錯誤")');
+    if (!await otpErrorMessage.isVisible()) {
+        errors.push('輸入錯誤的驗證碼: 未顯示 "OTP驗証碼錯誤" 提示');
+    } else {
+        console.log('輸入錯誤的驗證碼: 顯示 "OTP驗証碼錯誤" 提示');
+    }
+
+    // 2-3 輸入短密碼
+    console.log('檢查短密碼提示');
+    await usernameInput.fill(username);
+    await phoneInput.fill(phoneInputHK);
+    await otpInput.fill('1234'); // 使用随便一个验证码
+    await passwordInput.fill('12345');
+    await registerButton.click();
+    await page.waitForTimeout(1000); // 增加等待时间
+
+    const shortPasswordMessage = page.locator('.am-toast-text:has-text("密碼長度不能小於6位")');
+    if (!await shortPasswordMessage.isVisible()) {
+        errors.push('輸入短密碼: 未顯示 "密碼長度不能小於6位" 提示');
+    } else {
+        console.log('輸入短密碼: 顯示 "密碼長度不能小於6位" 提示');
+    }
+
+    // 2-4 輸入長密碼
+    console.log('檢查長密碼提示');
+    await usernameInput.fill(username);
+    await phoneInput.fill(phoneInputHK);
+    await otpInput.fill('1234'); // 使用随便一个验证码
+    await passwordInput.fill('12345678999999999');
+    await registerButton.click();
+    await page.waitForTimeout(1000); // 增加等待时间
+
+    const longPasswordMessage = page.locator('.am-toast-text:has-text("密碼長度不能超過16位")');
+    if (!await longPasswordMessage.isVisible()) {
+        errors.push('輸入長密碼: 未顯示 "密碼長度不能超過16位" 提示');
+    } else {
+        console.log('輸入長密碼: 顯示 "密碼長度不能超過16位" 提示');
+    }
+
+    // 打印所有錯誤訊息
+    if (errors.length > 0) {
+        console.log('以下是檢測到的錯誤:');
+        errors.forEach(error => console.error(error));
+    } else {
+        console.log('所有檢查項目均通過');
+    }
+
+    expect(errors.length).toBe(0); // 確保沒有錯誤
+});
+
+
+
+
+
+
+test('註冊正確流程檢查', async () => {
+    const page = await globalThis.context.newPage();
+    const errors = [];
+
+    await page.goto('https://wap-q0-npf2.qit1.net/reg');
+    await page.waitForLoadState('networkidle');
+
+    // 生成随机用户名，固定密码
+    const username = randomUsername();
+    const password = '396012';
+
+    // 填写表单
+    const usernameInput = page.locator('input[placeholder="請輸入帳號"]');
+    await usernameInput.fill(username);
+
+    const phoneInput = page.locator('input[placeholder="請輸入手機號"]');
+    const phoneInputHK = randomHongKongPhoneNumber();
+    console.log(`生成的隨機手機號: ${phoneInputHK}`);
+    await phoneInput.fill(phoneInputHK);
+
+    const sendCodeButton = page.locator('div.opt-btn#validate');
+    await sendCodeButton.click();
+
+    // 等待验证码发送请求完成
+    await page.waitForTimeout(5000);
+
+    // 获取验证码
+    const otpCode = await fetchVerificationCode(phoneInputHK.slice(-8)); // 传入生成的手机号码
+    console.log(`獲取到的簡訊驗證碼: ${otpCode}`);
+    if (!otpCode) {
+        errors.push('無法獲取驗證碼');
+    } else {
+        const otpInput = page.locator('input[placeholder="請輸入手機驗證碼"]');
+        await otpInput.fill(otpCode);
+    }
+
+    const passwordInput = page.locator('input[placeholder="請輸入登入密碼"]');
+    await passwordInput.fill(password);
+
+
+    const registerButton = page.locator('div.submitBtn');
+    await registerButton.click();
+
+    // 等待所有消息提示消失
+    const messages = page.locator('.am-toast-text-info');
+
+    // 检查是否出现“註冊成功”或“登入成功”提示
+    let successMessageVisible = false;
+    let successMessageContent = '';
+    const checkMessages = async () => {
+        const allMessages = await messages.allTextContents();
+        const successMessage = allMessages.find(message => message.includes('註冊成功') || message.includes('登入成功'));
+        if (successMessage) {
+            successMessageVisible = true;
+            successMessageContent = successMessage;
+        }
+        return successMessageVisible;
+    };
+
+    for (let i = 0; i < 30; i++) {
+        if (await checkMessages()) {
+            break;
+        }
+        await page.waitForTimeout(1000); // 每秒检查一次
+    }
+
+    if (!successMessageVisible) {
+        errors.push('註冊失敗: 未顯示 "註冊成功" 或 "登入成功" 提示');
+    } else {
+        console.log(`捕獲到的成功訊息: ${successMessageContent}`);
+    }
+
+    // 打印所有错误信息
+    if (errors.length > 0) {
+        console.log('以下是檢測到的錯誤:');
+        errors.forEach(error => console.error(error));
+    } else {
+        console.log('所有檢查項目均通過');
+    }
+
+    expect(errors.length).toBe(0); // 確保沒有錯誤
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

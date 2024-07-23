@@ -10,24 +10,24 @@
       "pending": 0,
       "skipped": 0,
       "other": 0,
-      "start": 1721725262698,
-      "stop": 1721725282663,
+      "start": 1721728346340,
+      "stop": 1721728417343,
       "suites": 0
     },
     "tests": [
       {
-        "name": "檢查娛樂城(EN)",
+        "name": "註冊正確流程檢查",
         "status": "passed",
-        "duration": 15949,
-        "start": 1721725263,
-        "stop": 1721725279,
+        "duration": 67682,
+        "start": 1721728347,
+        "stop": 1721728415,
         "rawStatus": "passed",
         "tags": [],
         "type": "e2e",
-        "filePath": "C:\\Users\\luekc\\Desktop\\playwright_UI-master\\tests\\Q8\\Q8UItest.spec.js",
+        "filePath": "C:\\Users\\luekc\\Desktop\\playwright_UI-master\\tests\\Q0\\Q0UItest.spec.js",
         "retries": 0,
         "flaky": false,
-        "suite": "Q8\\Q8UItest.spec.js"
+        "suite": "Q0\\Q0UItest.spec.js"
       }
     ]
   }

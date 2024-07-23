@@ -29,7 +29,7 @@ async function recognizeCaptcha(processedImagePath) {
 }
 
 async function loginToBackend() {
-    const imageDir = path.join('C:\\Users\\luekc\\Desktop\\playwright_UI-master\\tests\\Q8\\codepng');
+    const imageDir = path.join('C:\\Users\\luekc\\Desktop\\playwright_UI-master\\tests\\Q0\\codepng');
     await fs.ensureDir(imageDir);
 
     const browser = await chromium.launch({ headless: false }); // 使用非无头模式
