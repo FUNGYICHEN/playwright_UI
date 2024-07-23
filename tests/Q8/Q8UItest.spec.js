@@ -1704,8 +1704,8 @@ test('檢查娛樂城(EN)', async () => {
     }
 
     // 檢查每日簽到
-    const checkInImage = page.locator('img[alt="Daily Bouns"]');
-    const checkInText = page.locator('span.hasData:has-text("每日簽到EN")');
+    const checkInImage = page.locator('img[alt="Daily Bouns1"]');
+    const checkInText = page.locator('span.hasData:has-text("Daily Bouns1")');
     const checkInImageExists = await checkInImage.count() > 0;
     const checkInTextExists = await checkInText.count() > 0;
     console.log(`每日簽到圖片: ${checkInImageExists}`);
