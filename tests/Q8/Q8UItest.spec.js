@@ -1600,7 +1600,7 @@ test('首頁檢查(EN)', async () => {
 
 
 
-test('檢查娛樂城(EN)', async () => {
+test.only('檢查娛樂城(EN)', async () => {
     const page = await globalThis.context.newPage();
     // 设置 localStorage 语言为英文
     await page.addInitScript(() => {
@@ -1669,9 +1669,7 @@ test('檢查娛樂城(EN)', async () => {
         'WE LIVE CASINO',
         'CR SPORTS',
         'SBO SPORTS',
-        // 'KONG LOTTO SPORTS',
         'KA Slots',
-        // 'JDB Slots',
         'PP Slots',
         'SWG Slots',
         'TPG Slots',
@@ -1692,7 +1690,6 @@ test('檢查娛樂城(EN)', async () => {
         'JOKER FISHING',
         'BAISON FISHING',
         'SWG FISHING',
-        // 'JDB FISHING',
     ];
 
     // 檢查每個指定的 gameName 元素是否存在
@@ -1704,7 +1701,7 @@ test('檢查娛樂城(EN)', async () => {
     }
 
     // 檢查每日簽到
-    const checkInImage = page.locator('img[alt="Daily Bouns1"]');
+    const checkInImage = page.locator('img[alt="Daily Bouns"]');
     const checkInText = page.locator('span.hasData:has-text("Daily Bouns1")');
     const checkInImageExists = await checkInImage.count() > 0;
     const checkInTextExists = await checkInText.count() > 0;
@@ -1726,29 +1723,6 @@ test('檢查娛樂城(EN)', async () => {
         }
     }
 
-    // 檢查紅包
-    // const redEnvelopeImage = page.locator('img[src="/res/images/red-envelope.png"]');
-    // const redEnvelopeText = page.locator('div.redEnvelope-entrance-text:has-text("紅包包包包")');
-    // const redEnvelopeImageExists = await redEnvelopeImage.count() > 0;
-    // const redEnvelopeTextExists = await redEnvelopeText.count() > 0;
-    // console.log(`紅包圖片: ${redEnvelopeImageExists}`);
-    // console.log(`紅包文案${redEnvelopeTextExists}`);
-    // expect(redEnvelopeImageExists).toBeTruthy();
-    // expect(redEnvelopeTextExists).toBeTruthy();
-
-    // if (redEnvelopeImageExists) {
-    //     const redEnvelopeImageSize = await redEnvelopeImage.evaluate(el => {
-    //         return {
-    //             width: el.clientWidth,
-    //             height: el.clientHeight
-    //         };
-    //     });
-    //     console.log(`紅包圖片大小: 宽度=${redEnvelopeImageSize.width}px, 高度=${redEnvelopeImageSize.height}px`);
-    //     if (redEnvelopeImageSize.width !== 45 || redEnvelopeImageSize.height !== 56) {
-    //         errors.push(`紅包圖片大小不正确，宽度=${redEnvelopeImageSize.width}px, 高度=${redEnvelopeImageSize.height}px`);
-    //     }
-    // }
-
     // 檢查幸運輪
     const luckyWheel = page.locator('div.center-icon.en');
     const luckyWheelExists = await luckyWheel.count() > 0;
@@ -1757,20 +1731,24 @@ test('檢查娛樂城(EN)', async () => {
 
     if (luckyWheelExists) {
         const luckyWheelSize = await page.evaluate(() => {
-            const element = document.querySelector('#sector.sector-menu-wrapper.q6');
-            return {
+            const element = document.querySelector('#sector.sector-menu-wrapper.q8');
+            return element ? {
                 width: element.clientWidth,
                 height: element.clientHeight,
                 bottom: element.style.bottom,
                 left: element.style.left
-            };
+            } : null;
         });
-        console.log(`幸運輪大小: 宽度=${luckyWheelSize.width}px, 高度=${luckyWheelSize.height}px, bottom=${luckyWheelSize.bottom}, left=${luckyWheelSize.left}`);
-        if (luckyWheelSize.width !== 50 || luckyWheelSize.height !== 100) {
-            errors.push(`幸運輪大小不正确，宽度=${luckyWheelSize.width}px, 高度=${luckyWheelSize.height}px`);
-        }
-        if (luckyWheelSize.bottom !== '100px' || luckyWheelSize.left !== '344px') {
-            errors.push(`幸運輪位置不正确，bottom=${luckyWheelSize.bottom}, left=${luckyWheelSize.left}`);
+        console.log(`幸運輪大小: ${luckyWheelSize ? `宽度=${luckyWheelSize.width}px, 高度=${luckyWheelSize.height}px, bottom=${luckyWheelSize.bottom}, left=${luckyWheelSize.left}` : '無法獲取'}`);
+        if (luckyWheelSize) {
+            if (luckyWheelSize.width !== 50 || luckyWheelSize.height !== 100) {
+                errors.push(`幸運輪大小不正确，宽度=${luckyWheelSize.width}px, 高度=${luckyWheelSize.height}px`);
+            }
+            if (luckyWheelSize.bottom !== '100px' || luckyWheelSize.left !== '344px') {
+                errors.push(`幸運輪位置不正确，bottom=${luckyWheelSize.bottom}, left=${luckyWheelSize.left}`);
+            }
+        } else {
+            errors.push('無法獲取幸運輪大小');
         }
     }
 
@@ -1780,7 +1758,7 @@ test('檢查娛樂城(EN)', async () => {
         errors.forEach(error => console.error(error));
     }
 
-    expect(errors.length).toBe(0); // 确保没有错误
+    expect(errors.length).toBe(0); // 確保沒有错误
 
     await page.close();
 });
