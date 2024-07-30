@@ -8,7 +8,6 @@ const org = 'QA_test';
 const bucket = 'playwright_results';
 // const token = 'b1-kyQA3ARcP85_p6d5ry0XrQ1TSs9EDjpkagk4oyzeWCoOUt89l-K8gfnOhYqF3fCLfZEZdse4yJSUGdYXXNw==';
 const token = '_jPDDWo3llYJuRRoCY9LUTzgy-kbNRr8gzkE-KriNKGhz9X1zb8fGzrDvJCF6pQxb2MdLjidzodvG9x_HiiKqQ==';
-
 const MAX_RETRIES = 5; // 設置最大重試次數
 let retryCount = 0;
 
@@ -33,82 +32,65 @@ function processJsonData() {
 
             const lines = [];
             let currentTime = Date.now() * 1e6;
-            let uniqueCounter = 0; // 唯一計數器
+            const timeIncrement = 1e6; // 每個條目的時間增量（1微秒）
 
-            // 按 suite 分類匯總測試結果
-            const suiteSummary = {};
+            // 添加總體測試結果
+            const summary = jsonData.results.summary;
+            const summaryLine = `playwright_summary tests=${summary.tests},passed=${summary.passed},failed=${summary.failed} ${currentTime}`;
+            lines.push(summaryLine);
+            currentTime += timeIncrement;
+
+            // 按平台分類匯總測試結果
+            const platformSummary = {};
 
             jsonData.results.tests.forEach((test) => {
-                const suiteName = test.suite.replace(/ /g, '\\ ').replace(/\\/g, '\\\\');
-                const platform = suiteName.split('\\')[0]; // 假設平台名稱是suiteName的第一部分
-                if (!suiteSummary[suiteName]) {
-                    suiteSummary[suiteName] = { tests: 0, passed: 0, failed: 0, platform };
-                }
-                suiteSummary[suiteName].tests += 1;
-                if (test.status === 'passed') {
-                    suiteSummary[suiteName].passed += 1;
-                } else if (test.message || test.rawStatus === 'timedOut') { // 只有在 test.message 存在或 rawStatus 是 timedOut 時才計算失敗
-                    suiteSummary[suiteName].failed += 1;
-                    // 添加失敗的測試信息，包含對應平台
-                    uniqueCounter++;
-                    if (test.message) {
-                        const message = stripAnsi(test.message.replace(/"/g, '\\"').replace(/\n/g, '\\n'));
-                        const failedLine = `playwright_errors,platform=${platform} message="${message}" ${currentTime + uniqueCounter}`;
-                        lines.push(failedLine);
-                    } else {
-                        const failedLine = `playwright_errors,platform=${platform} message="Test timed out" ${currentTime + uniqueCounter}`;
-                        lines.push(failedLine);
-                    }
-                }
-            });
-
-            // 添加總體測試結果，按平台分類
-            const platformSummary = {};
-            let totalTests = 0;
-            let totalPassed = 0;
-            let totalFailed = 0;
-
-            for (const { platform, tests, passed, failed } of Object.values(suiteSummary)) {
+                const platform = test.suite.split('\\')[0];
                 if (!platformSummary[platform]) {
                     platformSummary[platform] = { tests: 0, passed: 0, failed: 0 };
                 }
-                platformSummary[platform].tests += tests;
-                platformSummary[platform].passed += passed;
-                platformSummary[platform].failed += failed;
-                totalTests += tests;
-                totalPassed += passed;
-                totalFailed += failed;
-            }
+                platformSummary[platform].tests += 1;
+                if (test.status === 'passed') {
+                    platformSummary[platform].passed += 1;
+                } else if (test.message) { // 只有在 test.message 存在時才計算失敗
+                    platformSummary[platform].failed += 1;
+                    // 添加失敗的測試信息
+                    const message = stripAnsi(test.message.replace(/"/g, '\\"').replace(/\n/g, '\\n'));
+                    const failedLine = `playwright_errors,platform=${platform} message="${message}" ${currentTime}`;
+                    lines.push(failedLine);
+                }
+                currentTime += timeIncrement;
+            });
 
+            // 將平台分類結果寫入 Line Protocol 文件
             for (const [platform, counts] of Object.entries(platformSummary)) {
-                uniqueCounter++;
-                const summaryLine = `playwright_results,platform=${platform} tests=${counts.tests},passed=${counts.passed},failed=${counts.failed} ${currentTime + uniqueCounter}`;
-                lines.push(summaryLine);
+                const platformLine = `playwright_results,platform=${platform} tests=${counts.tests},passed=${counts.passed},failed=${counts.failed} ${currentTime}`;
+                lines.push(platformLine);
+                currentTime += timeIncrement;
             }
 
-            // 添加總測試結果
-            uniqueCounter++;
-            const totalSummaryLine = `playwright_summary tests=${totalTests},passed=${totalPassed},failed=${totalFailed} ${currentTime + uniqueCounter}`;
-            lines.push(totalSummaryLine);
-
-            // 寫入 Line Protocol 文件 (同步寫入)
-            fs.writeFileSync(lpFilePath, lines.join('\n'));
-            console.log('成功寫入 Line Protocol 文件:', lpFilePath);
-
-            // 調試信息
-            console.log('寫入的 Line Protocol 內容:', lines.join('\n'));
-
-            // 上傳新數據
-            exec(`curl -X POST "http://localhost:8086/api/v2/write?org=${org}&bucket=${bucket}&precision=ns" -H "Authorization: Token ${token}" --data-binary @${lpFilePath}`, (err, stdout, stderr) => {
+            // 寫入 Line Protocol 文件
+            fs.writeFile(lpFilePath, lines.join('\n'), (err) => {
                 if (err) {
-                    console.error(`上傳新數據時出錯: ${err}`);
+                    console.error('寫入 Line Protocol 文件時出錯:', err);
                     return;
                 }
-                if (stderr) {
-                    console.error(`上傳新數據時的stderr: ${stderr}`);
-                } else {
-                    console.log(`新數據上傳成功: ${stdout}`);
-                }
+                console.log('成功寫入 Line Protocol 文件:', lpFilePath);
+
+                // 調試信息
+                console.log('寫入的 Line Protocol 內容:', lines.join('\n'));
+
+                // 上傳新數據
+                exec(`curl -X POST "http://localhost:8086/api/v2/write?org=${org}&bucket=${bucket}&precision=ns" -H "Authorization: Token ${token}" --data-binary @${lpFilePath}`, (err, stdout, stderr) => {
+                    if (err) {
+                        console.error(`上傳新數據時出錯: ${err}`);
+                        return;
+                    }
+                    if (stderr) {
+                        console.error(`上傳新數據時的stderr: ${stderr}`);
+                    } else {
+                        console.log(`新數據上傳成功: ${stdout}`);
+                    }
+                });
             });
         } catch (error) {
             console.error('解析 JSON 時出錯:', error);
