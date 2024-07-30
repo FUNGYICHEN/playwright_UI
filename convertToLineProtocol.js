@@ -6,8 +6,8 @@ const lpFilePath = path.join(__dirname, 'ctrf', 'results', 'results.lp');
 const inputPath = path.join(__dirname, 'ctrf', 'ctrf-report.json');
 const org = 'QA_test';
 const bucket = 'playwright_results';
-// const token = 'b1-kyQA3ARcP85_p6d5ry0XrQ1TSs9EDjpkagk4oyzeWCoOUt89l-K8gfnOhYqF3fCLfZEZdse4yJSUGdYXXNw==';
-const token = '_jPDDWo3llYJuRRoCY9LUTzgy-kbNRr8gzkE-KriNKGhz9X1zb8fGzrDvJCF6pQxb2MdLjidzodvG9x_HiiKqQ==';
+const token = 'b1-kyQA3ARcP85_p6d5ry0XrQ1TSs9EDjpkagk4oyzeWCoOUt89l-K8gfnOhYqF3fCLfZEZdse4yJSUGdYXXNw==';
+// const token = '_jPDDWo3llYJuRRoCY9LUTzgy-kbNRr8gzkE-KriNKGhz9X1zb8fGzrDvJCF6pQxb2MdLjidzodvG9x_HiiKqQ==';
 
 const MAX_RETRIES = 5; // 設置最大重試次數
 let retryCount = 0;
@@ -35,42 +35,56 @@ function processJsonData() {
             let currentTime = Date.now() * 1e6;
             const timeIncrement = 1e6; // 每個條目的時間增量（1微秒）
 
-            // 添加總體測試結果
-            const summary = jsonData.results.summary;
-            const summaryLine = `playwright_results tests=${summary.tests},passed=${summary.passed},failed=${summary.failed} ${currentTime}`;
-            lines.push(summaryLine);
-            currentTime += timeIncrement;
-
             // 按 suite 分類匯總測試結果
             const suiteSummary = {};
 
             jsonData.results.tests.forEach((test) => {
                 const suiteName = test.suite.replace(/ /g, '\\ ').replace(/\\/g, '\\\\');
+                const platform = suiteName.split('\\')[0]; // 假設平台名稱是suiteName的第一部分
                 if (!suiteSummary[suiteName]) {
-                    suiteSummary[suiteName] = { tests: 0, passed: 0, failed: 0 };
+                    suiteSummary[suiteName] = { tests: 0, passed: 0, failed: 0, platform };
                 }
                 suiteSummary[suiteName].tests += 1;
                 if (test.status === 'passed') {
                     suiteSummary[suiteName].passed += 1;
-                    // 添加成功的測試信息
-                    const passedLine = `playwright_passed,suite=${suiteName} message="Test passed" ${currentTime}`;
-                    lines.push(passedLine);
                 } else if (test.message) { // 只有在 test.message 存在時才計算失敗
                     suiteSummary[suiteName].failed += 1;
                     // 添加失敗的測試信息
                     const message = stripAnsi(test.message.replace(/"/g, '\\"').replace(/\n/g, '\\n'));
-                    const failedLine = `playwright_errors,suite=${suiteName} message="${message}" ${currentTime}`;
+                    const failedLine = `playwright_errors,suite=${suiteName},platform=${platform} message="${message}" ${currentTime}`;
                     lines.push(failedLine);
                 }
                 currentTime += timeIncrement;
             });
 
-            // 將分類結果寫入 Line Protocol 文件
-            for (const [suiteName, counts] of Object.entries(suiteSummary)) {
-                const suiteLine = `playwright_suite_results,suite=${suiteName} tests=${counts.tests},passed=${counts.passed},failed=${counts.failed} ${currentTime}`;
-                lines.push(suiteLine);
+            // 添加總體測試結果，按平台分類
+            const platformSummary = {};
+            let totalTests = 0;
+            let totalPassed = 0;
+            let totalFailed = 0;
+
+            for (const { platform, tests, passed, failed } of Object.values(suiteSummary)) {
+                if (!platformSummary[platform]) {
+                    platformSummary[platform] = { tests: 0, passed: 0, failed: 0 };
+                }
+                platformSummary[platform].tests += tests;
+                platformSummary[platform].passed += passed;
+                platformSummary[platform].failed += failed;
+                totalTests += tests;
+                totalPassed += passed;
+                totalFailed += failed;
+            }
+
+            for (const [platform, counts] of Object.entries(platformSummary)) {
+                const summaryLine = `playwright_results,platform=${platform} tests=${counts.tests},passed=${counts.passed},failed=${counts.failed} ${currentTime}`;
+                lines.push(summaryLine);
                 currentTime += timeIncrement;
             }
+
+            // 添加總測試結果
+            const totalSummaryLine = `playwright_summary tests=${totalTests},passed=${totalPassed},failed=${totalFailed} ${currentTime}`;
+            lines.push(totalSummaryLine);
+            currentTime += timeIncrement;
 
             // 寫入 Line Protocol 文件
             fs.writeFile(lpFilePath, lines.join('\n'), (err) => {

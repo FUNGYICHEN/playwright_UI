@@ -231,3 +231,129 @@ test('檢查 Giới thiệu về RG88', async () => {
 
 
 
+test('遊戲icon', async () => {
+    const page = await globalThis.context.newPage();
+    // 設置 localStorage 語言為越南語
+    await page.addInitScript(() => {
+        localStorage.setItem('locale', 'vi-VN');
+    });
+
+    // 打開目標頁面
+    await page.goto('https://wap-tn.qit1.net/hall');
+    await page.waitForLoadState('networkidle');
+
+    // 檢查並關閉彈窗
+    let closeButtonVisible = true;
+    while (closeButtonVisible) {
+        const closeButton = page.locator('.promotionAd-btn-box .promotionAd-btn.show');
+        closeButtonVisible = await closeButton.isVisible();
+        if (closeButtonVisible) {
+            await closeButton.click();
+            console.log('關閉廣告');
+            // 等待彈窗消失並檢查是否還有彈窗存在
+            await page.waitForTimeout(1000); // 可以根據需要調整等待時間
+        }
+    }
+
+    // 點擊 ag-slot
+    await page.locator('.game.ag-slot').click();
+    await page.waitForTimeout(5000); // 等待頁面加載完成
+
+    const gameIcons = [
+        { name: 'Lucha Heroes', selector: 'img[alt="Lucha Heroes"]', filePath: 'https://wap-tn.qit1.net/photo/AG_icon/WH49_en.png' },
+        { name: 'Ultra Shift', selector: 'img[alt="Ultra Shift"]', filePath: 'https://wap-tn.qit1.net/photo/AG_icon/WH54_en.png' },
+    ];
+
+    const results = [];
+    const errors = [];
+
+    for (const game of gameIcons) {
+        let iconExists = false;
+        let renderedSize = { width: 0, height: 0 };
+        let intrinsicSize = { width: 0, height: 0 };
+        let fileSize = NaN;
+        let statusCode = 200;
+
+        // 檢測圖片元素
+        const gameIcon = page.locator(game.selector);
+        iconExists = await gameIcon.count() > 0;
+
+        if (iconExists) {
+            const sizes = await gameIcon.evaluate(el => {
+                const renderedWidth = el.clientWidth;
+                const renderedHeight = el.clientHeight;
+                const intrinsicWidth = el.naturalWidth;
+                const intrinsicHeight = el.naturalHeight;
+                return {
+                    renderedWidth,
+                    renderedHeight,
+                    intrinsicWidth,
+                    intrinsicHeight,
+                    aspectRatio: renderedWidth / renderedHeight,
+                    intrinsicAspectRatio: intrinsicWidth / intrinsicHeight
+                };
+            });
+
+            renderedSize = { width: sizes.renderedWidth, height: sizes.renderedHeight };
+            intrinsicSize = { width: sizes.intrinsicWidth, height: sizes.intrinsicHeight };
+        }
+
+        // 获取文件大小和状态码
+        try {
+            const response = await page.request.get(game.filePath);
+            statusCode = response.status();
+            if (statusCode === 200) {
+                const buffer = await response.body();
+                fileSize = buffer.byteLength;
+            }
+        } catch (error) {
+            statusCode = '無狀態碼';
+        }
+
+        results.push({
+            game: game.name,
+            exists: iconExists,
+            renderedWidth: renderedSize.width,
+            renderedHeight: renderedSize.height,
+            intrinsicWidth: intrinsicSize.width,
+            intrinsicHeight: intrinsicSize.height,
+            renderedAspectRatio: renderedSize.width / renderedSize.height,
+            intrinsicAspectRatio: intrinsicSize.width / intrinsicSize.height,
+            fileSize,
+            statusCode
+        });
+
+        if (!/^2/.test(statusCode)) {
+            errors.push(`${game.name} 文件加载失败，状态码: ${statusCode}`);
+        }
+    }
+
+    results.forEach(result => {
+        console.log(`${result.game} 圖片存在: ${result.exists}`);
+        if (result.exists) {
+            console.log(`${result.game} 圖片大小: 寬度=${result.renderedWidth}px, 高度=${result.renderedHeight}px`);
+            console.log(`${result.game} 圖片內在大小: 寬度=${result.intrinsicWidth}px, 高度=${result.intrinsicHeight}px`);
+            console.log(`${result.game} 圖片渲染的寬高比: ${result.renderedAspectRatio}`);
+            console.log(`${result.game} 圖片內在的寬高比: ${result.intrinsicAspectRatio}`);
+            console.log(`${result.game} 圖片文件大小: ${isNaN(result.fileSize) ? 'NaN' : `${result.fileSize} bytes`}`);
+            console.log(`${result.game} 圖片文件狀態碼: ${result.statusCode}`);
+        }
+    });
+
+    // 打印所有错误
+    if (errors.length > 0) {
+        console.error('以下是检测到的错误:');
+        errors.forEach(error => {
+            console.error(error);
+            const gameName = error.split(' ')[0];
+            const result = results.find(r => r.game === gameName);
+            if (result) {
+                console.error(`${result.game} 圖片文件大小: ${isNaN(result.fileSize) ? 'NaN' : `${result.fileSize} bytes`}`);
+            }
+        });
+    }
+
+    expect(errors.length).toBe(0); // 確保沒有錯誤
+
+    await page.close();
+});

@@ -10,7 +10,7 @@ async function setupQ8() {
 
     const page = await context.newPage();
     try {
-        await page.goto("https://wap-q8-npf2.qit1.net/login");
+        await page.goto("http://wap-q8-npf2.qit1.net/login");
         await page.locator("#username").fill("uitest001");
         await page.locator('#password').type('396012');
         await page.locator('div.submitBtn.btns:has-text("登錄")').click();

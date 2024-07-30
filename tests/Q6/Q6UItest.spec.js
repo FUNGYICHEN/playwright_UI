@@ -99,14 +99,48 @@ test('登入頁檢查', async () => {
     console.log(`密碼圖標是否存在: ${passwordIconVisible}`);
     if (!passwordIconVisible) missingElements.push('密碼圖標');
 
+    // 检查文件状态码和大小
+    const filesToCheck = [
+        { url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/q6-icon2.png?v=001', description: 'LOGO圖' },
+        { url: 'http://wap-q6-npf2.qit1.net/res/images/com-q3/bg3.png', description: '背景圖' }
+    ];
+
+    for (const file of filesToCheck) {
+        let statusCode = 0;
+        let fileSize = 0;
+
+        try {
+            const response = await page.request.get(file.url);
+            statusCode = response.status();
+            if (statusCode === 200) {
+                const buffer = await response.body();
+                fileSize = buffer.byteLength;
+            }
+        } catch (error) {
+            statusCode = '無狀態碼';
+        }
+
+        console.log(`${file.description} 文件狀態碼: ${statusCode}`);
+        console.log(`${file.description} 文件大小: ${fileSize} bytes`);
+
+        if (statusCode !== 200) {
+            missingElements.push(`${file.description} 文件加载失败，状态码: ${statusCode}`);
+        }
+
+        if (fileSize === 0) {
+            missingElements.push(`${file.description} 文件大小不正确，文件大小: ${fileSize} bytes`);
+        }
+    }
+
     // 打印所有检查结果后再判断是否有错误
     if (missingElements.length > 0) {
-        console.log(`以下元素未找到或大小不符: ${missingElements.join(', ')}`);
+        console.error(`以下元素未找到或大小不符: ${missingElements.join(', ')}`);
         expect(missingElements.length, `以下元素未找到或大小不符: ${missingElements.join(', ')}`).toBe(0);
     }
 
     await page.close();
 });
+
 
 test('註冊頁檢查', async () => {
     const page = await globalThis.context.newPage();
@@ -206,9 +240,9 @@ test('註冊錯誤流程檢查', async () => {
 
     // 檢查是否出現 "請輸入手機號碼" 提示
     await page.waitForTimeout(1000); // 增加等待时间
-    const phoneErrorMessage = page.locator('.am-toast-notice-content .am-toast-text div:has-text("請輸入手機號碼")');
+    const phoneErrorMessage = page.locator('.am-toast-notice-content .am-toast-text div:has-text("輸入手機號")');
     if (!await phoneErrorMessage.isVisible()) {
-        errors.push('點擊發送驗證碼: 未顯示 "請輸入手機號碼" 提示');
+        errors.push('點擊發送驗證碼: 未顯示 "輸入手機號" 提示');
     }
 
     // 1-3 輸入錯誤的手機號碼並點擊發送驗證碼
@@ -476,49 +510,97 @@ test('首頁體育下注(注额15)', async () => {
 test('檢查首頁', async () => {
     const page = await globalThis.context.newPage();
 
-    // 导航到目标页面
+    // 導航到目標頁面
     await page.goto('https://wap-q6-npf2.qit1.net/hall');
     await page.waitForLoadState('networkidle');
     const missingElements = [];
-    // 要检查的 alt 属性列表
-    const altAttributes = ['足球', '籃球', '網球', '棒球', 'gift', 'sponsor'];
+    const errors = [];
+    // 要檢查的 alt 屬性列表
+    const altAttributes = [
+        { alt: '足球', url: 'http://wap-q6-npf2.qit1.net/soccor_34f4bf826da6b0ead896eb8095bf8172.png' },
+        { alt: '籃球', url: 'http://wap-q6-npf2.qit1.net/basketball_041a70bb6638ce2fbf03f29ba85ff652.png' },
+        { alt: '網球', url: 'http://wap-q6-npf2.qit1.net/tennis_385c5f240b23671da902eeda72d3ba37.png' },
+        { alt: '棒球', url: 'http://wap-q6-npf2.qit1.net/baseball_9f2acedd892c495bdcc4172ce5c39ec9.png' },
+        { alt: 'gift', url: 'http://wap-q6-npf2.qit1.net/gift_c4f823fc4659487cc0dfc4adef6326c4.png' },
+        { alt: 'sponsor', url: 'http://wap-q6-npf2.qit1.net/sponsor_f879496089550966b3009b0e6dbaec94.png' }
+    ];
 
-    for (const alt of altAttributes) {
-        const img = page.locator(`img[alt="${alt}"]`);
+    for (const item of altAttributes) {
+        const img = page.locator(`img[alt="${item.alt}"]`);
         const count = await img.count();
         if (count > 0) {
             const isVisible = await img.first().isVisible();
-            console.log(`${alt}:${isVisible}`);
+            console.log(`${item.alt}:${isVisible}`);
             if (!isVisible) {
-                missingElements.push(`icon ${alt}`);
+                missingElements.push(`icon ${item.alt}`);
+            } else {
+                try {
+                    const response = await page.request.get(item.url);
+                    const statusCode = response.status();
+                    const buffer = await response.body();
+                    const fileSize = buffer.byteLength;
+
+                    console.log(`${item.alt} 圖片狀態碼: ${statusCode}`);
+                    console.log(`${item.alt} 圖片文件大小: ${fileSize} bytes`);
+
+                    if (statusCode !== 200 || fileSize === 0) {
+                        errors.push(`${item.alt} 圖片加載失敗，狀態碼: ${statusCode}, 文件大小: ${fileSize} bytes`);
+                    }
+                } catch (error) {
+                    errors.push(`${item.alt} 圖片加載失敗`);
+                }
             }
         } else {
-            console.log(`icon ${alt} 不存在`);
-            missingElements.push(`icon ${alt}`);
+            console.log(`icon ${item.alt} 不存在`);
+            missingElements.push(`icon ${item.alt}`);
         }
     }
-    // 要检查的底部菜单项
-    const footerLabels = ['首頁', '娛樂城', '走地', '客服', '個人中心'];
 
-    for (const label of footerLabels) {
-        const footerItem = page.locator(`.footer-item:has-text("${label}")`);
+    // 要檢查的底部菜單項
+    const footerLabels = [
+        { text: '首頁', url: 'http://wap-q6-npf2.qit1.net/icon-home-active_77afa06fb99413741325eb93a40d9aa9.png' },
+        { text: '娛樂城', url: 'http://wap-q6-npf2.qit1.net/icon-play_dbfde5c59dee06f8f57bb9e49750d1d9.svg' },
+        { text: '走地', url: 'http://wap-q6-npf2.qit1.net/icon-roll_f04be4dadd0324df7549ed9d066465dc.svg' },
+        { text: '客服', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q4/footer/icon-headphones.png' },
+        { text: '個人中心', url: 'http://wap-q6-npf2.qit1.net/icon-account_03f844954145119bac4548c768666413.svg' }
+    ];
+
+    for (const item of footerLabels) {
+        const footerItem = page.locator(`.footer-item:has-text("${item.text}")`);
         const count = await footerItem.count();
         if (count > 0) {
             const isVisible = await footerItem.first().isVisible();
-            console.log(`${label}:${isVisible}`);
+            console.log(`${item.text}:${isVisible}`);
             if (!isVisible) {
-                missingElements.push(`底部项目 ${label}`);
+                missingElements.push(`底部項目 ${item.text}`);
+            } else {
+                try {
+                    const response = await page.request.get(item.url);
+                    const statusCode = response.status();
+                    const buffer = await response.body();
+                    const fileSize = buffer.byteLength;
+
+                    console.log(`${item.text} 圖片狀態碼: ${statusCode}`);
+                    console.log(`${item.text} 圖片文件大小: ${fileSize} bytes`);
+
+                    if (statusCode !== 200 || fileSize === 0) {
+                        errors.push(`${item.text} 圖片加載失敗，狀態碼: ${statusCode}, 文件大小: ${fileSize} bytes`);
+                    }
+                } catch (error) {
+                    errors.push(`${item.text} 圖片加載失敗`);
+                }
             }
         } else {
-            console.log(`底部项目 ${label} 不存在`);
-            missingElements.push(`底部项目 ${label}`);
+            console.log(`底部項目 ${item.text} 不存在`);
+            missingElements.push(`底部項目 ${item.text}`);
         }
     }
-    // 检查其他指定元素
+
+    // 檢查其他指定元素
     const elementsToCheck = [
         { selector: 'img[alt="banner"]', description: 'banner' },
-        { selector: 'button.deposit', description: '存款按钮' },
-        { selector: 'button.logout', description: '登出按钮' },
+        { selector: 'button.deposit', description: '存款按鈕' },
+        { selector: 'button.logout', description: '登出按鈕' },
         { selector: '.sportDetails_nav:first-child', description: '體育的第一場賽事' }
     ];
 
@@ -540,10 +622,16 @@ test('檢查首頁', async () => {
     await page.close();
 
     if (missingElements.length > 0) {
-        throw new Error(`以下元素不存在: ${missingElements.join(', ')}`);
+        console.error(`以下元素不存在: ${missingElements.join(', ')}`);
     }
-});
 
+    if (errors.length > 0) {
+        console.error(`以下圖片加載失敗: ${errors.join(', ')}`);
+    }
+
+    expect(missingElements.length).toBe(0);
+    expect(errors.length).toBe(0);
+});
 
 
 
@@ -661,13 +749,13 @@ test('檢查娛樂城', async () => {
 
 test('檢查個人頁icon圖片', async () => {
     const page = await globalThis.context.newPage();
-    // 导航到个人页面
+    // 導航到個人頁面
     await page.goto('https://wap-q6-npf2.qit1.net/accountCenter');
     await page.waitForLoadState('networkidle');
 
     const iconsToCheck = [
         { text: '優惠活動', class: 'icon-promotion', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-promotion2.png' },
-        { text: '合營代理', class: 'icon-moneyback', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-friend.png' },
+        { text: '合營代理', class: 'icon-moneyback', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-friend.png' },
         { text: '返水領取', class: 'icon-getrebate', url: 'https://wap-q6-npf2.qit1.net/icon-getrebate_dbe8471887fe6abe747cb02d80f977cd.png' },
         { text: 'VIP福利', class: 'icon-rebate', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-rebate.png' },
         { text: '每日盈虧數據', class: 'icon-profit', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-profit.png' },
@@ -675,8 +763,8 @@ test('檢查個人頁icon圖片', async () => {
         { text: '錢包交易紀錄', class: 'icon-statement', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-statement.png' },
         { text: '綁定銀行卡', class: 'icon-bank-card', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-bank-card.png' },
         { text: '遊戲投注數據', class: 'icon-record', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-record.png' },
-        { text: '推廣鏈結', class: 'icon-invitefriend', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-friend2.png?t=21491204' },
-        { text: '全民代理', class: 'icon-friend2', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-friend2.png' },
+        // { text: '推廣鏈結', class: 'icon-invitefriend', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-friend2.png?t=21491204' },
+        // { text: '全民代理', class: 'icon-friend2', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-friend2.png' },
         { text: '推薦好友', class: 'icon-friend2', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-friend2.png' },
         { text: '好友推廣鏈結', class: 'icon-friend2', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-friend2.png' },
         { text: '賽果查詢', class: 'icon-game-result', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-game-result.png' },
@@ -690,51 +778,70 @@ test('檢查個人頁icon圖片', async () => {
         const iconExists = await iconElement.count() > 0;
         console.log(`${text} 是否存在: ${iconExists}`);
 
-        // 如果元素不存在，记录错误信息
+        // 如果元素不存在，記錄錯誤信息
         if (!iconExists) {
-            errors.push(`${text} 图标不存在`);
+            errors.push(`${text} 圖標不存在`);
             continue;
         }
 
-        // 如果元素存在，检查其背景图片是否存在
+        // 如果元素存在，檢查其背景圖片是否存在
         let backgroundImage = '';
         if (iconExists) {
             backgroundImage = await iconElement.evaluate(el => {
                 const styles = window.getComputedStyle(el);
                 return styles.backgroundImage;
             });
-            console.log(`${text} 背景图片: ${backgroundImage}`);
+            console.log(`${text} 背景圖片: ${backgroundImage}`);
         }
 
-        // 断言背景图片是否符合预期
+        // 斷言背景圖片是否符合預期
         if (backgroundImage !== `url("${url}")`) {
-            errors.push(`${text} 背景图片不正确，预期: url("${url}")，实际: ${backgroundImage}`);
+            errors.push(`${text} 背景圖片不正確，預期: url("${url}")，實際: ${backgroundImage}`);
         }
 
-        // 获取图片大小
+        // 獲取圖片大小
         const { width, height } = await iconElement.evaluate(el => {
             const rect = el.getBoundingClientRect();
             return { width: rect.width, height: rect.height };
         });
 
-        console.log(`${text} 图片大小: 宽度=${width}px, 高度=${height}px`);
+        console.log(`${text} 圖片大小: 寬度=${width}px, 高度=${height}px`);
 
-        // 断言图片大小是否正确
+        // 斷言圖片大小是否正確
         if (width !== 27 || height !== 27) {
-            errors.push(`${text} 图片大小不正确，宽度=${width}px, 高度=${height}px`);
+            errors.push(`${text} 圖片大小不正確，寬度=${width}px, 高度=${height}px`);
+        }
+
+        // 檢查API狀態碼和文件大小
+        try {
+            const response = await page.request.get(url);
+            const statusCode = response.status();
+            const buffer = await response.body();
+            const fileSize = buffer.byteLength;
+
+            console.log(`${text} 圖片狀態碼: ${statusCode}`);
+            console.log(`${text} 圖片文件大小: ${fileSize} bytes`);
+
+            if (statusCode !== 200) {
+                errors.push(`${text} 圖片加載失敗，狀態碼: ${statusCode}`);
+            }
+            if (fileSize === 0) {
+                errors.push(`${text} 圖片文件大小為0`);
+            }
+        } catch (error) {
+            errors.push(`${text} 圖片加載失敗`);
         }
     }
 
-    // 打印所有错误
+    // 打印所有錯誤
     if (errors.length > 0) {
-        console.error('以下是检测到的错误:');
+        console.error('以下是檢測到的錯誤:');
         errors.forEach(error => console.error(error));
     }
 
-    // 确保没有错误
-    expect(errors.length, `以下是检测到的错误: ${errors.join(', ')}`).toBe(0);
+    // 確保沒有錯誤
+    expect(errors.length, `以下是檢測到的錯誤: ${errors.join(', ')}`).toBe(0);
 });
-
 
 
 

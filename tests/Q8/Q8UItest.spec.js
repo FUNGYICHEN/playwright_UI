@@ -15,7 +15,7 @@ test.beforeEach(async () => {
         localStorage.setItem(key, value);
     }, { key: userRecordKey, value: userRecordValue });
 
-    await page.goto('https://wap-q8-npf2.qit1.net');
+    await page.goto('http://wap-q8-npf2.qit1.net');
     await page.waitForLoadState('networkidle');
 
     await page.close();
@@ -27,7 +27,7 @@ test.beforeEach(async () => {
 test('登入頁檢查', async () => {
     const page = await globalThis.context.newPage();
 
-    await page.goto('https://wap-q8-npf2.qit1.net/login');
+    await page.goto('http://wap-q8-npf2.qit1.net/login');
     await page.waitForLoadState('networkidle');
     const missingElements = [];
 
@@ -111,7 +111,7 @@ test('登入頁檢查', async () => {
 test('註冊頁檢查', async () => {
     const page = await globalThis.context.newPage();
 
-    await page.goto('https://wap-q8-npf2.qit1.net/reg');
+    await page.goto('http://wap-q8-npf2.qit1.net/reg');
     await page.waitForLoadState('networkidle');
 
     const missingElements = [];
@@ -174,7 +174,7 @@ test('註冊錯誤流程檢查', async () => {
     const page = await globalThis.context.newPage();
     const errors = [];
 
-    await page.goto('https://wap-q8-npf2.qit1.net/reg');
+    await page.goto('http://wap-q8-npf2.qit1.netreg');
     await page.waitForLoadState('networkidle');
 
     // 1-1 只輸入英文或數字
@@ -298,7 +298,7 @@ test('註冊正確流程檢查', async () => {
     const page = await globalThis.context.newPage();
     const errors = [];
 
-    await page.goto('https://wap-q8-npf2.qit1.net/reg');
+    await page.goto('http://wap-q8-npf2.qit1.net/reg');
     await page.waitForLoadState('networkidle');
 
     // 生成随机用户名，固定密码
@@ -383,7 +383,7 @@ test('註冊正確流程檢查', async () => {
 test('首頁體育下注(注额15)', async () => {
     const page = await globalThis.context.newPage();
 
-    await page.goto('https://wap-q8-npf2.qit1.net/hall');
+    await page.goto('http://wap-q8-npf2.qit1.net/hall');
     await page.waitForLoadState('networkidle');
 
     // 找到第二个 .gameRate-card 元素
@@ -477,7 +477,7 @@ test('檢查首頁', async () => {
     const page = await globalThis.context.newPage();
 
     // 导航到目标页面
-    await page.goto('https://wap-q8-npf2.qit1.net/hall');
+    await page.goto('http://wap-q8-npf2.qit1.net/hall');
     await page.waitForLoadState('networkidle');
     const missingElements = [];
     // 要检查的 alt 属性列表
@@ -550,7 +550,7 @@ test('檢查首頁', async () => {
 test('檢查娛樂城', async () => {
     const page = await globalThis.context.newPage();
     // 導航到首頁
-    await page.goto('https://wap-q8-npf2.qit1.net/sportEvents');
+    await page.goto('http://wap-q8-npf2.qit1.net/sportEvents');
     await page.waitForLoadState('networkidle');
     // 檢查並關閉彈窗
     let closeButtonVisible = true;
@@ -662,25 +662,21 @@ test('檢查娛樂城', async () => {
 test('檢查個人頁icon圖片', async () => {
     const page = await globalThis.context.newPage();
     // 导航到个人页面
-    await page.goto('https://wap-q8-npf2.qit1.net/accountCenter');
+    await page.goto('http://wap-q8-npf2.qit1.net/accountCenter');
     await page.waitForLoadState('networkidle');
 
     const iconsToCheck = [
-        { text: '優惠活動', class: 'icon-promotion', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-promotion2.png' },
-        { text: '加入我們', class: 'icon-friend', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-friend.png' },
-        { text: '返水領取', class: 'icon-getrebate', url: "https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-getrebate.png" },
-        { text: 'VIP福利', class: 'icon-rebate', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-rebate.png' },
-        { text: '每日盈虧數據', class: 'icon-profit', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-profit.png' },
-        { text: '充提記錄', class: 'icon-history', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-history.png' },
-        { text: '錢包交易紀錄', class: 'icon-statement', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-statement.png' },
-        { text: '綁定銀行卡', class: 'icon-bank-card', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-bank-card.png' },
-        { text: '遊戲投注數據', class: 'icon-record', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-record.png' },
-        // { text: '推廣鏈結', class: 'icon-invitefriend', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-friend2.png?t=21491204' },
-        // { text: '全民代理', class: 'icon-friend2', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-friend2.png' },
-        // { text: '推薦好友', class: 'icon-friend2', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-friend2.png' },
-        // { text: '好友推廣鏈結', class: 'icon-friend2', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-friend2.png' },
-        { text: '賽果查詢', class: 'icon-game-result', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-game-result.png' },
-        { text: '語言選擇', class: 'icon-language', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-language.png' }
+        { text: '優惠活動', class: 'icon-promotion', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-promotion2.png' },
+        { text: '加入我們', class: 'icon-friend', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-friend.png' },
+        { text: '返水領取', class: 'icon-getrebate', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-getrebate.png' },
+        { text: 'VIP福利', class: 'icon-rebate', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-rebate.png' },
+        { text: '每日盈虧數據', class: 'icon-profit', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-profit.png' },
+        { text: '充提記錄', class: 'icon-history', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-history.png' },
+        { text: '錢包交易紀錄', class: 'icon-statement', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-statement.png' },
+        { text: '綁定銀行卡', class: 'icon-bank-card', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-bank-card.png' },
+        { text: '遊戲投注數據', class: 'icon-record', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-record.png' },
+        { text: '賽果查詢', class: 'icon-game-result', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-game-result.png' },
+        { text: '語言選擇', class: 'icon-language', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-language.png' }
     ];
 
     const errors = [];
@@ -723,6 +719,28 @@ test('檢查個人頁icon圖片', async () => {
         if (width !== 27 || height !== 27) {
             errors.push(`${text} 图片大小不正确，宽度=${width}px, 高度=${height}px`);
         }
+
+        // 获取文件大小和状态码
+        let statusCode = 200;
+        let fileSize = NaN;
+        try {
+            const response = await page.request.get(url);
+            statusCode = response.status();
+            if (statusCode === 200) {
+                const buffer = await response.body();
+                fileSize = buffer.byteLength;
+            }
+        } catch (error) {
+            statusCode = '无状态码';
+        }
+
+        console.log(`${text} 图片文件状态码: ${statusCode}`);
+        console.log(`${text} 图片文件大小: ${isNaN(fileSize) ? 'NaN' : `${fileSize} bytes`}`);
+
+        // 断言状态码是否正确
+        if (!/^2/.test(statusCode)) {
+            errors.push(`${text} 文件加载失败，状态码: ${statusCode}`);
+        }
     }
 
     // 打印所有错误
@@ -737,7 +755,6 @@ test('檢查個人頁icon圖片', async () => {
 
 
 
-
 test('檢查個人頁並點擊各個鏈接', async () => {
     const page = await globalThis.context.newPage();
     const missingCategories = [];
@@ -745,7 +762,7 @@ test('檢查個人頁並點擊各個鏈接', async () => {
     const checkedLabels = new Set();
 
     // 导航到个人页面
-    await page.goto('https://wap-q8-npf2.qit1.net/accountCenter');
+    await page.goto('http://wap-q8-npf2.qit1.net/accountCenter');
     await page.waitForLoadState('networkidle');
 
     const categoriesToCheck = [
@@ -831,7 +848,7 @@ test('檢查個人頁並點擊各個鏈接', async () => {
             }
 
             // 返回个人页面
-            await page.goto('https://wap-q8-npf2.qit1.net/accountCenter');
+            await page.goto('http://wap-q8-npf2.qit1.net/accountCenter');
             await page.waitForLoadState('networkidle');
         } else if (!checkedLabels.has(category.label)) {
             missingCategories.push(category.label);
@@ -865,7 +882,7 @@ test('檢查個人頁並點擊錢包中心', async () => {
     const page = await globalThis.context.newPage();
 
     // 导航到个人页面
-    await page.goto('https://wap-q8-npf2.qit1.net/accountCenter');
+    await page.goto('http://wap-q8-npf2.qit1.net/accountCenter');
     await page.waitForLoadState('networkidle');
 
     // 点击“錢包中心”并检查
@@ -967,7 +984,7 @@ test('檢查個人頁並點擊存款', async () => {
     const page = await globalThis.context.newPage();
 
     // 导航到个人页面
-    await page.goto('https://wap-q8-npf2.qit1.net/accountCenter');
+    await page.goto('http://wap-q8-npf2.qit1.net/accountCenter');
     await page.waitForLoadState('networkidle');
     const missingElements = [];
 
@@ -1049,7 +1066,7 @@ test('檢查關於樂古娛樂', async () => {
     const page = await globalThis.context.newPage();
 
     // 导航到个人页面
-    await page.goto('https://wap-q8-npf2.qit1.net/accountCenter');
+    await page.goto('http://wap-q8-npf2.qit1.net/accountCenter');
     await page.waitForLoadState('networkidle');
 
     const missingElements = [];
@@ -1169,7 +1186,7 @@ test('檢查關於樂古娛樂', async () => {
 test('檢查走地頁', async () => {
     const page = await globalThis.context.newPage();
     // 導航到首頁
-    await page.goto('https://wap-q8-npf2.qit1.net/showSportEvents/sportEvents/20003');
+    await page.goto('http://wap-q8-npf2.qit1.net/showSportEvents/sportEvents/20003');
     await page.waitForLoadState('networkidle');
 
     // 要檢查的類別和數值對應的元素選擇器
@@ -1293,7 +1310,7 @@ test('登入頁檢查(EN)', async () => {
         localStorage.setItem('locale', 'en');
     });
 
-    await page.goto('https://wap-q8-npf2.qit1.net/login');
+    await page.goto('http://wap-q8-npf2.qit1.net/login');
     await page.waitForLoadState('networkidle');
 
     const missingElements = [];
@@ -1381,7 +1398,7 @@ test('註冊頁檢查(EN)', async () => {
         localStorage.setItem('locale', 'en');
     });
 
-    await page.goto('https://wap-q8-npf2.qit1.net/reg');
+    await page.goto('http://wap-q8-npf2.qit1.net/reg');
     await page.waitForLoadState('networkidle');
 
     const missingElements = [];
@@ -1445,7 +1462,7 @@ test('首頁檢查(EN)', async () => {
     await page.addInitScript(() => {
         localStorage.setItem('locale', 'en');
     });
-    await page.goto('https://wap-q8-npf2.qit1.net/hall');
+    await page.goto('http://wap-q8-npf2.qit1.net/hall');
     await page.waitForLoadState('networkidle');
 
     const errors = [];
@@ -1606,7 +1623,7 @@ test('檢查娛樂城(EN)', async () => {
     await page.addInitScript(() => {
         localStorage.setItem('locale', 'en');
     });
-    await page.goto('https://wap-q8-npf2.qit1.net/sportEvents');
+    await page.goto('http://wap-q8-npf2.qit1.net/sportEvents');
     await page.waitForLoadState('networkidle');
 
     const errors = [];
@@ -1773,7 +1790,7 @@ test('檢查個人頁並點擊各個鏈接(EN)', async () => {
     });
 
     // 导航到个人页面
-    await page.goto('https://wap-q8-npf2.qit1.net/accountCenter');
+    await page.goto('http://wap-q8-npf2.qit1.net/accountCenter');
     await page.waitForLoadState('networkidle');
 
     const missingCategories = [];
@@ -1869,7 +1886,7 @@ test('檢查個人頁並點擊各個鏈接(EN)', async () => {
             }
 
             // 返回个人页面
-            await page.goto('https://wap-q8-npf2.qit1.net/accountCenter');
+            await page.goto('http://wap-q8-npf2.qit1.net/accountCenter');
             await page.waitForLoadState('networkidle');
         } else {
             missingCategories.push(category.label);
@@ -1897,7 +1914,7 @@ test('檢查個人頁icon圖片(EN)', async () => {
     });
 
     // 导航到个人页面
-    await page.goto('https://wap-q8-npf2.qit1.net/accountCenter');
+    await page.goto('http://wap-q8-npf2.qit1.net/accountCenter');
     await page.waitForLoadState('networkidle');
 
     const iconsToCheck = [
@@ -1978,7 +1995,7 @@ test('檢查About Luk gu(EN)', async () => {
     });
 
     // 导航到个人页面
-    await page.goto('https://wap-q8-npf2.qit1.net/accountCenter');
+    await page.goto('http://wap-q8-npf2.qit1.net/accountCenter');
     await page.waitForLoadState('networkidle');
 
     const missingElements = [];
@@ -2102,7 +2119,7 @@ test('檢查遊戲開啟(EN)', async () => {
     });
 
     // 导航到游戏页面
-    await page.goto('https://wap-q8-npf2.qit1.net/sportEvents');
+    await page.goto('http://wap-q8-npf2.qit1.net');
     await page.waitForLoadState('networkidle');
 
     const gamesToCheck = [
@@ -2170,7 +2187,7 @@ test('檢查遊戲開啟(EN)', async () => {
         }
 
         // 返回游戏页面
-        await page.goto('https://wap-q8-npf2.qit1.net/sportEvents');
+        await page.goto('http://wap-q8-npf2.qit1.net/sportEvents');
         await page.waitForLoadState('networkidle');
     }
 
