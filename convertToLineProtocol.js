@@ -47,12 +47,17 @@ function processJsonData() {
                 suiteSummary[suiteName].tests += 1;
                 if (test.status === 'passed') {
                     suiteSummary[suiteName].passed += 1;
-                } else if (test.message) { // 只有在 test.message 存在時才計算失敗
+                } else if (test.message || test.rawStatus === 'timedOut') { // 只有在 test.message 存在或 rawStatus 是 timedOut 時才計算失敗
                     suiteSummary[suiteName].failed += 1;
-                    // 添加失敗的測試信息
-                    const message = stripAnsi(test.message.replace(/"/g, '\\"').replace(/\n/g, '\\n'));
-                    const failedLine = `playwright_errors,suite=${suiteName},platform=${platform} message="${message}" ${currentTime}`;
-                    lines.push(failedLine);
+                    // 添加失敗的測試信息，包含對應平台
+                    if (test.message) {
+                        const message = stripAnsi(test.message.replace(/"/g, '\\"').replace(/\n/g, '\\n'));
+                        const failedLine = `playwright_errors,platform=${platform} message="${message}" ${currentTime}`;
+                        lines.push(failedLine);
+                    } else {
+                        const failedLine = `playwright_errors,platform=${platform} message="Test timed out" ${currentTime}`;
+                        lines.push(failedLine);
+                    }
                 }
                 currentTime += timeIncrement;
             });

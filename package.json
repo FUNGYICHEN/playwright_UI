@@ -23,6 +23,7 @@
     "express": "^4.19.2",
     "fs-extra": "^11.2.0",
     "jimp": "^0.22.12",
+    "strip-ansi": "^7.1.0",
     "tesseract.js": "^5.1.0"
   }
 }
