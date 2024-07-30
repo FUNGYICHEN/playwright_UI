@@ -6,8 +6,8 @@ const lpFilePath = path.join(__dirname, 'ctrf', 'results', 'results.lp');
 const inputPath = path.join(__dirname, 'ctrf', 'ctrf-report.json');
 const org = 'QA_test';
 const bucket = 'playwright_results';
-const token = 'b1-kyQA3ARcP85_p6d5ry0XrQ1TSs9EDjpkagk4oyzeWCoOUt89l-K8gfnOhYqF3fCLfZEZdse4yJSUGdYXXNw==';
-// const token = '_jPDDWo3llYJuRRoCY9LUTzgy-kbNRr8gzkE-KriNKGhz9X1zb8fGzrDvJCF6pQxb2MdLjidzodvG9x_HiiKqQ==';
+// const token = 'b1-kyQA3ARcP85_p6d5ry0XrQ1TSs9EDjpkagk4oyzeWCoOUt89l-K8gfnOhYqF3fCLfZEZdse4yJSUGdYXXNw==';
+const token = '_jPDDWo3llYJuRRoCY9LUTzgy-kbNRr8gzkE-KriNKGhz9X1zb8fGzrDvJCF6pQxb2MdLjidzodvG9x_HiiKqQ==';
 
 const MAX_RETRIES = 5; // 設置最大重試次數
 let retryCount = 0;
