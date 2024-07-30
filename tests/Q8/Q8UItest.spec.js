@@ -174,7 +174,7 @@ test('註冊錯誤流程檢查', async () => {
     const page = await globalThis.context.newPage();
     const errors = [];
 
-    await page.goto('http://wap-q8-npf2.qit1.netreg');
+    await page.goto('http://wap-q8-npf2.qit1.net/reg');
     await page.waitForLoadState('networkidle');
 
     // 1-1 只輸入英文或數字
@@ -1918,22 +1918,22 @@ test('檢查個人頁icon圖片(EN)', async () => {
     await page.waitForLoadState('networkidle');
 
     const iconsToCheck = [
-        { text: 'Profit', class: 'icon-promotion', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-promotion2.png' },
+        { text: 'Profit', class: 'icon-promotion', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-promotion2.png' },
         // { text: 'Agency Commission', class: 'icon-moneyback', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-friend.png' },
-        { text: 'Rebate', class: 'icon-getrebate', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-getrebate.png' },
-        { text: 'VIP', class: 'icon-rebate', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-rebate.png' },
-        { text: 'Profit', class: 'icon-profit', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-profit.png' },
-        { text: 'Deposit & Withdrawal', class: 'icon-history', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-history.png' },
-        { text: 'Transaction Record', class: 'icon-statement', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-statement.png' },
-        { text: 'Bank Card Management', class: 'icon-bank-card', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-bank-card.png' },
-        { text: 'Bet History', class: 'icon-record', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-record.png' },
-        // { text: 'Refer a Friend', class: 'icon-invitefriend', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-friend2.png?t=21491204' },
-        // { text: 'National agent', class: 'icon-friend2', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-friend2.png' },
-        // { text: 'Recommend friends', class: 'icon-friend2', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-friend2.png' },
-        // { text: 'Friend promotion link', class: 'icon-friend2', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-friend2.png' },
-        { text: 'Game Result', class: 'icon-game-result', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-game-result.png' },
-        { text: 'Language Selection', class: 'icon-language', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-language.png' },
-        { text: 'Join us', class: 'icon-friend', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-friend.png' }
+        { text: 'Rebate', class: 'icon-getrebate', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-getrebate.png' },
+        { text: 'VIP', class: 'icon-rebate', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-rebate.png' },
+        { text: 'Profit', class: 'icon-profit', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-profit.png' },
+        { text: 'Deposit & Withdrawal', class: 'icon-history', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-history.png' },
+        { text: 'Transaction Record', class: 'icon-statement', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-statement.png' },
+        { text: 'Bank Card Management', class: 'icon-bank-card', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-bank-card.png' },
+        { text: 'Bet History', class: 'icon-record', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-record.png' },
+        // { text: 'Refer a Friend', class: 'icon-invitefriend', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-friend2.png?t=21491204' },
+        // { text: 'National agent', class: 'icon-friend2', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-friend2.png' },
+        // { text: 'Recommend friends', class: 'icon-friend2', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-friend2.png' },
+        // { text: 'Friend promotion link', class: 'icon-friend2', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-friend2.png' },
+        { text: 'Game Result', class: 'icon-game-result', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-game-result.png' },
+        { text: 'Language Selection', class: 'icon-language', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-language.png' },
+        { text: 'Join us', class: 'icon-friend', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-friend.png' }
     ];
 
     const errors = [];
@@ -2119,7 +2119,7 @@ test('檢查遊戲開啟(EN)', async () => {
     });
 
     // 导航到游戏页面
-    await page.goto('http://wap-q8-npf2.qit1.net');
+    await page.goto('http://wap-q8-npf2.qit1.net/sportEvents');
     await page.waitForLoadState('networkidle');
 
     const gamesToCheck = [

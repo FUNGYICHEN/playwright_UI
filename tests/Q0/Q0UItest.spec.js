@@ -26,7 +26,7 @@ test('註冊錯誤流程檢查', async () => {
     const page = await globalThis.context.newPage();
     const errors = [];
 
-    await page.goto('https://wap-q0-npf2.qit1.net/reg');
+    await page.goto('http://wap-q0-npf2.qit1.net/reg');
     await page.waitForLoadState('networkidle');
 
     // 1-1 只輸入英文或數字
@@ -160,7 +160,7 @@ test('註冊正確流程檢查', async () => {
     const page = await globalThis.context.newPage();
     const errors = [];
 
-    await page.goto('https://wap-q0-npf2.qit1.net/reg');
+    await page.goto('http://wap-q0-npf2.qit1.net/reg');
     await page.waitForLoadState('networkidle');
 
     // 生成随机用户名，固定密码
