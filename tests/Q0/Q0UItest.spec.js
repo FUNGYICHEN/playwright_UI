@@ -22,7 +22,7 @@ test.beforeEach(async () => {
 });
 
 
-test.only('註冊錯誤流程檢查', async () => {
+test('註冊錯誤流程檢查', async () => {
     const page = await globalThis.context.newPage();
     const errors = [];
 

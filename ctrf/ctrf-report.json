@@ -10,17 +10,17 @@
       "pending": 0,
       "skipped": 0,
       "other": 0,
-      "start": 1722337580953,
-      "stop": 1722337605919,
+      "start": 1722338007243,
+      "stop": 1722338039077,
       "suites": 0
     },
     "tests": [
       {
         "name": "檢查娛樂城(EN)",
         "status": "passed",
-        "duration": 19526,
-        "start": 1722337582,
-        "stop": 1722337602,
+        "duration": 25408,
+        "start": 1722338009,
+        "stop": 1722338034,
         "rawStatus": "passed",
         "tags": [],
         "type": "e2e",

@@ -1864,7 +1864,7 @@ test('首頁檢查(EN)', async () => {
 
 
 
-test('檢查娛樂城(EN)', async () => {
+testnly('檢查娛樂城(EN)', async () => {
     const page = await globalThis.context.newPage();
     // 设置 localStorage 语言为英文
     await page.addInitScript(() => {
@@ -1874,6 +1874,7 @@ test('檢查娛樂城(EN)', async () => {
     await page.waitForLoadState('networkidle');
 
     const errors = [];
+    const urlResults = [];
 
     // 檢查並關閉彈窗
     let closeButtonVisible = true;
@@ -2090,12 +2091,16 @@ test('檢查娛樂城(EN)', async () => {
             statusCode = '无状态码';
         }
 
+        console.log(`${description} 狀態碼: ${statusCode}, 文件大小: ${fileSize} bytes`);
+
+        urlResults.push({ description, statusCode, fileSize });
+
         if (statusCode !== 200) {
-            errors.push(`${description} 图片加载失败，状态码: ${statusCode}`);
+            errors.push(`${description} 加載失敗，狀態碼: ${statusCode}`);
         }
 
         if (fileSize === 0) {
-            errors.push(`${description} 图片大小不正确，文件大小: ${fileSize} bytes`);
+            errors.push(`${description} 文件大小不正確，文件大小: ${fileSize} bytes`);
         }
     }
 
@@ -2104,6 +2109,11 @@ test('檢查娛樂城(EN)', async () => {
         console.error('以下是检测到的错误:');
         errors.forEach(error => console.error(error));
     }
+
+    console.log('URL 检查结果:');
+    urlResults.forEach(result => {
+        console.log(`${result.description}: 狀態碼=${result.statusCode}, 文件大小=${result.fileSize} bytes`);
+    });
 
     expect(errors.length).toBe(0); // 确保没有错误
 
