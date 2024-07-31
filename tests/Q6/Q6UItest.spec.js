@@ -1864,7 +1864,7 @@ test('首頁檢查(EN)', async () => {
 
 
 
-testnly('檢查娛樂城(EN)', async () => {
+test('檢查娛樂城(EN)', async () => {
     const page = await globalThis.context.newPage();
     // 设置 localStorage 语言为英文
     await page.addInitScript(() => {
