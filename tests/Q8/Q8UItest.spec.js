@@ -660,7 +660,7 @@ test('檢查娛樂城', async () => {
 
 
 
-test('檢查個人頁icon圖片', async () => {
+test.only('檢查個人頁icon圖片', async () => {
     const page = await globalThis.context.newPage();
     // 导航到个人页面
     await page.goto('http://wap-q8-npf2.qit1.net/accountCenter');
