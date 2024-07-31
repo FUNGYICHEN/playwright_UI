@@ -667,17 +667,17 @@ test('檢查個人頁icon圖片', async () => {
     await page.waitForLoadState('networkidle');
 
     const iconsToCheck = [
-        { text: '優惠活動', class: 'icon-promotion', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-promotion2.png' },
-        { text: '加入我們', class: 'icon-friend', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-friend.png' },
-        { text: '返水領取', class: 'icon-getrebate', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-getrebate.png' },
-        { text: 'VIP福利', class: 'icon-rebate', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-rebate.png' },
-        { text: '每日盈虧數據', class: 'icon-profit', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-profit.png' },
-        { text: '充提記錄', class: 'icon-history', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-history.png' },
-        { text: '錢包交易紀錄', class: 'icon-statement', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-statement.png' },
-        { text: '綁定銀行卡', class: 'icon-bank-card', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-bank-card.png' },
-        { text: '遊戲投注數據', class: 'icon-record', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-record.png' },
-        { text: '賽果查詢', class: 'icon-game-result', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-game-result.png' },
-        { text: '語言選擇', class: 'icon-language', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-language.png' }
+        { text: '優惠活動', class: 'icon-promotion', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-promotion2.png' },
+        { text: '加入我們', class: 'icon-friend', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-friend.png' },
+        { text: '返水領取', class: 'icon-getrebate', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-getrebate.png' },
+        { text: 'VIP福利', class: 'icon-rebate', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-rebate.png' },
+        { text: '每日盈虧數據', class: 'icon-profit', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-profit.png' },
+        { text: '充提記錄', class: 'icon-history', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-history.png' },
+        { text: '錢包交易紀錄', class: 'icon-statement', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-statement.png' },
+        { text: '綁定銀行卡', class: 'icon-bank-card', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-bank-card.png' },
+        { text: '遊戲投注數據', class: 'icon-record', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-record.png' },
+        { text: '賽果查詢', class: 'icon-game-result', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-game-result.png' },
+        { text: '語言選擇', class: 'icon-language', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-language.png' }
     ];
 
     const errors = [];
