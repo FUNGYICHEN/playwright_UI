@@ -12,7 +12,7 @@ async function setupVN() {
 
     const page = await context.newPage();
     try {
-        await page.goto("http://wap-tn.qit1.net/login");
+        await page.goto("http://wap.jisookorea.com/login");
         await page.locator("#username").fill("uitest001");
         await page.locator('#password').type('396012');
         await page.locator('div.login:has-text("Đăng nhập")').click();

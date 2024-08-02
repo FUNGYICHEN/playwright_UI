@@ -40,7 +40,7 @@ async function loginToBackend() {
     const maxRetries = 20; // 最大重试次数
 
     try {
-        await page.goto('https://oms-q6-npf2.qit1.net/login');
+        await page.goto('https://oms-q6.qbpink01.com/login');
 
         // 填写用户名和密码
         await page.fill('input[name="username"]', 'qatest0001');
@@ -182,7 +182,7 @@ async function fetchVerificationCode(phoneNumber) {
         return null;
     }
 
-    const url = "http://oms-q6-npf2.qit1.net/manage/backend/func/otp/queryCode";
+    const url = "https://oms-q6.qbpink01.com/manage/backend/func/otp/queryCode";
     const headers = {
         'Content-Type': 'application/json;charset=UTF-8',
         'Accept': '*/*',

@@ -15,7 +15,7 @@ test.beforeEach(async () => {
         localStorage.setItem(key, value);
     }, { key: userRecordKey, value: userRecordValue });
 
-    await page.goto('http://wap-my.qit1.net');
+    await page.goto('https://wap-my.qbpink01.com');
     await page.waitForLoadState('networkidle');
 
     await page.close();
@@ -34,7 +34,7 @@ test('關於 Betone', async () => {
     });
 
     // 导航到个人页面
-    await page.goto('http://wap-my.qit1.net/accountCenter');
+    await page.goto('https://wap-my.qbpink01.com/accountCenter');
     await page.waitForLoadState('networkidle');
 
     const missingElements = [];
@@ -147,7 +147,7 @@ test('關於 Betone', async () => {
 
 
 
-test('關於 Betone(EN)', async () => {
+test('About Betone(EN)', async () => {
     const page = await globalThis.context.newPage();
     // Set the page language to English
     await page.addInitScript(() => {
@@ -155,7 +155,7 @@ test('關於 Betone(EN)', async () => {
     });
 
     // Navigate to the account page
-    await page.goto('http://wap-my.qit1.net/accountCenter');
+    await page.goto('https://wap-my.qbpink01.com/accountCenter');
     await page.waitForLoadState('networkidle');
 
     const missingElements = [];

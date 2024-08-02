@@ -15,7 +15,7 @@ test.beforeEach(async () => {
         localStorage.setItem(key, value);
     }, { key: userRecordKey, value: userRecordValue });
 
-    await page.goto('https://wap-sg.qit1.net');
+    await page.goto('https://wap-sg.qbpink01.com');
     await page.waitForLoadState('networkidle');
 
     await page.close();
@@ -31,7 +31,7 @@ test('檢查 关於 Betone', async () => {
     });
 
     // 导航到个人页面
-    await page.goto('https://wap-sg.qit1.net/accountCenter');
+    await page.goto('https://wap-sg.qbpink01.com/accountCenter');
     await page.waitForLoadState('networkidle');
 
     const missingElements = [];
@@ -131,7 +131,7 @@ test('檢查 About Betone(EN)', async () => {
     });
 
     // 导航到个人页面
-    await page.goto('https://wap-sg.qit1.net/accountCenter');
+    await page.goto('https://wap-sg.qbpink01.com/accountCenter');
     await page.waitForLoadState('networkidle');
 
     const missingElements = [];
@@ -230,7 +230,7 @@ test('檢查 Mengenai Bet One(MY)', async () => {
     });
 
     // 导航到个人页面
-    await page.goto('https://wap-sg.qit1.net/accountCenter');
+    await page.goto('https://wap-sg.qbpink01.com/accountCenter');
     await page.waitForLoadState('networkidle');
 
     const missingElements = [];

@@ -37,7 +37,7 @@ async function loginToBackend() {
 
     let token = null;
     let loginResponse = null;
-    const maxRetries = 20; // 最大重试次数
+    const maxRetries = 25; // 最大重试次数
 
     try {
         await page.goto('https://oms-q8-npf2.qit1.net/login');

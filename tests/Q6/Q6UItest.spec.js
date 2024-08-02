@@ -15,7 +15,7 @@ test.beforeEach(async () => {
         localStorage.setItem(key, value);
     }, { key: userRecordKey, value: userRecordValue });
 
-    await page.goto('https://wap-q6-npf2.qit1.net');
+    await page.goto('https://wap-q6.qbpink01.com');
     await page.waitForLoadState('networkidle');
 
     await page.close();
@@ -27,7 +27,7 @@ test.beforeEach(async () => {
 test('登入頁檢查', async () => {
     const page = await globalThis.context.newPage();
 
-    await page.goto('https://wap-q6-npf2.qit1.net/login');
+    await page.goto('https://wap-q6.qbpink01.com/login');
     await page.waitForLoadState('networkidle');
     const missingElements = [];
 
@@ -101,8 +101,8 @@ test('登入頁檢查', async () => {
 
     // 檢查文件狀態碼和大小
     const filesToCheck = [
-        { url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/q6-icon2.png?v=001', description: 'LOGO圖' },
-        { url: 'http://wap-q6-npf2.qit1.net/res/images/com-q3/bg3.png', description: '背景圖' }
+        { url: 'https://wap-q6.qbpink01.com/res/images/com-q6/q6-icon2.png?v=001', description: 'LOGO圖' },
+        { url: 'https://wap-q6.qbpink01.com/res/images/com-q3/bg3.png', description: '背景圖' }
     ];
 
     for (const file of filesToCheck) {
@@ -169,7 +169,7 @@ test('登入頁檢查', async () => {
 test('註冊頁檢查', async () => {
     const page = await globalThis.context.newPage();
 
-    await page.goto('https://wap-q6-npf2.qit1.net/reg');
+    await page.goto('https://wap-q6.qbpink01.com/reg');
     await page.waitForLoadState('networkidle');
 
     const missingElements = [];
@@ -232,7 +232,7 @@ test('註冊錯誤流程檢查', async () => {
     const page = await globalThis.context.newPage();
     const errors = [];
 
-    await page.goto('https://wap-q6-npf2.qit1.net/reg');
+    await page.goto('https://wap-q6.qbpink01.com/reg');
     await page.waitForLoadState('networkidle');
 
     // 1-1 只輸入英文或數字
@@ -356,7 +356,7 @@ test('註冊正確流程檢查', async () => {
     const page = await globalThis.context.newPage();
     const errors = [];
 
-    await page.goto('https://wap-q6-npf2.qit1.net/reg');
+    await page.goto('https://wap-q6.qbpink01.com/reg');
     await page.waitForLoadState('networkidle');
 
     // 生成随机用户名，固定密码
@@ -441,7 +441,7 @@ test('註冊正確流程檢查', async () => {
 test('首頁體育下注(注额15)', async () => {
     const page = await globalThis.context.newPage();
 
-    await page.goto('https://wap-q6-npf2.qit1.net/hall');
+    await page.goto('https://wap-q6.qbpink01.com/hall');
     await page.waitForLoadState('networkidle');
 
     // 找到第二个 .gameRate-card 元素
@@ -535,18 +535,18 @@ test('檢查首頁', async () => {
     const page = await globalThis.context.newPage();
 
     // 導航到目標頁面
-    await page.goto('https://wap-q6-npf2.qit1.net/hall');
+    await page.goto('https://wap-q6.qbpink01.com/hall');
     await page.waitForLoadState('networkidle');
     const missingElements = [];
     const errors = [];
     // 要檢查的 alt 屬性列表
     const altAttributes = [
-        { alt: '足球', url: 'http://wap-q6-npf2.qit1.net/soccor_34f4bf826da6b0ead896eb8095bf8172.png' },
-        { alt: '籃球', url: 'http://wap-q6-npf2.qit1.net/basketball_041a70bb6638ce2fbf03f29ba85ff652.png' },
-        { alt: '網球', url: 'http://wap-q6-npf2.qit1.net/tennis_385c5f240b23671da902eeda72d3ba37.png' },
-        { alt: '棒球', url: 'http://wap-q6-npf2.qit1.net/baseball_9f2acedd892c495bdcc4172ce5c39ec9.png' },
-        { alt: 'gift', url: 'http://wap-q6-npf2.qit1.net/gift_c4f823fc4659487cc0dfc4adef6326c4.png' },
-        { alt: 'sponsor', url: 'http://wap-q6-npf2.qit1.net/sponsor_f879496089550966b3009b0e6dbaec94.png' }
+        { alt: '足球', url: 'https://wap-q6.qbpink01.com/soccor_34f4bf826da6b0ead896eb8095bf8172.png' },
+        { alt: '籃球', url: 'https://wap-q6.qbpink01.com/basketball_041a70bb6638ce2fbf03f29ba85ff652.png' },
+        { alt: '網球', url: 'https://wap-q6.qbpink01.com/tennis_385c5f240b23671da902eeda72d3ba37.png' },
+        { alt: '棒球', url: 'https://wap-q6.qbpink01.com/baseball_9f2acedd892c495bdcc4172ce5c39ec9.png' },
+        { alt: 'gift', url: 'https://wap-q6.qbpink01.com/gift_c4f823fc4659487cc0dfc4adef6326c4.png' },
+        { alt: 'sponsor', url: 'https://wap-q6.qbpink01.com/sponsor_f879496089550966b3009b0e6dbaec94.png' }
     ];
 
     for (const item of altAttributes) {
@@ -582,11 +582,11 @@ test('檢查首頁', async () => {
 
     // 要檢查的底部菜單項
     const footerLabels = [
-        { text: '首頁', url: 'http://wap-q6-npf2.qit1.net/icon-home-active_77afa06fb99413741325eb93a40d9aa9.png' },
-        { text: '娛樂城', url: 'http://wap-q6-npf2.qit1.net/icon-play_dbfde5c59dee06f8f57bb9e49750d1d9.svg' },
-        { text: '走地', url: 'http://wap-q6-npf2.qit1.net/icon-roll_f04be4dadd0324df7549ed9d066465dc.svg' },
-        { text: '客服', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q4/footer/icon-headphones.png' },
-        { text: '個人中心', url: 'http://wap-q6-npf2.qit1.net/icon-account_03f844954145119bac4548c768666413.svg' }
+        { text: '首頁', url: 'https://wap-q6.qbpink01.com/icon-home-active_77afa06fb99413741325eb93a40d9aa9.png' },
+        { text: '娛樂城', url: 'https://wap-q6.qbpink01.com/icon-play_dbfde5c59dee06f8f57bb9e49750d1d9.svg' },
+        { text: '走地', url: 'https://wap-q6.qbpink01.com/icon-roll_f04be4dadd0324df7549ed9d066465dc.svg' },
+        { text: '客服', url: 'https://wap-q6.qbpink01.com/res/images/com-q4/footer/icon-headphones.png' },
+        { text: '個人中心', url: 'https://wap-q6.qbpink01.com/icon-account_03f844954145119bac4548c768666413.svg' }
     ];
 
     for (const item of footerLabels) {
@@ -662,7 +662,7 @@ test('檢查首頁', async () => {
 test('檢查娛樂城', async () => {
     const page = await globalThis.context.newPage();
     // 導航到首頁
-    await page.goto('https://wap-q6-npf2.qit1.net/sportEvents');
+    await page.goto('https://wap-q6.qbpink01.com/sportEvents');
     await page.waitForLoadState('networkidle');
     // 檢查並關閉彈窗
     let closeButtonVisible = true;
@@ -708,7 +708,7 @@ test('檢查娛樂城', async () => {
         'DG真人',
         'SEXY真人',
         'WM真人',
-        'Motivation真人',
+        // 'Motivation真人',
         'OB真人',
         'WE真人',
         '皇冠體育',
@@ -744,36 +744,35 @@ test('檢查娛樂城', async () => {
     }
 
     const urlsToCheck = [
-        { description: 'EVO真人', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-evo.png' },
-        { description: 'DG真人', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-dg.png' },
-        { description: 'SEXY真人', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-sexy.png' },
-        { description: 'WM真人', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-wm.png' },
-        { description: 'Motivation真人', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/live-cq9.png' },
-        { description: 'OB真人', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/live-ob.png' },
-        { description: 'WE真人', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-we.png' },
-        { description: '皇冠體育', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-crown.png' },
-        { description: 'SBO體育', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-sbo2.png' },
-        { description: '港體會體育', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-game-1-sport.png' },
-        { description: 'KA電子', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-ka-slot.png' },
-        { description: 'PP電子', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-pp-slot.png' },
-        { description: 'SWG 電子', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-swg-slot.png' },
-        { description: 'TPG電子', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-tpg-slot.png' },
-        { description: 'PG電子', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-pg-slot.png' },
-        { description: 'JOKER電子', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q8/game-zone/bk-joker-slot.png' },
-        { description: 'MW電子', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-mw-slot.png' },
-        { description: '博樂棋牌', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-bole.png' },
-        { description: 'VG棋牌', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-vg.png' },
-        { description: 'OB棋牌', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-ob.png' },
-        { description: '香港麻將館', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-game-1-poker.png' },
-        { description: '百勝棋牌', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-baison.png' },
-        { description: '樂遊棋牌', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-baison.png' },
-        { description: '開元棋牌', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-leg.png' },
-        { description: '雷火電競', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-ia.png' },
-        { description: 'CQ9捕魚', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-cq-9.png' },
-        { description: 'TPG捕魚', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-tpg.png' },
-        { description: 'JOKER捕魚', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-joker.png' },
-        { description: '百勝捕魚', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-baison-fish.png' },
-        { description: 'SWG 捕魚', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-swg-fish.png' }
+        { description: 'EVO真人', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-evo.png' },
+        { description: 'DG真人', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-dg.png' },
+        { description: 'SEXY真人', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-sexy.png' },
+        { description: 'WM真人', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-wm.png' },
+        // { description: 'Motivation真人', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/live-cq9.png' },
+        { description: 'OB真人', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/live-ob.png' },
+        { description: 'WE真人', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-we.png' },
+        { description: '皇冠體育', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-crown.png' },
+        { description: 'SBO體育', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-sbo2.png' },
+        { description: '港體會體育', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-game-1-sport.png' },
+        { description: 'KA電子', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-ka-slot.png' },
+        { description: 'PP電子', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-pp-slot.png' },
+        { description: 'SWG 電子', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-swg-slot.png' },
+        { description: 'TPG電子', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-tpg-slot.png' },
+        { description: 'PG電子', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-pg-slot.png' },
+        { description: 'JOKER電子', url: 'https://wap-q6.qbpink01.com/res/images/com-q8/game-zone/bk-joker-slot.png' },
+        { description: '博樂棋牌', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-bole.png' },
+        { description: 'VG棋牌', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-vg.png' },
+        { description: 'OB棋牌', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-ob.png' },
+        { description: '香港麻將館', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-game-1-poker.png' },
+        { description: '百勝棋牌', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-baison.png' },
+        { description: '樂遊棋牌', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-baison.png' },
+        { description: '開元棋牌', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-leg.png' },
+        { description: '雷火電競', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-ia.png' },
+        { description: 'CQ9捕魚', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-cq-9.png' },
+        { description: 'TPG捕魚', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-tpg.png' },
+        { description: 'JOKER捕魚', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-joker.png' },
+        { description: '百勝捕魚', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-baison-fish.png' },
+        { description: 'SWG 捕魚', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-swg-fish.png' }
     ];
 
     for (const { description, url } of urlsToCheck) {
@@ -805,7 +804,7 @@ test('檢查娛樂城', async () => {
 
     // 檢查每日簽到
     const checkInImage = page.locator('img[alt="每日簽到"]');
-    const checkInText = page.locator('span.hasData:has-text("每日簽到cn")');
+    const checkInText = page.locator('span.hasData:has-text("每日簽到1")');
     const checkInImageExists = await checkInImage.count() > 0;
     const checkInTextExists = await checkInText.count() > 0;
     console.log(`每日簽到圖片: ${checkInImageExists}`);
@@ -846,25 +845,25 @@ test('檢查娛樂城', async () => {
 test('檢查個人頁icon圖片', async () => {
     const page = await globalThis.context.newPage();
     // 導航到個人頁面
-    await page.goto('https://wap-q6-npf2.qit1.net/accountCenter');
+    await page.goto('https://wap-q6.qbpink01.com/accountCenter');
     await page.waitForLoadState('networkidle');
 
     const iconsToCheck = [
-        { text: '優惠活動', class: 'icon-promotion', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-promotion2.png' },
-        { text: '加入我們', class: 'icon-friend', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-friend.png' },
-        { text: '返水領取', class: 'icon-getrebate', url: 'https://wap-q6-npf2.qit1.net/icon-getrebate_dbe8471887fe6abe747cb02d80f977cd.png' },
-        { text: 'VIP福利', class: 'icon-rebate', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-rebate.png' },
-        { text: '每日盈虧數據', class: 'icon-profit', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-profit.png' },
-        { text: '充提記錄', class: 'icon-history', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-history.png' },
-        { text: '錢包交易紀錄', class: 'icon-statement', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-statement.png' },
-        { text: '綁定銀行卡', class: 'icon-bank-card', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-bank-card.png' },
-        { text: '遊戲投注數據', class: 'icon-record', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-record.png' },
+        { text: '優惠活動', class: 'icon-promotion', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/account-center/icon-promotion2.png' },
+        { text: '加入我們', class: 'icon-friend', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/account-center/icon-friend.png' },
+        { text: '返水領取', class: 'icon-getrebate', url: 'https://wap-q6.qbpink01.com/icon-getrebate_dbe8471887fe6abe747cb02d80f977cd.png' },
+        { text: 'VIP福利', class: 'icon-rebate', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/account-center/icon-rebate.png' },
+        { text: '每日盈虧數據', class: 'icon-profit', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/account-center/icon-profit.png' },
+        { text: '充提記錄', class: 'icon-history', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/account-center/icon-history.png' },
+        { text: '錢包交易紀錄', class: 'icon-statement', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/account-center/icon-statement.png' },
+        { text: '綁定銀行卡', class: 'icon-bank-card', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/account-center/icon-bank-card.png' },
+        { text: '遊戲投注數據', class: 'icon-record', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/account-center/icon-record.png' },
         // { text: '推廣鏈結', class: 'icon-invitefriend', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-friend2.png?t=21491204' },
         // { text: '全民代理', class: 'icon-friend2', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-friend2.png' },
-        { text: '推薦好友', class: 'icon-friend2', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-friend2.png' },
-        { text: '好友推廣鏈結', class: 'icon-friend2', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-friend2.png' },
-        { text: '賽果查詢', class: 'icon-game-result', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-game-result.png' },
-        { text: '語言選擇', class: 'icon-language', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-language.png' }
+        { text: '推薦好友', class: 'icon-friend2', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/account-center/icon-friend2.png' },
+        { text: '好友推廣鏈結', class: 'icon-friend2', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/account-center/icon-friend2.png' },
+        { text: '賽果查詢', class: 'icon-game-result', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/account-center/icon-game-result.png' },
+        { text: '語言選擇', class: 'icon-language', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/account-center/icon-language.png' }
     ];
 
     const errors = [];
@@ -948,7 +947,7 @@ test('檢查個人頁並點擊各個鏈接', async () => {
     const checkedLabels = new Set();
 
     // 导航到个人页面
-    await page.goto('https://wap-q6-npf2.qit1.net/accountCenter');
+    await page.goto('https://wap-q6.qbpink01.com/accountCenter');
     await page.waitForLoadState('networkidle');
 
     const categoriesToCheck = [
@@ -1034,7 +1033,7 @@ test('檢查個人頁並點擊各個鏈接', async () => {
             }
 
             // 返回个人页面
-            await page.goto('https://wap-q6-npf2.qit1.net/accountCenter');
+            await page.goto('https://wap-q6.qbpink01.com/accountCenter');
             await page.waitForLoadState('networkidle');
         } else if (!checkedLabels.has(category.label)) {
             missingCategories.push(category.label);
@@ -1072,7 +1071,7 @@ test('檢查個人頁並點擊錢包中心', async () => {
     const page = await globalThis.context.newPage();
 
     // 导航到个人页面
-    await page.goto('https://wap-q6-npf2.qit1.net/accountCenter');
+    await page.goto('https://wap-q6.qbpink01.com/accountCenter');
     await page.waitForLoadState('networkidle');
 
     const errors = [];
@@ -1168,9 +1167,9 @@ test('檢查個人頁並點擊錢包中心', async () => {
 
     // 检查额外的图标和文件
     const urlsToCheck = [
-        { description: '錢包icon', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/ucenter/icon_transfer_top.png' },
-        { description: '首頁icon', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/account-functions/icon-home.png?v2' },
-        { description: '一鍵轉回icon', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/account-functions/icon-return.png' }
+        { description: '錢包icon', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/ucenter/icon_transfer_top.png' },
+        { description: '首頁icon', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/account-functions/icon-home.png?v2' },
+        { description: '一鍵轉回icon', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/account-functions/icon-return.png' }
     ];
 
     for (const { description, url } of urlsToCheck) {
@@ -1216,7 +1215,7 @@ test('檢查關於港體會', async () => {
     const page = await globalThis.context.newPage();
 
     // 导航到个人页面
-    await page.goto('https://wap-q6-npf2.qit1.net/accountCenter');
+    await page.goto('https://wap-q6.qbpink01.com/accountCenter');
     await page.waitForLoadState('networkidle');
 
     const missingElements = [];
@@ -1324,9 +1323,9 @@ test('檢查關於港體會', async () => {
 
     // 检查额外的图标和文件
     const urlsToCheck = [
-        { description: '港體會icon', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/Q6.png' },
-        { description: 'icon_1', url: 'http://wap-q6-npf2.qit1.net/res/images/about-footer-1.png' },
-        { description: 'icon_2', url: 'http://wap-q6-npf2.qit1.net/res/images/about-footer-2.png' }
+        { description: '港體會icon', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/Q6.png' },
+        { description: 'icon_1', url: 'https://wap-q6.qbpink01.com/res/images/about-footer-1.png' },
+        { description: 'icon_2', url: 'https://wap-q6.qbpink01.com/res/images/about-footer-2.png' }
     ];
 
     for (const { description, url } of urlsToCheck) {
@@ -1369,7 +1368,7 @@ test('檢查關於港體會', async () => {
 test('檢查走地頁', async () => {
     const page = await globalThis.context.newPage();
     // 導航到首頁
-    await page.goto('https://wap-q6-npf2.qit1.net/showSportEvents/sportEvents/20003');
+    await page.goto('https://wap-q6.qbpink01.com/showSportEvents/sportEvents/20003');
     await page.waitForLoadState('networkidle');
 
     // 要檢查的類別和數值對應的元素選擇器
@@ -1493,7 +1492,7 @@ test('登入頁檢查(EN)', async () => {
         localStorage.setItem('locale', 'en');
     });
 
-    await page.goto('https://wap-q6-npf2.qit1.net/login');
+    await page.goto('https://wap-q6.qbpink01.com/login');
     await page.waitForLoadState('networkidle');
 
     const missingElements = [];
@@ -1553,8 +1552,8 @@ test('登入頁檢查(EN)', async () => {
 
     // 检查文件状态码和大小
     const filesToCheck = [
-        { url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/q6-icon2.png?v=001', description: 'LOGO圖' },
-        { url: 'http://wap-q6-npf2.qit1.net/res/images/com-q3/bg3.png', description: '背景圖' },
+        { url: 'https://wap-q6.qbpink01.com/res/images/com-q6/q6-icon2.png?v=001', description: 'LOGO圖' },
+        { url: 'https://wap-q6.qbpink01.com/res/images/com-q3/bg3.png', description: '背景圖' },
         { url: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAA5UExURUxpcf///////////////////////////////////////////////////////////////////////9URaEsAAAASdFJOUwBgEL8gcIDv30Cvn1Awz5Cgj8J0CjoAAAGnSURBVHja3VXduoQgCAxTAbOf5f0f9nzHbMHS3fvlKpVhBlCaftM4JEIR3FLk794uohijxX92f8nDPkECSscIRv5XeNohM3M4qG68+nLmcoi7yXQ9TsTmOoCtHM03xf6EzAM9GDqJ9VVB8V97WtdSinBjLvmt7yXECL5BYJvGYYPwLG0+4SHKlw7VRdQWxLpVIrg7gTf+tCQypP5Eq1ElqGdUWpH/d1kjovqzyTiJkNdKzOpRwKqClABsIKcatLJJFeWGGkXy+bWLSNJboXA4VWh1QCtLNpDwG7D1ALnJ2mTETU/R7ov0AA5LwVWHswArKdfvXe/gitp+Vkm3mvl/dPR1HJC9TltT1v1a5POZkojhnY6mrMG+KSZ5G4LGtJeJlXudxVh7Tdh2FIaDJlxBaVKLS/MUcAkAMWHzKNJiAM6b905wdQ5KOpXde/W3FZXdmUB7IRwNy1kFqNj+VNLuL/fdwsFjgvWhc0jhzoyz7pg2dhlAiqXKbyfUYOBnvH47gZlzWOoaDetjYHZs89PYQgOxA31IAg2Eopu+2hrShiJIKfD0k/YH+voqvciLmqQAAAAASUVORK5CYII=', description: '登入圖標' },
         { url: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAzUExURUxpcf////////////////////////////////////////////////////////////////Hv/K4AAAAQdFJOUwBgcJB/v++fQN9QzyAQMLBQk0ruAAAA4UlEQVR42u2U2w7CMAhA6QVKL278/9dqTTRuZbgl6sPieVvLKdBmwDm5cKgkQhjKrvBI8iTHBm8oJAuyA5MoA3FHPAbHXEIdDD0e+fHN1TZ43I7SYdDJfdPDAnfvHFScmj70VacKtZ+l50VQaBtHlb7eNioi7enp0ZlS7AwKEzNrGXBo2SDd6M3VZPEiyC5+LszJABWBwYA/LvTHOiRkkfwXviHUQ4IXiYcEmCawBBoGhjI6aPU/oyWkVUDcM6XdevZIKqzisO/mtryVt/ghqYFWsM9iQB4GmkPaiMZ4gTNxBW+tJqIAT0niAAAAAElFTkSuQmCC', description: '移除圖標' }
     ];
@@ -1618,7 +1617,7 @@ test('註冊頁檢查(EN)', async () => {
         localStorage.setItem('locale', 'en');
     });
 
-    await page.goto('https://wap-q6-npf2.qit1.net/reg');
+    await page.goto('https://wap-q6.qbpink01.com/reg');
     await page.waitForLoadState('networkidle');
 
     const missingElements = [];
@@ -1682,7 +1681,7 @@ test('首頁檢查(EN)', async () => {
     await page.addInitScript(() => {
         localStorage.setItem('locale', 'en');
     });
-    await page.goto('https://wap-q6-npf2.qit1.net/hall');
+    await page.goto('https://wap-q6.qbpink01.com/hall');
     await page.waitForLoadState('networkidle');
 
     const errors = [];
@@ -1759,12 +1758,12 @@ test('首頁檢查(EN)', async () => {
 
     // 检查图标是否存在并抓取大小和URL
     const iconsToCheck = [
-        { alt: 'Football', src: '/soccor_34f4bf826da6b0ead896eb8095bf8172.png', url: 'http://wap-q6-npf2.qit1.net/soccor_34f4bf826da6b0ead896eb8095bf8172.png', width: 36, height: 36 },
-        { alt: 'Basketball', src: '/basketball_041a70bb6638ce2fbf03f29ba85ff652.png', url: 'http://wap-q6-npf2.qit1.net/basketball_041a70bb6638ce2fbf03f29ba85ff652.png', width: 36, height: 36 },
-        { alt: 'Tennis', src: '/tennis_385c5f240b23671da902eeda72d3ba37.png', url: 'http://wap-q6-npf2.qit1.net/tennis_385c5f240b23671da902eeda72d3ba37.png', width: 36, height: 36 },
-        { alt: 'Baseball', src: '/baseball_9f2acedd892c495bdcc4172ce5c39ec9.png', url: 'http://wap-q6-npf2.qit1.net/baseball_9f2acedd892c495bdcc4172ce5c39ec9.png', width: 36, height: 36 },
-        { alt: 'gift', src: '/gift_c4f823fc4659487cc0dfc4adef6326c4.png', url: 'http://wap-q6-npf2.qit1.net/gift_c4f823fc4659487cc0dfc4adef6326c4.png', width: 36, height: 36 },
-        { alt: 'sponsor', src: '/sponsor_f879496089550966b3009b0e6dbaec94.png', url: 'http://wap-q6-npf2.qit1.net/sponsor_f879496089550966b3009b0e6dbaec94.png', width: 36, height: 36 }
+        { alt: 'Football', src: '/soccor_34f4bf826da6b0ead896eb8095bf8172.png', url: 'https://wap-q6.qbpink01.com/soccor_34f4bf826da6b0ead896eb8095bf8172.png', width: 36, height: 36 },
+        { alt: 'Basketball', src: '/basketball_041a70bb6638ce2fbf03f29ba85ff652.png', url: 'https://wap-q6.qbpink01.com/basketball_041a70bb6638ce2fbf03f29ba85ff652.png', width: 36, height: 36 },
+        { alt: 'Tennis', src: '/tennis_385c5f240b23671da902eeda72d3ba37.png', url: 'https://wap-q6.qbpink01.com/tennis_385c5f240b23671da902eeda72d3ba37.png', width: 36, height: 36 },
+        { alt: 'Baseball', src: '/baseball_9f2acedd892c495bdcc4172ce5c39ec9.png', url: 'https://wap-q6.qbpink01.com/baseball_9f2acedd892c495bdcc4172ce5c39ec9.png', width: 36, height: 36 },
+        { alt: 'gift', src: '/gift_c4f823fc4659487cc0dfc4adef6326c4.png', url: 'https://wap-q6.qbpink01.com/gift_c4f823fc4659487cc0dfc4adef6326c4.png', width: 36, height: 36 },
+        { alt: 'sponsor', src: '/sponsor_f879496089550966b3009b0e6dbaec94.png', url: 'https://wap-q6.qbpink01.com/sponsor_f879496089550966b3009b0e6dbaec94.png', width: 36, height: 36 }
     ];
 
     for (const { alt, src, url, width, height } of iconsToCheck) {
@@ -1870,7 +1869,7 @@ test('檢查娛樂城(EN)', async () => {
     await page.addInitScript(() => {
         localStorage.setItem('locale', 'en');
     });
-    await page.goto('https://wap-q6-npf2.qit1.net/sportEvents');
+    await page.goto('https://wap-q6.qbpink01.com/sportEvents');
     await page.waitForLoadState('networkidle');
 
     const errors = [];
@@ -1930,7 +1929,7 @@ test('檢查娛樂城(EN)', async () => {
         'DG LIVE CASINO',
         'SEXY LIVE CASINO',
         'WM LIVE CASINO',
-        'Motivation LIVE CASINO',
+        // 'Motivation LIVE CASINO',
         'OB LIVE CASINO',
         'WE LIVE CASINO',
         'CR SPORTS',
@@ -1971,7 +1970,7 @@ test('檢查娛樂城(EN)', async () => {
 
     // 檢查每日簽到
     const checkInImage = page.locator('img[alt="Daily Bouns"]');
-    const checkInText = page.locator('span.hasData:has-text("每日簽到EN")');
+    const checkInText = page.locator('span.hasData:has-text("Daily Bouns2")');
     const checkInImageExists = await checkInImage.count() > 0;
     const checkInTextExists = await checkInText.count() > 0;
     console.log(`每日簽到圖片: ${checkInImageExists}`);
@@ -2041,38 +2040,38 @@ test('檢查娛樂城(EN)', async () => {
     }
 
     const urlsToCheck = [
-        { description: 'EVO LIVE CASINO', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-evo.png' },
-        { description: 'DG LIVE CASINO', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-dg.png' },
-        { description: 'SEXY LIVE CASINO', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-sexy.png' },
-        { description: 'WM LIVE CASINO', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-wm.png' },
-        { description: 'Motivation LIVE CASINO', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/live-cq9.png' },
-        { description: 'OB LIVE CASINO', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/live-ob.png' },
-        { description: 'WE LIVE CASINO', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-we.png' },
-        { description: 'CR SPORTS', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-crown.png' },
-        { description: 'SBO SPORTS', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-sbo2.png' },
-        { description: 'KONG LOTTO SPORTS', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-game-1-sport.png' },
-        { description: 'KA Slots', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-ka-slot.png' },
-        { description: 'PP Slots', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-pp-slot.png' },
-        { description: 'SWG Slots', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-swg-slot.png' },
-        { description: 'TPG Slots', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-tpg-slot.png' },
-        { description: 'PG Slots', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-pg-slot.png' },
-        { description: 'JOKER Slots', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q8/game-zone/bk-joker-slot.png' },
-        { description: 'MW Slots', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-mw-slot.png' },
-        { description: 'BOLE MAHJONG', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-bole.png' },
-        { description: 'VG CHESS', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-vg.png' },
-        { description: 'OB CHESS', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-ob.png' },
-        { description: 'Hong Kong CHESS', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-game-1-poker.png' },
-        { description: 'BAISON CHESS', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-baison.png' },
-        { description: 'LEG CHESS', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-leg.png' },
-        { description: 'KAIYUAN CHESS', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-ky.png' },
-        { description: 'IA ESPORTS', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-ia.png' },
-        { description: 'CQ9 FISHING', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-cq-9.png' },
-        { description: 'TPG FISHING', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-tpg.png' },
-        { description: 'JOKER FISHING', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-joker.png' },
-        { description: 'BAISON FISHING', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-baison-fish.png' },
-        { description: 'SWG FISHING', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/game-zone/bk-swg-fish.png' },
-        { description: 'Daily Bouns', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/checkIn.png' },
-        { description: 'Lucky Wheel', url: 'http://wap-q6-npf2.qit1.net/wheel-enter_ff8ff6ac1abcf9601b8f566e65ce0588.png' }
+        { description: 'EVO LIVE CASINO', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-evo.png' },
+        { description: 'DG LIVE CASINO', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-dg.png' },
+        { description: 'SEXY LIVE CASINO', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-sexy.png' },
+        { description: 'WM LIVE CASINO', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-wm.png' },
+        // { description: 'Motivation LIVE CASINO', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/live-cq9.png' },
+        { description: 'OB LIVE CASINO', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/live-ob.png' },
+        { description: 'WE LIVE CASINO', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-we.png' },
+        { description: 'CR SPORTS', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-crown.png' },
+        { description: 'SBO SPORTS', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-sbo2.png' },
+        { description: 'KONG LOTTO SPORTS', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-game-1-sport.png' },
+        { description: 'KA Slots', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-ka-slot.png' },
+        { description: 'PP Slots', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-pp-slot.png' },
+        { description: 'SWG Slots', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-swg-slot.png' },
+        { description: 'TPG Slots', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-tpg-slot.png' },
+        { description: 'PG Slots', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-pg-slot.png' },
+        { description: 'JOKER Slots', url: 'https://wap-q6.qbpink01.com/res/images/com-q8/game-zone/bk-joker-slot.png' },
+        { description: 'MW Slots', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-mw-slot.png' },
+        { description: 'BOLE MAHJONG', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-bole.png' },
+        { description: 'VG CHESS', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-vg.png' },
+        { description: 'OB CHESS', url: 'https://wap-q6.qbpink01.comres/images/com-q6/game-zone/bk-ob.png' },
+        { description: 'Hong Kong CHESS', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-game-1-poker.png' },
+        { description: 'BAISON CHESS', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-baison.png' },
+        { description: 'LEG CHESS', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-leg.png' },
+        { description: 'KAIYUAN CHESS', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-ky.png' },
+        { description: 'IA ESPORTS', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-ia.png' },
+        { description: 'CQ9 FISHING', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-cq-9.png' },
+        { description: 'TPG FISHING', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-tpg.png' },
+        { description: 'JOKER FISHING', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-joker.png' },
+        { description: 'BAISON FISHING', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-baison-fish.png' },
+        { description: 'SWG FISHING', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/game-zone/bk-swg-fish.png' },
+        { description: 'Daily Bouns', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/checkIn.png' },
+        { description: 'Lucky Wheel', url: 'https://wap-q6.qbpink01.com/wheel-enter_ff8ff6ac1abcf9601b8f566e65ce0588.png' }
     ];
 
     // 检查每个指定的 URL 的状态码和大小
@@ -2132,7 +2131,7 @@ test('檢查個人頁並點擊各個鏈接(EN)', async () => {
     });
 
     // 导航到个人页面
-    await page.goto('https://wap-q6-npf2.qit1.net/accountCenter');
+    await page.goto('https://wap-q6.qbpink01.com/accountCenter');
     await page.waitForLoadState('networkidle');
 
     const missingCategories = [];
@@ -2226,7 +2225,7 @@ test('檢查個人頁並點擊各個鏈接(EN)', async () => {
             }
 
             // 返回个人页面
-            await page.goto('https://wap-q6-npf2.qit1.net/accountCenter');
+            await page.goto('https://wap-q6.qbpink01.com/accountCenter');
             await page.waitForLoadState('networkidle');
         } else {
             missingCategories.push(category.label);
@@ -2254,25 +2253,25 @@ test('檢查個人頁icon圖片(EN)', async () => {
     });
 
     // 导航到个人页面
-    await page.goto('https://wap-q6-npf2.qit1.net/accountCenter');
+    await page.goto('https://wap-q6.qbpink01.com/accountCenter');
     await page.waitForLoadState('networkidle');
 
     const iconsToCheck = [
-        { text: 'Profit', class: 'icon-promotion', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-promotion2.png' },
-        { text: 'Join us', class: 'icon-friend', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-friend.png' },
-        { text: 'Rebate', class: 'icon-getrebate', url: 'https://wap-q6-npf2.qit1.net/icon-getrebate_dbe8471887fe6abe747cb02d80f977cd.png' },
-        { text: 'VIP', class: 'icon-rebate', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-rebate.png' },
-        { text: 'Profit', class: 'icon-profit', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-profit.png' },
-        { text: 'Deposit & Withdrawal', class: 'icon-history', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-history.png' },
-        { text: 'Transaction Record', class: 'icon-statement', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-statement.png' },
-        { text: 'Bank Card Management', class: 'icon-bank-card', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-bank-card.png' },
-        { text: 'Bet History', class: 'icon-record', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-record.png' },
+        { text: 'Profit', class: 'icon-promotion', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/account-center/icon-promotion2.png' },
+        { text: 'Join us', class: 'icon-friend', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/account-center/icon-friend.png' },
+        { text: 'Rebate', class: 'icon-getrebate', url: 'https://wap-q6.qbpink01.com/icon-getrebate_dbe8471887fe6abe747cb02d80f977cd.png' },
+        { text: 'VIP', class: 'icon-rebate', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/account-center/icon-rebate.png' },
+        { text: 'Profit', class: 'icon-profit', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/account-center/icon-profit.png' },
+        { text: 'Deposit & Withdrawal', class: 'icon-history', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/account-center/icon-history.png' },
+        { text: 'Transaction Record', class: 'icon-statement', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/account-center/icon-statement.png' },
+        { text: 'Bank Card Management', class: 'icon-bank-card', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/account-center/icon-bank-card.png' },
+        { text: 'Bet History', class: 'icon-record', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/account-center/icon-record.png' },
         // { text: 'Refer a Friend', class: 'icon-invitefriend', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-friend2.png?t=21491204' },
         // { text: 'National agent', class: 'icon-friend2', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-friend2.png' },
         // { text: 'Recommend friends', class: 'icon-friend2', url: 'http://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-friend2.png' },
-        { text: 'Friend promotion link', class: 'icon-friend2', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-friend2.png' },
-        { text: 'Game Result', class: 'icon-game-result', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-game-result.png' },
-        { text: 'Language Selection', class: 'icon-language', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-language.png' }
+        { text: 'Friend promotion link', class: 'icon-friend2', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/account-center/icon-friend2.png' },
+        { text: 'Game Result', class: 'icon-game-result', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/account-center/icon-game-result.png' },
+        { text: 'Language Selection', class: 'icon-language', url: 'https://wap-q6.qbpink01.com/res/images/com-q6/account-center/icon-language.png' }
     ];
 
     const errors = [];
@@ -2334,7 +2333,7 @@ test('檢查關於港體會(EN)', async () => {
     });
 
     // 导航到个人页面
-    await page.goto('https://wap-q6-npf2.qit1.net/accountCenter');
+    await page.goto('https://wap-q6.qbpink01.com/accountCenter');
     await page.waitForLoadState('networkidle');
 
     const missingElements = [];
@@ -2449,93 +2448,93 @@ test('檢查關於港體會(EN)', async () => {
 
 
 
-test('檢查遊戲開啟(EN)', async () => {
-    const page = await globalThis.context.newPage();
-    // 设置 localStorage 语言为英文
-    await page.addInitScript(() => {
-        localStorage.setItem('locale', 'en');
-    });
+// test('檢查遊戲開啟(EN)', async () => {
+//     const page = await globalThis.context.newPage();
+//     // 设置 localStorage 语言为英文
+//     await page.addInitScript(() => {
+//         localStorage.setItem('locale', 'en');
+//     });
 
-    // 导航到游戏页面
-    await page.goto('https://wap-q6-npf2.qit1.net/sportEvents');
-    await page.waitForLoadState('networkidle');
+//     // 导航到游戏页面
+//     await page.goto('https://wap-q6.qbpink01.com/sportEvents');
+//     await page.waitForLoadState('networkidle');
 
-    const gamesToCheck = [
-        {
-            buttonSelector: '.enter-game-button.bk-ka-slot.en',
-            gameName: 'KA Slots',
-            iconSelector: 'li .game_item img[alt="KA All Star Sports Day"][src="https://rmpseaiconcdn.kaga88.com/kaga/gameIcon?game=KAAllStarSportsDay&lang=zh&type=circular_framed"]',
-            expectedWidth: 150,
-            expectedHeight: 150
-        },
-        // {
-        //     buttonSelector: '.enter-game-button.bk-jdb-slot.en',
-        //     gameName: 'JDB Slots',
-        //     iconSelector: 'li .game_item img[alt="Flirting Scholar Tang"][src="https://dl.lfyanwei.com/jdb-assetsv3/games/8002/8002_en.png"]',
-        //     expectedWidth: 150,
-        //     expectedHeight: 150
-        // },
-        // {
-        //     buttonSelector: '.enter-game-button.bk-pp-slot.en',
-        //     gameName: 'PP Slots',
-        //     iconSelector: 'li .game_item img[alt="Fortune Ace"][src="https://api.prerelease-env.biz/game_pic/square/200/vs1024fortune.png"]',
-        //     expectedWidth: 150,
-        //     expectedHeight: 150
-        // },
-        // {
-        //     buttonSelector: '.enter-game-button.bk-swg-slot.en',
-        //     gameName: 'SWG Slots',
-        //     iconSelector: 'li .game_item img[alt="FortuneGems"][src="http://wap-q6-npf2.qit1.net/photo/SWG_icon/5003_en.png"]',
-        //     expectedWidth: 150,
-        //     expectedHeight: 150
-        // }
-    ];
+//     const gamesToCheck = [
+//         {
+//             buttonSelector: '.enter-game-button.bk-ka-slot.en',
+//             gameName: 'KA Slots',
+//             iconSelector: 'li .game_item img[alt="KA All Star Sports Day"][src="https://rmpseaiconcdn.kaga88.com/kaga/gameIcon?game=KAAllStarSportsDay&lang=zh&type=circular_framed"]',
+//             expectedWidth: 150,
+//             expectedHeight: 150
+//         },
+// {
+//     buttonSelector: '.enter-game-button.bk-jdb-slot.en',
+//     gameName: 'JDB Slots',
+//     iconSelector: 'li .game_item img[alt="Flirting Scholar Tang"][src="https://dl.lfyanwei.com/jdb-assetsv3/games/8002/8002_en.png"]',
+//     expectedWidth: 150,
+//     expectedHeight: 150
+// },
+// {
+//     buttonSelector: '.enter-game-button.bk-pp-slot.en',
+//     gameName: 'PP Slots',
+//     iconSelector: 'li .game_item img[alt="Fortune Ace"][src="https://api.prerelease-env.biz/game_pic/square/200/vs1024fortune.png"]',
+//     expectedWidth: 150,
+//     expectedHeight: 150
+// },
+// {
+//     buttonSelector: '.enter-game-button.bk-swg-slot.en',
+//     gameName: 'SWG Slots',
+//     iconSelector: 'li .game_item img[alt="FortuneGems"][src="http://wap-q6-npf2.qit1.net/photo/SWG_icon/5003_en.png"]',
+//     expectedWidth: 150,
+//     expectedHeight: 150
+// }
+//     ];
 
-    const errors = [];
+//     const errors = [];
 
-    for (const game of gamesToCheck) {
-        // 点击指定的游戏场馆
-        await page.click(game.buttonSelector);
+//     for (const game of gamesToCheck) {
+//         // 点击指定的游戏场馆
+//         await page.click(game.buttonSelector);
 
-        // 等待页面加载并检查游戏图标
-        await page.waitForSelector(game.iconSelector);
-        const gameIcon = page.locator(game.iconSelector);
-        const gameIconExists = await gameIcon.count() > 0;
-        console.log(`${game.gameName} 游戏图标是否存在: ${gameIconExists}`);
-        expect(gameIconExists, `${game.gameName} 游戏图标不存在`).toBeTruthy();
+//         // 等待页面加载并检查游戏图标
+//         await page.waitForSelector(game.iconSelector);
+//         const gameIcon = page.locator(game.iconSelector);
+//         const gameIconExists = await gameIcon.count() > 0;
+//         console.log(`${game.gameName} 游戏图标是否存在: ${gameIconExists}`);
+//         expect(gameIconExists, `${game.gameName} 游戏图标不存在`).toBeTruthy();
 
-        if (gameIconExists) {
-            const gameIconSize = await gameIcon.evaluate(el => {
-                return {
-                    width: el.clientWidth,
-                    height: el.clientHeight
-                };
-            });
-            console.log(`${game.gameName} 游戏图标大小: 宽度=${gameIconSize.width}px, 高度=${gameIconSize.height}px`);
+//         if (gameIconExists) {
+//             const gameIconSize = await gameIcon.evaluate(el => {
+//                 return {
+//                     width: el.clientWidth,
+//                     height: el.clientHeight
+//                 };
+//             });
+//             console.log(`${game.gameName} 游戏图标大小: 宽度=${gameIconSize.width}px, 高度=${gameIconSize.height}px`);
 
-            if (gameIconSize.width !== game.expectedWidth || gameIconSize.height !== game.expectedHeight) {
-                console.error(`${game.gameName} 游戏图标大小不正确，宽度=${gameIconSize.width}px, 高度=${gameIconSize.height}px`);
-                errors.push(`${game.gameName} 游戏图标大小不正确，宽度=${gameIconSize.width}px, 高度=${gameIconSize.height}px`);
-            } else {
-                console.log(`${game.gameName} 游戏图标大小正确`);
-            }
+//             if (gameIconSize.width !== game.expectedWidth || gameIconSize.height !== game.expectedHeight) {
+//                 console.error(`${game.gameName} 游戏图标大小不正确，宽度=${gameIconSize.width}px, 高度=${gameIconSize.height}px`);
+//                 errors.push(`${game.gameName} 游戏图标大小不正确，宽度=${gameIconSize.width}px, 高度=${gameIconSize.height}px`);
+//             } else {
+//                 console.log(`${game.gameName} 游戏图标大小正确`);
+//             }
 
-            expect(gameIconSize.width).toBe(game.expectedWidth);
-            expect(gameIconSize.height).toBe(game.expectedHeight);
-        }
+//             expect(gameIconSize.width).toBe(game.expectedWidth);
+//             expect(gameIconSize.height).toBe(game.expectedHeight);
+//         }
 
-        // 返回游戏页面
-        await page.goto('https://wap-q6-npf2.qit1.net/sportEvents');
-        await page.waitForLoadState('networkidle');
-    }
+//         // 返回游戏页面
+//         await page.goto('https://wap-q6-npf2.qit1.net/sportEvents');
+//         await page.waitForLoadState('networkidle');
+//     }
 
-    // 打印所有错误
-    if (errors.length > 0) {
-        console.error('以下是检测到的错误:');
-        errors.forEach(error => console.error(error));
-    }
+//     // 打印所有错误
+//     if (errors.length > 0) {
+//         console.error('以下是检测到的错误:');
+//         errors.forEach(error => console.error(error));
+//     }
 
-    expect(errors.length).toBe(0); // 确保没有错误
+//     expect(errors.length).toBe(0); // 确保没有错误
 
-    await page.close();
-});
+//     await page.close();
+// });

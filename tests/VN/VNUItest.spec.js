@@ -15,7 +15,7 @@ test.beforeEach(async () => {
     }, { key: userRecordKey, value: userRecordValue });
 
     // 导航到目标页面
-    await page.goto('https://wap-tn.qit1.net');
+    await page.goto('http://wap.jisookorea.com');
     await page.waitForLoadState('networkidle');
 
     // 关闭页面
@@ -31,7 +31,7 @@ test('登入頁檢查', async () => {
         localStorage.setItem('locale', 'vi-VN');
     });
 
-    await page.goto('http://wap-tn.qit1.net/login');
+    await page.goto('http://wap.jisookorea.com/login');
     await page.waitForLoadState('networkidle');
 
     const elementsToCheck = [
@@ -73,7 +73,7 @@ test('註冊頁檢查', async () => {
         localStorage.setItem('locale', 'vi-VN');
     });
 
-    await page.goto('http://wap-tn.qit1.net/reg');
+    await page.goto('http://wap.jisookorea.com/reg');
     await page.waitForLoadState('networkidle');
 
     const elementsToCheck = [
@@ -116,7 +116,7 @@ test('檢查 Giới thiệu về RG88', async () => {
     });
 
     // 导航到个人页面
-    await page.goto('https://wap-tn.qit1.net/accountCenter');
+    await page.goto('http://wap.jisookorea.com/accountCenter');
     await page.waitForLoadState('networkidle');
 
     const missingElements = [];
@@ -239,7 +239,7 @@ test('遊戲icon', async () => {
     });
 
     // 打開目標頁面
-    await page.goto('https://wap-tn.qit1.net/hall');
+    await page.goto('http://wap.jisookorea.com/hall');
     await page.waitForLoadState('networkidle');
 
     // 檢查並關閉彈窗
@@ -357,3 +357,6 @@ test('遊戲icon', async () => {
 
     await page.close();
 });
+
+
+

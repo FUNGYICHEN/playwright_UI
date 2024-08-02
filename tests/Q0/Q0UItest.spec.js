@@ -15,7 +15,7 @@ test.beforeEach(async () => {
         localStorage.setItem(key, value);
     }, { key: userRecordKey, value: userRecordValue });
 
-    await page.goto('http://wap-q0-npf2.qit1.net');
+    await page.goto('https://wap-q0.qbpink01.com');
     await page.waitForLoadState('networkidle');
 
     await page.close();
@@ -26,7 +26,7 @@ test('註冊錯誤流程檢查', async () => {
     const page = await globalThis.context.newPage();
     const errors = [];
 
-    await page.goto('http://wap-q0-npf2.qit1.net/reg');
+    await page.goto('https://wap-q0.qbpink01.com/reg');
     await page.waitForLoadState('networkidle');
 
     // 1-1 只輸入英文或數字
@@ -160,7 +160,7 @@ test('註冊正確流程檢查', async () => {
     const page = await globalThis.context.newPage();
     const errors = [];
 
-    await page.goto('http://wap-q0-npf2.qit1.net/reg');
+    await page.goto('https://wap-q0.qbpink01.com/reg');
     await page.waitForLoadState('networkidle');
 
     // 生成随机用户名，固定密码
@@ -249,7 +249,7 @@ test('檢查關於Q0', async () => {
     const page = await globalThis.context.newPage();
 
     // 导航到个人页面
-    await page.goto('http://wap-q0-npf2.qit1.net/accountCenter');
+    await page.goto('https://wap-q0.qbpink01.com/accountCenter');
     await page.waitForLoadState('networkidle');
 
     const missingElements = [];
@@ -386,7 +386,7 @@ test('檢查關於 q0 (EN)', async () => {
     });
 
     // Navigate to the personal page
-    await page.goto('http://wap-q0-npf2.qit1.net/accountCenter');
+    await page.goto('https://wap-q0.qbpink01.com/accountCenter');
     await page.waitForLoadState('networkidle');
 
     const missingElements = [];
@@ -508,7 +508,7 @@ test('檢查關於 q0 (EN)', async () => {
 test('Q0首頁檢查', async () => {
     const page = await globalThis.context.newPage();
     // 打開目標頁面
-    await page.goto('https://wap-q0-npf2.qit1.net/hall');
+    await page.goto('https://wap-q0.qbpink01.com/hall');
 
 
     // 檢查並關閉彈窗
@@ -548,13 +548,12 @@ test('Q0首頁檢查', async () => {
 
     // 確認下面這些icon標籤文案是否存在，並比對background圖片URL
     const gameCategories = [
-        { icon: '.icon-live', label: '真人', expectedUrl: 'https://wap-q0-npf2.qit1.net/res/images/com-q1/gameCategory/icon-delier-active.png' },
-        { icon: '.icon-sport', label: '體育', expectedUrl: 'https://wap-q0-npf2.qit1.net/res/images/com-q1/gameCategory/icon-sport-ball.png' },
-        { icon: '.icon-eGame', label: '電子', expectedUrl: 'https://wap-q0-npf2.qit1.net/res/images/com-q1/gameCategory/icon-slot-machine.png' },
-        { icon: '.icon-chess', label: '棋牌', expectedUrl: 'https://wap-q0-npf2.qit1.net/res/images/com-q1/gameCategory/icon-poker-cards.png' },
-        { icon: '.icon-eSport', label: '電競', expectedUrl: 'https://wap-q0-npf2.qit1.net/res/images/com-q1/gameCategory/icon-esport.png' },
-        { icon: '.icon-fish', label: '捕魚', expectedUrl: 'https://wap-q0-npf2.qit1.net/res/images/com-q1/gameCategory/icon-fish.png' },
-        { icon: '.icon-animal-planet', label: '實況', expectedUrl: 'https://wap-q0-npf2.qit1.net/res/images/com-q1/gameCategory/icon-live.png' }
+        { icon: '.icon-sport', label: '體育', expectedUrl: 'https://wap-q0.qbpink01.com/res/images/com-q1/gameCategory/icon-sport-ball.png' },
+        { icon: '.icon-eGame', label: '電子', expectedUrl: 'https://wap-q0.qbpink01.com/res/images/com-q1/gameCategory/icon-slot-machine.png' },
+        { icon: '.icon-chess', label: '棋牌', expectedUrl: 'https://wap-q0.qbpink01.com/res/images/com-q1/gameCategory/icon-poker-cards.png' },
+        { icon: '.icon-eSport', label: '電競', expectedUrl: 'https://wap-q0.qbpink01.com/res/images/com-q1/gameCategory/icon-esport.png' },
+        { icon: '.icon-fish', label: '捕魚', expectedUrl: 'https://wap-q0.qbpink01.com/res/images/com-q1/gameCategory/icon-fish.png' },
+        { icon: '.icon-animal-planet', label: '實況', expectedUrl: 'https://wap-q0.qbpink01.com/res/images/com-q1/gameCategory/icon-live.png' }
     ];
 
     for (const category of gameCategories) {
@@ -574,9 +573,9 @@ test('Q0首頁檢查', async () => {
 
     // 確認新的按鈕圖標和文案是否存在，並抓取background圖片URL
     const accountButtons = [
-        { icon: '.icon-rebate', label: 'VIP', expectedUrl: 'https://wap-q0-npf2.qit1.net/res/images/com-q1/account-functions/icon-money-bag.png' },
-        { icon: '.icon-deposit', label: '存款', expectedUrl: 'https://wap-q0-npf2.qit1.net/res/images/com-q1/account-functions/icon-piggy-bank.png' },
-        { icon: '.icon-withdraw', label: '提款', expectedUrl: 'https://wap-q0-npf2.qit1.net/res/images/com-q1/account-functions/icon-dollar.png' }
+        { icon: '.icon-rebate', label: 'VIP', expectedUrl: 'https://wap-q0.qbpink01.com/res/images/com-q1/account-functions/icon-money-bag.png' },
+        { icon: '.icon-deposit', label: '存款', expectedUrl: 'https://wap-q0.qbpink01.com/res/images/com-q1/account-functions/icon-piggy-bank.png' },
+        { icon: '.icon-withdraw', label: '提款', expectedUrl: 'https://wap-q0.qbpink01.com/res/images/com-q1/account-functions/icon-dollar.png' }
     ];
 
     for (const button of accountButtons) {

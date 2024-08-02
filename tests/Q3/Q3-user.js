@@ -12,7 +12,7 @@ async function setupQ3() {
 
     const page = await context.newPage();
     try {
-        await page.goto("http://wap-q3-npf2.qit1.net/login");
+        await page.goto("https://wap-q3.qbpink01.com/login");
         await page.locator("#username").fill("uitest001");
         await page.locator('#password').type('396012');
         await page.locator('div.submitBtn.btns:has-text("登錄")').click();

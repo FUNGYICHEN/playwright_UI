@@ -10,7 +10,7 @@ async function setupQ6() {
 
     const page = await context.newPage();
     try {
-        await page.goto("https://wap-q6-npf2.qit1.net/login");
+        await page.goto("https://wap-q6.qbpink01.com/login");
         await page.locator("#username").fill("uitest001");
         await page.locator('#password').type('396012');
         await page.locator('div.submitBtn.btns:has-text("登錄")').click();
@@ -40,3 +40,8 @@ module.exports = {
 }
 
 module.exports = { setupQ6 };
+
+// 如果脚本作为主模块运行，则执行 setupQ6
+if (require.main === module) {
+    setupQ6();
+}

@@ -12,7 +12,7 @@ async function setupTK() {
 
     const page = await context.newPage();
     try {
-        await page.goto("https://wap.mcmcgo.com/login");
+        await page.goto("http://wap.pp-af.com/login");
         await page.locator("#username").fill("uitest001");
         await page.locator('#password').type('396012');
         await page.locator('div.submitBtn.btns:has-text("Sign in")').click();

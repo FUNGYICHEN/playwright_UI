@@ -99,6 +99,63 @@ test('登入頁檢查', async () => {
     console.log(`密碼圖標是否存在: ${passwordIconVisible}`);
     if (!passwordIconVisible) missingElements.push('密碼圖標');
 
+    // 检查文件状态码和大小
+    const filesToCheck = [
+        { url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/q8-icon2.png?v=001', description: 'LOGO圖' },
+        { url: 'http://wap-q8-npf2.qit1.net/res/images/com-q3/bg3.png', description: '背景圖' }
+    ];
+
+    for (const file of filesToCheck) {
+        let statusCode = 0;
+        let fileSize = 0;
+
+        try {
+            const response = await page.request.get(file.url);
+            statusCode = response.status();
+            if (statusCode === 200) {
+                const buffer = await response.body();
+                fileSize = buffer.byteLength;
+            }
+        } catch (error) {
+            statusCode = '無狀態碼';
+        }
+
+        console.log(`${file.description} 狀態碼: ${statusCode}`);
+        console.log(`${file.description} 文件大小: ${fileSize} bytes`);
+
+        if (statusCode !== 200) {
+            missingElements.push(`${file.description} 文件加載失敗，狀態碼: ${statusCode}`);
+        }
+
+        if (fileSize === 0) {
+            missingElements.push(`${file.description} 文件大小不正確，文件大小: ${fileSize} bytes`);
+        }
+    }
+
+    // 检查base64图片
+    const base64ImagesToCheck = [
+        { selector: 'img[src^="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAA5UExURUxpcf///////////////////////////////////////////////////////////////////////9URaEsAAAASdFJOUwBgEL8gcIDv30Cvn1Awz5Cgj8J0CjoAAAGnSURBVHja3VXduoQgCAxTAbOf5f0f9nzHbMHS3fvlKpVhBlCaftM4JEIR3FLk794uohijxX92f8nDPkECSscIRv5XeNohM3M4qG68+nLmcoi7yXQ9TsTmOoCtHM03xf6EzAM9GDqJ9VVB8V97WtdSinBjLvmt7yXECL5BYJvGYYPwLG0+4SHKlw7VRdQWxLpVIrg7gTf+tCQypP5Eq1ElqGdUWpH/d1kjovqzyTiJkNdKzOpRwKqClABsIKcatLJJFeWGGkXy+bWLSNJboXA4VWh1QCtLNpDwG7D1ALnJ2mTETU/R7ov0AA5LwVWHswArKdfvXe/gitp+Vkm3mvl/dPR1HJC9TltT1v1a5POZkojhnY6mrMG+KSZ5G4LGtJeJlXudxVh7Tdh2FIaDJlxBaVKLS/MUcAkAMWHzKNJiAM6b905wdQ5KOpXde/W3FZXdmUB7IRwNy1kFqNj+VNLuL/fdwsFjgvWhc0jhzoyz7pg2dhlAiqXKbyfUYOBnvH47gZlzWOoaDetjYHZs89PYQgOxA31IAg2Eopu+2hrShiJIKfD0k/YH+voqvciLmqQAAAAASUVORK5CYII="]', description: '帳號圖標 (Base64)' },
+        { selector: 'img[src^="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAAAGFBMVEVMaXH////////////////////////////eQubUAAAAB3RSTlMAIOCgXL8QLDtEcwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAJZJREFUeJztkkEOxCAMA22gm///eKVStm3QJu6hN3xEMwISAysrr6TRn7CFvBVnsFhgNDNnsJgFRjVn7LxVqEbK424IPK6GxOM0RB7DkHkchs6jGw94DEPm0d9vfMib71XGqwb7fKZe/ctv/qLBc/6Sweu+BIP3/aYGfR8yY5v2uxtbeIPrQ83eNPWnJr+ejz4Rv7KCkS9J2wVXNO01IwAAAABJRU5ErkJggg=="]', description: '叉叉圖標 (Base64)' },
+        { selector: 'img[src^="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAzUExURUxpcf////////////////////////////////////////////////////////////////Hv/K4AAAAQdFJOUwBgcJB/v++fQN9QzyAQMLBQk0ruAAAA4UlEQVR42u2U2w7CMAhA6QVKL278/9dqTTRuZbgl6sPieVvLKdBmwDm5cKgkQhjKrvBI8iTHBm8oJAuyA5MoA3FHPAbHXEIdDD0e+fHN1TZ43I7SYdDJfdPDAnfvHFScmj70VacKtZ+l50VQaBtHlb7eNioi7enp0ZlS7AwKEzNrGXBo2SDd6M3VZPEiyC5+LszJABWBwYA/LvTHOiRkkfwXviHUQ4IXiYcEmCawBBoGhjI6aPU/oyWkVUDcM6XdevZIKqzisO/mtryVt/ghqYFWsM9iQB4GmkPaiMZ4gTNxBW+tJqIAT0niAAAAAElFTkSuQmCC"]', description: '登入密碼圖標 (Base64)' }
+    ];
+
+    for (const image of base64ImagesToCheck) {
+        const imgSize = await page.evaluate(selector => {
+            const img = document.querySelector(selector);
+            return img ? { width: img.naturalWidth, height: img.naturalHeight } : null;
+        }, image.selector);
+
+        if (imgSize) {
+            console.log(`${image.description} 大小: ${imgSize.width}x${imgSize.height}`);
+            if (imgSize.width !== 48 || imgSize.height !== 48) {
+                missingElements.push(`${image.description} (期望: 48x48, 实际: ${imgSize.width}x${imgSize.height})`);
+            }
+        } else {
+            console.log(`${image.description} 未找到`);
+            missingElements.push(`${image.description} 未找到`);
+        }
+    }
+
     // 打印所有检查结果后再判断是否有错误
     if (missingElements.length > 0) {
         console.log(`以下元素未找到或大小不符: ${missingElements.join(', ')}`);
@@ -477,49 +534,98 @@ test('首頁體育下注(注额15)', async () => {
 test('檢查首頁', async () => {
     const page = await globalThis.context.newPage();
 
-    // 导航到目标页面
-    await page.goto('http://wap-q8-npf2.qit1.net/hall');
+    // 導航到目標頁面
+    await page.goto('https://wap-q8-npf2.qit1.net/hall');
     await page.waitForLoadState('networkidle');
     const missingElements = [];
-    // 要检查的 alt 属性列表
-    const altAttributes = ['足球', '籃球', '網球', '棒球', 'gift', 'sponsor'];
+    const errors = [];
 
-    for (const alt of altAttributes) {
-        const img = page.locator(`img[alt="${alt}"]`);
+    // 要檢查的 alt 屬性列表
+    const altAttributes = [
+        { alt: '足球', url: 'http://wap-q8-npf2.qit1.net/soccor_a2e6e921d0778423cc6911b8c4e4d811.png' },
+        { alt: '籃球', url: 'http://wap-q8-npf2.qit1.net/basketball_a60f6032e66bb6c01b16d3edb6ed52e9.png' },
+        { alt: '網球', url: 'http://wap-q8-npf2.qit1.net/tennis_2f2d0b4ff025620ec491bedcf26ad4e3.png' },
+        { alt: '棒球', url: 'http://wap-q8-npf2.qit1.net/baseball_24d151c7cdce6cf4825c6bf7d10cd026.png' },
+        { alt: 'gift', url: 'http://wap-q8-npf2.qit1.net/gift_e3532dc7dbc29f264e30a254166b0e97.png' },
+        { alt: 'sponsor', url: 'http://wap-q8-npf2.qit1.net/sponsor_cac5099cc00aa6b0701e597bacf198ce.png' }
+    ];
+
+    for (const item of altAttributes) {
+        const img = page.locator(`img[alt="${item.alt}"]`);
         const count = await img.count();
         if (count > 0) {
             const isVisible = await img.first().isVisible();
-            console.log(`${alt}:${isVisible}`);
+            console.log(`${item.alt}:${isVisible}`);
             if (!isVisible) {
-                missingElements.push(`icon ${alt}`);
+                missingElements.push(`icon ${item.alt}`);
+            } else {
+                try {
+                    const response = await page.request.get(item.url);
+                    const statusCode = response.status();
+                    const buffer = await response.body();
+                    const fileSize = buffer.byteLength;
+
+                    console.log(`${item.alt} 圖片狀態碼: ${statusCode}`);
+                    console.log(`${item.alt} 圖片文件大小: ${fileSize} bytes`);
+
+                    if (statusCode !== 200 || fileSize === 0) {
+                        errors.push(`${item.alt} 圖片加載失敗，狀態碼: ${statusCode}, 文件大小: ${fileSize} bytes`);
+                    }
+                } catch (error) {
+                    errors.push(`${item.alt} 圖片加載失敗`);
+                }
             }
         } else {
-            console.log(`icon ${alt} 不存在`);
-            missingElements.push(`icon ${alt}`);
+            console.log(`icon ${item.alt} 不存在`);
+            missingElements.push(`icon ${item.alt}`);
         }
     }
-    // 要检查的底部菜单项
-    const footerLabels = ['首頁', '娛樂城', '走地', '客服', '個人中心'];
 
-    for (const label of footerLabels) {
-        const footerItem = page.locator(`.footer-item:has-text("${label}")`);
+    // 要檢查的底部菜單項
+    const footerLabels = [
+        { text: '首頁', url: 'http://wap-q8-npf2.qit1.net/icon-home-active_c6e4c69313080e778c89b370a53db03b.png' },
+        { text: '娛樂城', url: 'http://wap-q8-npf2.qit1.net/icon-play_43efc2993182818b2da3645a117c4b1d.png' },
+        { text: '走地', url: 'http://wap-q8-npf2.qit1.net/icon-roll_b393b40b7ecd7d199a3d26af444ab3c5.png' },
+        { text: '客服', url: 'http://wap-q8-npf2.qit1.net/icon-headphones_7c3f8ba7d5efffa6db666b6cb370c157.png' },
+        { text: '個人中心', url: 'http://wap-q8-npf2.qit1.net/icon-account_08cf41dde8a320ce3eaa786501472c64.png' }
+    ];
+
+    for (const item of footerLabels) {
+        const footerItem = page.locator(`.footer-item:has-text("${item.text}")`);
         const count = await footerItem.count();
         if (count > 0) {
             const isVisible = await footerItem.first().isVisible();
-            console.log(`${label}:${isVisible}`);
+            console.log(`${item.text}:${isVisible}`);
             if (!isVisible) {
-                missingElements.push(`底部项目 ${label}`);
+                missingElements.push(`底部項目 ${item.text}`);
+            } else {
+                try {
+                    const response = await page.request.get(item.url);
+                    const statusCode = response.status();
+                    const buffer = await response.body();
+                    const fileSize = buffer.byteLength;
+
+                    console.log(`${item.text} 圖片狀態碼: ${statusCode}`);
+                    console.log(`${item.text} 圖片文件大小: ${fileSize} bytes`);
+
+                    if (statusCode !== 200 || fileSize === 0) {
+                        errors.push(`${item.text} 圖片加載失敗，狀態碼: ${statusCode}, 文件大小: ${fileSize} bytes`);
+                    }
+                } catch (error) {
+                    errors.push(`${item.text} 圖片加載失敗`);
+                }
             }
         } else {
-            console.log(`底部项目 ${label} 不存在`);
-            missingElements.push(`底部项目 ${label}`);
+            console.log(`底部項目 ${item.text} 不存在`);
+            missingElements.push(`底部項目 ${item.text}`);
         }
     }
-    // 检查其他指定元素
+
+    // 檢查其他指定元素
     const elementsToCheck = [
         { selector: 'img[alt="banner"]', description: 'banner' },
-        { selector: 'button.deposit', description: '存款按钮' },
-        { selector: 'button.logout', description: '登出按钮' },
+        { selector: 'button.deposit', description: '存款按鈕' },
+        { selector: 'button.logout', description: '登出按鈕' },
         { selector: '.sportDetails_nav:first-child', description: '體育的第一場賽事' }
     ];
 
@@ -541,10 +647,16 @@ test('檢查首頁', async () => {
     await page.close();
 
     if (missingElements.length > 0) {
-        throw new Error(`以下元素不存在: ${missingElements.join(', ')}`);
+        console.error(`以下元素不存在: ${missingElements.join(', ')}`);
     }
-});
 
+    if (errors.length > 0) {
+        console.error(`以下圖片加載失敗: ${errors.join(', ')}`);
+    }
+
+    expect(missingElements.length).toBe(0);
+    expect(errors.length).toBe(0);
+});
 
 
 
