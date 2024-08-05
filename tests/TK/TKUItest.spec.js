@@ -23,11 +23,6 @@ test.beforeEach(async () => {
 
 
 
-
-
-
-
-
 test('檢查 Acerca de Castillo', async () => {
     const page = await globalThis.context.newPage();
     // 设置 localStorage 语言为越南语
@@ -168,93 +163,136 @@ test('檢查 Acerca de Castillo', async () => {
 
 
 
-test('检查 About Castillo(EN)', async () => {
+
+
+test.only('检查 About Castillo(EN)', async () => {
     const page = await globalThis.context.newPage();
 
     await page.addInitScript(() => {
         localStorage.setItem('locale', 'en');
     });
-    // 导航到个人页面
+
     await page.goto('http://wap.pp-af.com/accountCenter');
     await page.waitForLoadState('networkidle');
-
     const missingElements = [];
 
-    // 檢查 logo.png 是否存在
-    const logo = await page.locator('img[src="/logo_fc1a76f3b42b518866602813348c493b.png"]').first();
+    // 检查 .icon.icon-alert.logo 并检查大小
+    const logo = await page.locator('.icon.icon-alert.logo').first();
     const logoVisible = await logo.isVisible();
-    console.log(`logo.png 是否存在: ${logoVisible}`);
-    if (!logoVisible) {
-        missingElements.push('logo.png');
+    console.log(`Castillo icon 是否存在: ${logoVisible}`);
+    if (logoVisible) {
+        const logoSize = await logo.evaluate(element => {
+            return {
+                width: element.offsetWidth,
+                height: element.offsetHeight
+            };
+        });
+        console.log(`Castillo icon大小: ${logoSize.width}x${logoSize.height}`);
+        const expectedWidth = 20;
+        const expectedHeight = 20;
+        if (logoSize.width !== expectedWidth || logoSize.height !== expectedHeight) {
+            missingElements.push(`icon 大小不符 (期望: ${expectedWidth}x${expectedHeight}, 实际: ${logoSize.width}x${logoSize.height})`);
+        }
+    } else {
+        missingElements.push('icon');
     }
 
-    //檢查並點擊“关於 Betone”按鈕
-    const aboutButton = await page.locator('span:has-text("About Betone")').first();
+    // 找到第12个 .menu-item框架
+    const menuItem = await page.locator('.menu-item').nth(10);
+    const menuItemVisible = await menuItem.isVisible();
+    console.log(`第11个 .menu-item 是否存在: ${menuItemVisible}`);
+    if (!menuItemVisible) {
+        throw new Error('第11个 .menu-item 不存在');
+    }
+
+    // 在找到的 .menu-item 中查找 main-label 的文本内容
+    const mainLabel = menuItem.locator('.main-label');
+    const mainLabelText = await mainLabel.textContent();
+    console.log(`第11个 .menu-item 下的 main-label 文本内容: ${mainLabelText}`);
+
+    if (mainLabelText.trim() !== "About Castillo") {
+        missingElements.push('About Castillo 文本不匹配');
+    }
+
+    // 检查并点击“Acerca de Castillo”按钮
+    const aboutButton = mainLabel.locator('div:has-text("About Castillo")');
     const aboutButtonVisible = await aboutButton.isVisible();
-    console.log(`About Betone 按鈕是否存在: ${aboutButtonVisible}`);
+    console.log(`About Castillo 按钮是否存在: ${aboutButtonVisible}`);
     if (!aboutButtonVisible) {
-        missingElements.push('About Betone');
+        missingElements.push('About Castillo 按钮');
     } else {
         await aboutButton.click();
     }
 
-    // 檢查彈窗中的所有文案和圖片大小
+    // 检查弹窗中的所有文案和图片大小
     await page.waitForSelector('.about-container', { state: 'visible' });
 
     const textsToCheck = [
-        'Responsible Gambling',
-        'Betone is committed to loyal and trustworthy gambling guarantees. Our company complies with applicable regulations and guidelines from remote gaming authorities and strives to be a socially responsible remote gaming operator. Remote gambling is a legal entertainment experience for millions of players around the world. For most players, remote gambling is an enjoyable experience. However, we also accept the reality that a small number of players who indulge in remote gambling may be under the legal age or suffer from gambling-related impairments. Problems with their lives or financial situation. Being a socially responsible company means paying attention to our players, and it means taking a proactive approach to issues that may have an impact on society. That\'s why Betone has adopted and is fully committed to enforcing the strictest procedures and restrictions below.',
-        'Execution policy',
-        'Access restrictions for minors',
-        'Betone requires new customers to declare that they are of legal age in their jurisdiction and are at least 18 years old. When we suspect that a customer may have made a false declaration or that a minor may be trying to use our services, we will use reasonable methods for further verification.',
-        'Betone will not allow anyone under the age of 18 to use our services. This policy fully complies with and meets the rules and regulations of the remote gaming authority that regulates and licenses our operations, First Cagayan Leisure and Resort Corporation (FCRLC) for the Cagayan Economic Zone Authority (CEZA), of Santa Ana, Cagayan, Philippines;',
-        'We promise to do our best and need your help to do the following',
-        '1. Use child protection software to block remote gambling websites from computers that may be used by minors.',
-        '2. Do not leave your computer unattended when logging into a remote gaming website.',
-        '3. Do not share your credit card or bank account details with minors.',
-        '4. Do not enable the "Save Password" option on the login page of this website.',
-        '5. Create a separate login file for minors on the computer so that they cannot access your information when they log in.',
-        '6. If you know of anyone under the age of 18 (or under the legal age in their jurisdiction) who has mistakenly registered as a player with us, please notify us immediately.',
-        'Operation Qualification'
+        { text: 'Responsible Gambling', tag: 'div.about-heading' },
+        { text: 'Castillo is committed to loyal and trustworthy gambling guarantees. Our company complies with applicable regulations and guidelines from remote gaming authorities and strives to be a socially responsible remote gaming operator. Remote gambling is a legal entertainment experience for millions of players around the world. For most players, remote gambling is an enjoyable experience. However, we also accept the reality that a small number of players who indulge in remote gambling may be under the legal age or suffer from gambling-related impairments. Problems with their lives or financial situation. Being a socially responsible company means paying attention to our players, and it means taking a proactive approach to issues that may have an impact on society. That\'s why Castillo has adopted and is fully committed to enforcing the strictest procedures and restrictions below.', tag: 'div.about-desc' },
+        { text: 'Execution policy', tag: 'div.about-heading' },
+        { text: 'Access restrictions for minors', tag: 'div.about-desc' },
+        { text: 'Castillo requires new customers to declare that they are of legal age in their jurisdiction and are at least 18 years old. When we suspect that a customer may have made a false declaration or that a minor may be trying to use our services, we will use reasonable methods for further verification.', tag: 'div.about-desc' },
+        { text: 'Castillo will not allow anyone under the age of 18 to use our services. This policy fully complies with and meets the rules and regulations of the remote gaming authority that regulates and licenses our operations, First Cagayan Leisure and Resort Corporation (FCRLC) for the Cagayan Economic Zone Authority (CEZA), of Santa Ana, Cagayan, Philippines ;', tag: 'div.about-desc' },
+        { text: 'We promise to do our best and need your help to do the following', tag: 'div.about-heading' },
+        { text: '1. Use child protection software to block remote gambling websites from computers that may be used by minors.', tag: 'div.about-desc' },
+        { text: '2. Do not leave your computer unattended when logging into a remote gaming website.', tag: 'div.about-desc' },
+        { text: '3. Do not share your credit card or bank account details with minors.', tag: 'div.about-desc' },
+        { text: '4. Do not enable the "Save Password" option on the Real Sports login page.', tag: 'div.about-desc' },
+        { text: '5. Create a separate login file for minors on the computer so that they cannot access your information when they log in.', tag: 'div.about-desc' },
+        { text: '6. If you know of anyone under the age of 18 (or under the legal age in their jurisdiction) who has mistakenly registered as a player with us, please notify us immediately.', tag: 'div.about-desc' },
+        { text: 'Operation Qualification', tag: 'p.about-heading' },
+        { text: 'Responsible Gambling', tag: 'p.about-heading' }
     ];
+
     const normalizeText = (text) => {
         return text.replace(/[^\w\s]/gi, '').replace(/\s+/g, '');
     };
 
     for (const item of textsToCheck) {
-        const normalizedItem = normalizeText(item);
-        const textVisible = await page.locator('body').evaluate((body, text) => {
-            const regex = new RegExp(text, 'i');
-            return regex.test(body.innerText.replace(/[^\w\s]/gi, '').replace(/\s+/g, ''));
-        }, normalizedItem);
-        console.log(`文案 "${item}" 是否存在: ${textVisible}`);
-        if (!textVisible) missingElements.push(`文案 "${item}"`);
-    }
-
-    // 检查图片大小
-    const imagesToCheck = [
-        { selector: 'img[src="/res/images/about-footer-1.png"]', description: 'icon_1', expectedWidth: 391, expectedHeight: 50 },
-        { selector: 'img[src="/res/images/about-footer-2.png"]', description: 'icon_2', expectedWidth: 181, expectedHeight: 48 }
-    ];
-
-    for (const image of imagesToCheck) {
-        const imgSize = await page.evaluate(selector => {
-            const img = document.querySelector(selector);
-            return img ? { width: img.naturalWidth, height: img.naturalHeight } : null;
-        }, image.selector);
-
-        if (imgSize) {
-            console.log(`${image.description} 大小: ${imgSize.width}x${imgSize.height}`);
-            if ((imgSize.width !== image.expectedWidth && image.expectedWidth !== 'auto') || imgSize.height !== image.expectedHeight) {
-                missingElements.push(`${image.description} 大小不符 (期望: ${image.expectedWidth}x${image.expectedHeight}, 實際: ${imgSize.width}x${imgSize.height})`);
-            }
-        } else {
-            console.log(`${image.description} 未找到`);
-            missingElements.push(image.description);
+        let textVisible;
+        try {
+            const normalizedItem = normalizeText(item.text);
+            const locator = await page.locator(`${item.tag}`).evaluateAll((elements, text) => {
+                const regex = new RegExp(text, 'i');
+                return elements.some(element => regex.test(element.innerText.replace(/[^\w\s]/gi, '').replace(/\s+/g, '')));
+            }, normalizedItem);
+            textVisible = locator;
+            console.log(`Text "${item.text}" (${item.tag}) visible: ${textVisible}`);
+            if (!textVisible) missingElements.push(`Text "${item.text}" (${item.tag})`);
+        } catch (error) {
+            missingElements.push(`Error checking text "${item.text}": ${error.message}`);
         }
     }
 
-    // 打印所有检查结果后再判断是否有错误
+    // 檢查圖片大小
+    const imagesToCheck = [
+        { selector: 'img[src="/res/images/com-tk/about-footer-1.png"]', description: 'icon_1', expectedWidth: 391, expectedHeight: 50 },
+        { selector: 'img[src="/res/images/com-tk/about-footer-2.png"]', description: 'icon_2', expectedWidth: 181, expectedHeight: 48 }
+    ];
+
+    for (const image of imagesToCheck) {
+        try {
+            const imgSize = await page.evaluate(selector => {
+                const img = document.querySelector(selector);
+                return img ? { width: img.naturalWidth, height: img.naturalHeight } : null;
+            }, image.selector);
+
+            if (imgSize) {
+                console.log(`${image.description} size: ${imgSize.width}x${imgSize.height}`);
+                if ((imgSize.width !== image.expectedWidth && image.expectedWidth !== 'auto') || imgSize.height !== image.expectedHeight) {
+                    missingElements.push(`${image.description} size mismatch (expected: ${image.expectedWidth}x${image.expectedHeight}, actual: ${imgSize.width}x${imgSize.height})`);
+                }
+            } else {
+                console.log(`${image.description} not found`);
+                missingElements.push(image.description);
+            }
+        } catch (error) {
+            missingElements.push(`Error checking image "${image.description}": ${error.message}`);
+        }
+    }
+
+    // 打印所有檢查結果後再判斷是否有錯誤
     if (missingElements.length > 0) {
         console.log(`以下元素未找到或大小不符: ${missingElements.join(', ')}`);
         expect(missingElements.length, `以下元素未找到或大小不符: ${missingElements.join(', ')}`).toBe(0);
@@ -262,6 +300,10 @@ test('检查 About Castillo(EN)', async () => {
 
     await page.close();
 });
+
+
+
+
 
 
 

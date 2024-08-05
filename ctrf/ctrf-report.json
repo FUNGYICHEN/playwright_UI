@@ -10,24 +10,24 @@
       "pending": 0,
       "skipped": 0,
       "other": 0,
-      "start": 1722854482089,
-      "stop": 1722854502505,
+      "start": 1722857555305,
+      "stop": 1722857566329,
       "suites": 0
     },
     "tests": [
       {
-        "name": "首頁體育下注(注额15)",
+        "name": "检查 About Castillo(EN)",
         "status": "passed",
-        "duration": 18051,
-        "start": 1722854483,
-        "stop": 1722854501,
+        "duration": 9121,
+        "start": 1722857555,
+        "stop": 1722857565,
         "rawStatus": "passed",
         "tags": [],
         "type": "e2e",
-        "filePath": "C:\\Users\\luekc\\Desktop\\playwright_UI-master\\tests\\Q8\\Q8UItest.spec.js",
+        "filePath": "C:\\Users\\luekc\\Desktop\\playwright_UI-master\\tests\\TK\\TKUItest.spec.js",
         "retries": 0,
         "flaky": false,
-        "suite": "Q8\\Q8UItest.spec.js"
+        "suite": "TK\\TKUItest.spec.js"
       }
     ]
   }
