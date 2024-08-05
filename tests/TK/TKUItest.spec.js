@@ -62,15 +62,15 @@ test('檢查 Acerca de Castillo', async () => {
     // 找到第12个 .menu-item框架
     const menuItem = await page.locator('.menu-item').nth(10);
     const menuItemVisible = await menuItem.isVisible();
-    console.log(`第12个 .menu-item 是否存在: ${menuItemVisible}`);
+    console.log(`第11个 .menu-item 是否存在: ${menuItemVisible}`);
     if (!menuItemVisible) {
-        throw new Error('第12个 .menu-item 不存在');
+        throw new Error('第11个 .menu-item 不存在');
     }
 
     // 在找到的 .menu-item 中查找 main-label 的文本内容
     const mainLabel = menuItem.locator('.main-label');
     const mainLabelText = await mainLabel.textContent();
-    console.log(`第12个 .menu-item 下的 main-label 文本内容: ${mainLabelText}`);
+    console.log(`第11个 .menu-item 下的 main-label 文本内容: ${mainLabelText}`);
 
     if (mainLabelText.trim() !== "Acerca de Castillo") {
         missingElements.push('Acerca de Castillo 文本不匹配');

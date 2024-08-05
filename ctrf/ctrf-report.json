@@ -4,46 +4,30 @@
       "name": "playwright"
     },
     "summary": {
-      "tests": 2,
+      "tests": 1,
       "passed": 1,
-      "failed": 1,
+      "failed": 0,
       "pending": 0,
       "skipped": 0,
       "other": 0,
-      "start": 1722596601290,
-      "stop": 1722596696054,
+      "start": 1722854482089,
+      "stop": 1722854502505,
       "suites": 0
     },
     "tests": [
       {
-        "name": "檢查 Acerca de Castillo",
+        "name": "首頁體育下注(注额15)",
         "status": "passed",
-        "duration": 16882,
-        "start": 1722596602,
-        "stop": 1722596619,
+        "duration": 18051,
+        "start": 1722854483,
+        "stop": 1722854501,
         "rawStatus": "passed",
         "tags": [],
         "type": "e2e",
-        "filePath": "C:\\Users\\luekc\\Desktop\\playwright_UI-master\\tests\\TK\\TKUItest.spec.js",
+        "filePath": "C:\\Users\\luekc\\Desktop\\playwright_UI-master\\tests\\Q8\\Q8UItest.spec.js",
         "retries": 0,
         "flaky": false,
-        "suite": "TK\\TKUItest.spec.js"
-      },
-      {
-        "name": "检查 About Castillo(EN)",
-        "status": "failed",
-        "duration": 72853,
-        "start": 1722596622,
-        "stop": 1722596695,
-        "message": "Error: page.waitForSelector: Target page, context or browser has been closed\nCall log:\n  \u001b[2m- waiting for locator('.about-container') to be visible\u001b[22m\n",
-        "trace": "Error: page.waitForSelector: Target page, context or browser has been closed\nCall log:\n  \u001b[2m- waiting for locator('.about-container') to be visible\u001b[22m\n\n    at C:\\Users\\luekc\\Desktop\\playwright_UI-master\\tests\\TK\\TKUItest.spec.js:202:16",
-        "rawStatus": "failed",
-        "tags": [],
-        "type": "e2e",
-        "filePath": "C:\\Users\\luekc\\Desktop\\playwright_UI-master\\tests\\TK\\TKUItest.spec.js",
-        "retries": 0,
-        "flaky": false,
-        "suite": "TK\\TKUItest.spec.js"
+        "suite": "Q8\\Q8UItest.spec.js"
       }
     ]
   }
