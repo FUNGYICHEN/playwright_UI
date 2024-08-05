@@ -438,7 +438,7 @@ test('註冊正確流程檢查', async () => {
 
 
 
-test.only('首頁體育下注(注额15)', async () => {
+test('首頁體育下注(注额15)', async () => {
     const page = await globalThis.context.newPage();
 
     await page.goto('http://wap-q8-npf2.qit1.net/hall');
