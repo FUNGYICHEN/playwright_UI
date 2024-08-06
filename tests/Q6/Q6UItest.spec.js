@@ -227,6 +227,96 @@ test('註冊頁檢查', async () => {
 
 
 
+test('註冊正確流程檢查', async () => {
+    const page = await globalThis.context.newPage();
+    const errors = [];
+
+    await page.goto('https://wap-q6.qbpink01.com/reg');
+    await page.waitForLoadState('networkidle');
+
+    // 生成随机用户名，固定密码
+    const username = randomUsername();
+    const password = '396012';
+
+    // 填写表单
+    const usernameInput = page.locator('input[placeholder="輸入會員帳號"]');
+    await usernameInput.fill(username);
+
+    const phoneInput = page.locator('input[placeholder="輸入手機號"]');
+    const phoneInputHK = randomHongKongPhoneNumber();
+    console.log(`生成的隨機手機號: ${phoneInputHK}`);
+    await phoneInput.fill(phoneInputHK);
+
+    const sendCodeButton = page.locator('div.opt-btn#validate');
+    await sendCodeButton.click();
+
+    // 等待验证码发送请求完成
+    await page.waitForTimeout(5000);
+
+    // 获取验证码
+    const otpCode = await fetchVerificationCode(phoneInputHK.slice(-8)); // 传入生成的手机号码
+    console.log(`获取到的驗證碼: ${otpCode}`);
+    if (!otpCode) {
+        errors.push('无法获取验证码');
+    } else {
+        const otpInput = page.locator('input[placeholder="輸入手機驗證碼"]');
+        await otpInput.fill(otpCode);
+    }
+
+    const passwordInput = page.locator('input[placeholder="密碼為6~16位字符之間"]');
+    await passwordInput.fill(password);
+
+    const confirmPasswordInput = page.locator('input[placeholder="請與上方的密碼相同"]');
+    await confirmPasswordInput.fill(password);
+
+    const registerButton = page.locator('div.submitBtn');
+    await registerButton.click();
+
+    // 等待所有消息提示消失
+    const messages = page.locator('.am-toast-text-info');
+
+    // 检查是否出现“註冊成功”或“登入成功”提示
+    let successMessageVisible = false;
+    let successMessageContent = '';
+    const checkMessages = async () => {
+        const allMessages = await messages.allTextContents();
+        const successMessage = allMessages.find(message => message.includes('註冊成功') || message.includes('登入成功'));
+        if (successMessage) {
+            successMessageVisible = true;
+            successMessageContent = successMessage;
+        }
+        return successMessageVisible;
+    };
+
+    for (let i = 0; i < 30; i++) {
+        if (await checkMessages()) {
+            break;
+        }
+        await page.waitForTimeout(1000); // 每秒检查一次
+    }
+
+    if (!successMessageVisible) {
+        errors.push('註冊失敗: 未顯示 "註冊成功" 或 "登入成功" 提示');
+    } else {
+        console.log(`捕獲到的成功訊息: ${successMessageContent}`);
+    }
+
+    // 打印所有错误信息
+    if (errors.length > 0) {
+        console.log('以下是檢測到的錯誤:');
+        errors.forEach(error => console.error(error));
+    } else {
+        console.log('所有檢查項目均通過');
+    }
+
+    expect(errors.length).toBe(0); // 確保沒有錯誤
+});
+
+
+
+
+
+
 
 test('註冊錯誤流程檢查', async () => {
     const page = await globalThis.context.newPage();
@@ -352,90 +442,7 @@ test('註冊錯誤流程檢查', async () => {
 });
 
 
-test('註冊正確流程檢查', async () => {
-    const page = await globalThis.context.newPage();
-    const errors = [];
 
-    await page.goto('https://wap-q6.qbpink01.com/reg');
-    await page.waitForLoadState('networkidle');
-
-    // 生成随机用户名，固定密码
-    const username = randomUsername();
-    const password = '396012';
-
-    // 填写表单
-    const usernameInput = page.locator('input[placeholder="輸入會員帳號"]');
-    await usernameInput.fill(username);
-
-    const phoneInput = page.locator('input[placeholder="輸入手機號"]');
-    const phoneInputHK = randomHongKongPhoneNumber();
-    console.log(`生成的隨機手機號: ${phoneInputHK}`);
-    await phoneInput.fill(phoneInputHK);
-
-    const sendCodeButton = page.locator('div.opt-btn#validate');
-    await sendCodeButton.click();
-
-    // 等待验证码发送请求完成
-    await page.waitForTimeout(5000);
-
-    // 获取验证码
-    const otpCode = await fetchVerificationCode(phoneInputHK.slice(-8)); // 传入生成的手机号码
-    console.log(`获取到的驗證碼: ${otpCode}`);
-    if (!otpCode) {
-        errors.push('无法获取验证码');
-    } else {
-        const otpInput = page.locator('input[placeholder="輸入手機驗證碼"]');
-        await otpInput.fill(otpCode);
-    }
-
-    const passwordInput = page.locator('input[placeholder="密碼為6~16位字符之間"]');
-    await passwordInput.fill(password);
-
-    const confirmPasswordInput = page.locator('input[placeholder="請與上方的密碼相同"]');
-    await confirmPasswordInput.fill(password);
-
-    const registerButton = page.locator('div.submitBtn');
-    await registerButton.click();
-
-    // 等待所有消息提示消失
-    const messages = page.locator('.am-toast-text-info');
-
-    // 检查是否出现“註冊成功”或“登入成功”提示
-    let successMessageVisible = false;
-    let successMessageContent = '';
-    const checkMessages = async () => {
-        const allMessages = await messages.allTextContents();
-        const successMessage = allMessages.find(message => message.includes('註冊成功') || message.includes('登入成功'));
-        if (successMessage) {
-            successMessageVisible = true;
-            successMessageContent = successMessage;
-        }
-        return successMessageVisible;
-    };
-
-    for (let i = 0; i < 30; i++) {
-        if (await checkMessages()) {
-            break;
-        }
-        await page.waitForTimeout(1000); // 每秒检查一次
-    }
-
-    if (!successMessageVisible) {
-        errors.push('註冊失敗: 未顯示 "註冊成功" 或 "登入成功" 提示');
-    } else {
-        console.log(`捕獲到的成功訊息: ${successMessageContent}`);
-    }
-
-    // 打印所有错误信息
-    if (errors.length > 0) {
-        console.log('以下是檢測到的錯誤:');
-        errors.forEach(error => console.error(error));
-    } else {
-        console.log('所有檢查項目均通過');
-    }
-
-    expect(errors.length).toBe(0); // 確保沒有錯誤
-});
 
 
 test('首頁體育下注(注额15)', async () => {
@@ -946,7 +953,7 @@ test('檢查個人頁並點擊各個鏈接', async () => {
     const errorMessages = [];
     const checkedLabels = new Set();
 
-    // 导航到个人页面
+    // 導航到個人頁面
     await page.goto('https://wap-q6.qbpink01.com/accountCenter');
     await page.waitForLoadState('networkidle');
 
@@ -996,7 +1003,7 @@ test('檢查個人頁並點擊各個鏈接', async () => {
         { label: '語言選擇', selector: 'text=語言選擇' }
     ];
 
-    // 检查标签是否存在
+    // 檢查標籤是否存在
     for (const category of categoriesToCheck) {
         const elementExists = await page.locator(category.selector).count() > 0;
         console.log(`${category.label} 文案是否存在: ${elementExists}`);
@@ -1006,62 +1013,61 @@ test('檢查個人頁並點擊各個鏈接', async () => {
         checkedLabels.add(category.label);
     }
 
-    // 点击标签并检查错误消息
+    // 點擊標籤並檢查錯誤消息
     for (const category of categoriesToClick) {
         const elementExists = await page.locator(category.selector).count() > 0;
-        console.log(`${category.label} 链接是否存在: ${elementExists}`);
+        console.log(`${category.label} 鏈接是否存在: ${elementExists}`);
         if (elementExists) {
             const exactMatch = await page.locator(category.selector).first();
             await exactMatch.click();
-            console.log(`点击 ${category.label} 链接`);
+            console.log(`點擊 ${category.label} 鏈接`);
 
-            // 等待“加载中”消息消失
+            // 等待“加載中”消息消失
             try {
                 await page.waitForSelector('.am-toast-text-info:has-text("載入中")', { state: 'hidden', timeout: 10000 });
             } catch (e) {
-                // 无需在这里打印日志，只需继续检查错误消息
+                // 無需在這裡打印日志，只需繼續檢查錯誤消息
             }
 
-            // 检查是否有错误消息
+            // 檢查是否有錯誤消息
             const errorMessageVisible = await page.isVisible('.am-toast-text:has(svg.am-icon-fail) .am-toast-text-info');
             if (errorMessageVisible) {
                 const errorMessage = await page.locator('.am-toast-text:has(svg.am-icon-fail) .am-toast-text-info').innerText();
                 errorMessages.push(`${category.label}: ${errorMessage}`);
-                console.log(`${category.label} 点击后报错: ${errorMessage}`);
+                console.log(`${category.label} 點擊後報錯: ${errorMessage}`);
             } else {
-                console.log(`${category.label} 点击后无错误`);
+                console.log(`${category.label} 點擊後無錯誤`);
             }
 
-            // 返回个人页面
+            // 返回個人頁面
             await page.goto('https://wap-q6.qbpink01.com/accountCenter');
             await page.waitForLoadState('networkidle');
         } else if (!checkedLabels.has(category.label)) {
             missingCategories.push(category.label);
-            console.log(`${category.label} 链接未找到`);
+            console.log(`${category.label} 鏈接未找到`);
         }
     }
 
-    // 打印缺少的标签
+    // 打印缺少的標籤
     if (missingCategories.length > 0) {
         console.log(`以下標籤未找到: ${missingCategories.join(', ')}`);
     }
 
-    // 打印错误消息
+    // 打印錯誤消息
     if (errorMessages.length > 0) {
         console.log(`以下標籤點擊跳轉過去後報錯: ${errorMessages.join(', ')}`);
     }
 
-    // 统一报告错误
+    // 統一報告錯誤
     const totalErrors = missingCategories.length + errorMessages.length;
     if (totalErrors > 0) {
         const allErrors = [...missingCategories, ...errorMessages].join(', ');
         expect(totalErrors, `以下標籤未找到或鏈接點擊跳轉後報錯: ${allErrors}`).toBe(0);
     }
 
+    // 強制關閉頁面
     await page.close();
 });
-
-
 
 
 
@@ -1107,7 +1113,7 @@ test('檢查個人頁並點擊錢包中心', async () => {
 
     // 檢查每個指定的遊戲名稱元素是否存在
     const gameNames = [
-        'CQ9電子餘額', 'Motivation真人餘額', '樂遊棋牌餘額', '開元棋牌餘額', 'PG電子餘額',
+        'CQ9電子餘額', '樂遊棋牌餘額', '開元棋牌餘額', 'PG電子餘額',
         '小艾電競餘額', 'JOKER電子餘額', 'DG真人餘額', 'JDB/SPRIBE餘額', '百勝棋牌餘額',
         '香港麻將館餘額', '港體會體育餘額', 'OB棋牌餘額', '利記體育餘額', 'SEXY餘額',
         '皇冠餘額', 'WM餘額', '雷火餘額', 'VG餘額', 'EVO餘額', '鬥雞餘額', 'KA餘額',

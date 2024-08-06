@@ -37,14 +37,14 @@ async function loginToBackend() {
 
     let token = null;
     let loginResponse = null;
-    const maxRetries = 25; // 最大重试次数
+    const maxRetries = 30; // 最大重试次数
 
     try {
         await page.goto('https://oms-q8-npf2.qit1.net/login');
 
         // 填写用户名和密码
         await page.fill('input[name="username"]', 'qdb8372');
-        await page.fill('input[name="password"]', '396012');
+        await page.fill('input[name="password"]', 'q813592');
 
         // 监听网络请求
         page.on('response', async response => {

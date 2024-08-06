@@ -22,6 +22,97 @@ test.beforeEach(async () => {
 });
 
 
+
+test('註冊正確流程檢查', async () => {
+    const page = await globalThis.context.newPage();
+    const errors = [];
+
+    await page.goto('https://wap-q0.qbpink01.com/reg');
+    await page.waitForLoadState('networkidle');
+
+    // 生成随机用户名，固定密码
+    const username = randomUsername();
+    const password = '396012';
+
+    // 填写表单
+    const usernameInput = page.locator('input[placeholder="請輸入帳號"]');
+    await usernameInput.fill(username);
+
+    const phoneInput = page.locator('input[placeholder="請輸入手機號"]');
+    const phoneInputHK = randomHongKongPhoneNumber();
+    console.log(`生成的隨機手機號: ${phoneInputHK}`);
+    await phoneInput.fill(phoneInputHK);
+
+    const sendCodeButton = page.locator('div.opt-btn#validate');
+    await sendCodeButton.click();
+
+    // 等待验证码发送请求完成
+    await page.waitForTimeout(5000);
+
+    // 获取验证码
+    const otpCode = await fetchVerificationCode(phoneInputHK.slice(-8)); // 传入生成的手机号码
+    console.log(`獲取到的簡訊驗證碼: ${otpCode}`);
+    if (!otpCode) {
+        errors.push('無法獲取驗證碼');
+    } else {
+        const otpInput = page.locator('input[placeholder="請輸入手機驗證碼"]');
+        await otpInput.fill(otpCode);
+    }
+
+    const passwordInput = page.locator('input[placeholder="請輸入登入密碼"]');
+    await passwordInput.fill(password);
+
+
+    const registerButton = page.locator('div.submitBtn');
+    await registerButton.click();
+
+    // 等待所有消息提示消失
+    const messages = page.locator('.am-toast-text-info');
+
+    // 检查是否出现“註冊成功”或“登入成功”提示
+    let successMessageVisible = false;
+    let successMessageContent = '';
+    const checkMessages = async () => {
+        const allMessages = await messages.allTextContents();
+        const successMessage = allMessages.find(message => message.includes('註冊成功') || message.includes('登入成功'));
+        if (successMessage) {
+            successMessageVisible = true;
+            successMessageContent = successMessage;
+        }
+        return successMessageVisible;
+    };
+
+    for (let i = 0; i < 30; i++) {
+        if (await checkMessages()) {
+            break;
+        }
+        await page.waitForTimeout(1000); // 每秒检查一次
+    }
+
+    if (!successMessageVisible) {
+        errors.push('註冊失敗: 未顯示 "註冊成功" 或 "登入成功" 提示');
+    } else {
+        console.log(`捕獲到的成功訊息: ${successMessageContent}`);
+    }
+
+    // 打印所有错误信息
+    if (errors.length > 0) {
+        console.log('以下是檢測到的錯誤:');
+        errors.forEach(error => console.error(error));
+    } else {
+        console.log('所有檢查項目均通過');
+    }
+
+    expect(errors.length).toBe(0); // 確保沒有錯誤
+});
+
+
+
+
+
+
+
+
 test('註冊錯誤流程檢查', async () => {
     const page = await globalThis.context.newPage();
     const errors = [];
@@ -155,89 +246,6 @@ test('註冊錯誤流程檢查', async () => {
 });
 
 
-
-test('註冊正確流程檢查', async () => {
-    const page = await globalThis.context.newPage();
-    const errors = [];
-
-    await page.goto('https://wap-q0.qbpink01.com/reg');
-    await page.waitForLoadState('networkidle');
-
-    // 生成随机用户名，固定密码
-    const username = randomUsername();
-    const password = '396012';
-
-    // 填写表单
-    const usernameInput = page.locator('input[placeholder="請輸入帳號"]');
-    await usernameInput.fill(username);
-
-    const phoneInput = page.locator('input[placeholder="請輸入手機號"]');
-    const phoneInputHK = randomHongKongPhoneNumber();
-    console.log(`生成的隨機手機號: ${phoneInputHK}`);
-    await phoneInput.fill(phoneInputHK);
-
-    const sendCodeButton = page.locator('div.opt-btn#validate');
-    await sendCodeButton.click();
-
-    // 等待验证码发送请求完成
-    await page.waitForTimeout(5000);
-
-    // 获取验证码
-    const otpCode = await fetchVerificationCode(phoneInputHK.slice(-8)); // 传入生成的手机号码
-    console.log(`獲取到的簡訊驗證碼: ${otpCode}`);
-    if (!otpCode) {
-        errors.push('無法獲取驗證碼');
-    } else {
-        const otpInput = page.locator('input[placeholder="請輸入手機驗證碼"]');
-        await otpInput.fill(otpCode);
-    }
-
-    const passwordInput = page.locator('input[placeholder="請輸入登入密碼"]');
-    await passwordInput.fill(password);
-
-
-    const registerButton = page.locator('div.submitBtn');
-    await registerButton.click();
-
-    // 等待所有消息提示消失
-    const messages = page.locator('.am-toast-text-info');
-
-    // 检查是否出现“註冊成功”或“登入成功”提示
-    let successMessageVisible = false;
-    let successMessageContent = '';
-    const checkMessages = async () => {
-        const allMessages = await messages.allTextContents();
-        const successMessage = allMessages.find(message => message.includes('註冊成功') || message.includes('登入成功'));
-        if (successMessage) {
-            successMessageVisible = true;
-            successMessageContent = successMessage;
-        }
-        return successMessageVisible;
-    };
-
-    for (let i = 0; i < 30; i++) {
-        if (await checkMessages()) {
-            break;
-        }
-        await page.waitForTimeout(1000); // 每秒检查一次
-    }
-
-    if (!successMessageVisible) {
-        errors.push('註冊失敗: 未顯示 "註冊成功" 或 "登入成功" 提示');
-    } else {
-        console.log(`捕獲到的成功訊息: ${successMessageContent}`);
-    }
-
-    // 打印所有错误信息
-    if (errors.length > 0) {
-        console.log('以下是檢測到的錯誤:');
-        errors.forEach(error => console.error(error));
-    } else {
-        console.log('所有檢查項目均通過');
-    }
-
-    expect(errors.length).toBe(0); // 確保沒有錯誤
-});
 
 
 
