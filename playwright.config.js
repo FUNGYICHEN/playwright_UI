@@ -13,9 +13,6 @@ const config = {
     ['list']
   ],
   use: {
-    baseURL: 'http://localhost:3000',
-    browserName: 'chromium',
-    ...devices['iPhone 11'],
     headless: false,
     screenshot: 'on',
     trace: 'on',

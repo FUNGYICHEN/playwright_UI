@@ -307,101 +307,97 @@ test('检查 About Castillo(EN)', async () => {
 
 
 
+test.describe('遊戲場館測試', () => {
+    test('rich88', async () => {
+        // 设置测试超时
+        test.setTimeout(9000000);
 
+        const page = await globalThis.context.newPage();
 
+        // 设置 localStorage 语言为越南语
+        await page.addInitScript(() => {
+            localStorage.setItem('locale', 'mx');
+        });
 
+        await page.goto('https://wap.mcmcgo.com/hall');
+        await page.waitForLoadState('networkidle');
 
-// test.describe('遊戲場館測試', () => {
-//     test('rich88', async () => {
-//         // 设置测试超时
-//         test.setTimeout(9000000);
+        // 检查并关闭弹窗
+        let closeButtonVisible = true;
+        while (closeButtonVisible) {
+            const closeButton = page.locator('svg path[fill="#999"]').first();
+            closeButtonVisible = await closeButton.isVisible();
+            if (closeButtonVisible) {
+                await closeButton.click();
+                console.log('關閉广告');
+                await page.waitForTimeout(1000);
+            }
+        }
 
-//         const page = await globalThis.context.newPage();
+        // 切换到 Slot 类别
+        const slotCategory = page.locator('.label:has-text("Slot")');
+        await slotCategory.click();
+        console.log('已切换到 Slot 類別');
 
-//         // 设置 localStorage 语言为越南语
-//         await page.addInitScript(() => {
-//             localStorage.setItem('locale', 'mx');
-//         });
+        await page.waitForLoadState('networkidle');
 
-//         await page.goto('https://wap.mcmcgo.com/hall');
-//         await page.waitForLoadState('networkidle');
+        // 点击游戏场馆按钮
+        const gameVenueButton = page.locator('.enter-game-button.bk-rich.mx');
+        await gameVenueButton.click();
+        console.log('已點擊遊戲場館按钮');
 
-//         // 检查并关闭弹窗
-//         let closeButtonVisible = true;
-//         while (closeButtonVisible) {
-//             const closeButton = page.locator('svg path[fill="#999"]').first();
-//             closeButtonVisible = await closeButton.isVisible();
-//             if (closeButtonVisible) {
-//                 await closeButton.click();
-//                 console.log('關必广告');
-//                 await page.waitForTimeout(1000);
-//             }
-//         }
+        await page.waitForLoadState('networkidle');
 
-//         // 切换到 Slot 类别
-//         const slotCategory = page.locator('.label:has-text("Slot")');
-//         await slotCategory.click();
-//         console.log('已切换到 Slot 類別');
+        const errors = [];
 
-//         await page.waitForLoadState('networkidle');
+        // 封装游戏点击和 API 检查的函数
+        async function checkGameItem(index) {
+            try {
+                // 定位并点击游戏项目
+                const gameItem = page.locator('.game_item').nth(index);
+                await gameItem.click();
+                console.log(`已点击第 ${index + 1} 个游戏项目`);
 
-//         // 点击游戏场馆按钮
-//         const gameVenueButton = page.locator('.enter-game-button.bk-rich.mx');
-//         await gameVenueButton.click();
-//         console.log('已點擊遊戲場館按钮');
+                // 等待并拦截 API 请求
+                try {
+                    const response = await page.waitForResponse(response => response.url().includes('https://betacenter.ark8899.com/v1/player/game/login/'), { timeout: 12000 });
+                    const statusCode = response.status();
+                    console.log(`第 ${index + 1} 個遊戲項目 API 狀態碼: ${statusCode}`);
+                    if (statusCode !== 200) {
+                        errors.push(`第 ${index + 1} 遊戲項目的 API 狀態碼: ${statusCode}`);
+                    }
+                } catch (error) {
+                    console.log(`第 ${index + 1} 個遊戲項目 API 無返回狀態碼`);
+                    errors.push(`第 ${index + 1} 個遊戲項目 API 無返回狀態碼`);
+                }
 
-//         await page.waitForLoadState('networkidle');
+                // 返回上一页
+                try {
+                    await page.goBack();
+                    await page.waitForTimeout(5000); // 等待 5 秒再点击下一款游戏
+                } catch (error) {
+                    console.log(`第 ${index + 1} 个游戏项目返回上一页失败`);
+                    errors.push(`第 ${index + 1} 个游戏项目返回上一页失败`);
+                }
+            } catch (error) {
+                console.log(`第 ${index + 1} 个游戏项目处理失败`);
+                errors.push(`第 ${index + 1} 个游戏项目处理失败`);
+            }
+        }
 
-//         const errors = [];
+        // 检查108个游戏项目
+        for (let i = 0; i < 98; i++) {
+            await checkGameItem(i);
+        }
 
-//         // 封装游戏点击和 API 检查的函数
-//         async function checkGameItem(index) {
-//             try {
-//                 // 定位并点击游戏项目
-//                 const gameItem = page.locator('.game_item').nth(index);
-//                 await gameItem.click();
-//                 console.log(`已点击第 ${index + 1} 个游戏项目`);
+        // 打印所有错误
+        if (errors.length > 0) {
+            console.error('以下是檢測到的錯誤:');
+            errors.forEach(error => console.error(error));
+        }
 
-//                 // 等待并拦截 API 请求
-//                 try {
-//                     const response = await page.waitForResponse(response => response.url().includes('https://betacenter.ark8899.com/v1/player/game/login/'), { timeout: 12000 });
-//                     const statusCode = response.status();
-//                     console.log(`第 ${index + 1} 個遊戲項目 API 狀態碼: ${statusCode}`);
-//                     if (statusCode !== 200) {
-//                         errors.push(`第 ${index + 1} 遊戲項目的 API 狀態碼: ${statusCode}`);
-//                     }
-//                 } catch (error) {
-//                     console.log(`第 ${index + 1} 個遊戲項目 API 無返回狀態碼`);
-//                     errors.push(`第 ${index + 1} 個遊戲項目 API 無返回狀態碼`);
-//                 }
+        expect(errors.length).toBe(0); // 确保没有错误
 
-//                 // 返回上一页
-//                 try {
-//                     await page.goBack();
-//                     await page.waitForTimeout(5000); // 等待 5 秒再点击下一款游戏
-//                 } catch (error) {
-//                     console.log(`第 ${index + 1} 个游戏项目返回上一页失败`);
-//                     errors.push(`第 ${index + 1} 个游戏项目返回上一页失败`);
-//                 }
-//             } catch (error) {
-//                 console.log(`第 ${index + 1} 个游戏项目处理失败`);
-//                 errors.push(`第 ${index + 1} 个游戏项目处理失败`);
-//             }
-//         }
-
-//         // 检查108个游戏项目
-//         for (let i = 0; i < 108; i++) {
-//             await checkGameItem(i);
-//         }
-
-//         // 打印所有错误
-//         if (errors.length > 0) {
-//             console.error('以下是檢測到的錯誤:');
-//             errors.forEach(error => console.error(error));
-//         }
-
-//         expect(errors.length).toBe(0); // 确保没有错误
-
-//         await page.close();
-//     });
-// });
+        await page.close();
+    });
+});
