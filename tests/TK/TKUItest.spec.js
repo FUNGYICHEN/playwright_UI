@@ -165,7 +165,7 @@ test('檢查 Acerca de Castillo', async () => {
 
 
 
-test.only('检查 About Castillo(EN)', async () => {
+test('检查 About Castillo(EN)', async () => {
     const page = await globalThis.context.newPage();
 
     await page.addInitScript(() => {
