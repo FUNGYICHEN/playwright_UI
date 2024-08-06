@@ -5,31 +5,29 @@
     },
     "summary": {
       "tests": 1,
-      "passed": 0,
-      "failed": 1,
+      "passed": 1,
+      "failed": 0,
       "pending": 0,
       "skipped": 0,
       "other": 0,
-      "start": 1722934236217,
-      "stop": 1722934325284,
+      "start": 1722937536411,
+      "stop": 1722937613665,
       "suites": 0
     },
     "tests": [
       {
-        "name": "rich88",
-        "status": "failed",
-        "duration": 84022,
-        "start": 1722934238,
-        "stop": 1722934322,
-        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m109\u001b[39m",
-        "trace": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m109\u001b[39m\n    at C:\\Users\\luekc\\Desktop\\playwright_UI-master\\tests\\VN\\VNUItest.spec.js:451:31",
-        "rawStatus": "failed",
+        "name": "Q0首頁檢查",
+        "status": "passed",
+        "duration": 25280,
+        "start": 1722937545,
+        "stop": 1722937570,
+        "rawStatus": "passed",
         "tags": [],
         "type": "e2e",
-        "filePath": "C:\\Users\\luekc\\Desktop\\playwright_UI-master\\tests\\VN\\VNUItest.spec.js",
+        "filePath": "C:\\Users\\luekc\\Desktop\\playwright_UI-master\\tests\\Q0\\Q0UItest.spec.js",
         "retries": 0,
         "flaky": false,
-        "suite": "VN\\VNUItest.spec.js > 遊戲場館測試"
+        "suite": "Q0\\Q0UItest.spec.js > Q0 WAP 測試"
       }
     ]
   }
