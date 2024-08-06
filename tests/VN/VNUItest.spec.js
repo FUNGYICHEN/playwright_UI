@@ -367,7 +367,7 @@ test.describe('遊戲場館測試', () => {
         });
     });
 
-    test.only('rich88', async () => {
+    test('rich88', async () => {
         // 设置测试超时
         test.setTimeout(9000000);
 
