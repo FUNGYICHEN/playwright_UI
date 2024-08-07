@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "powershell -Command \"npx playwright test --grep @WAP --reporter=playwright-ctrf-json-reporter,html; node convertToLineProtocol.js\"",
+    "test": "powershell -Command \"npx playwright test --grep '@WAP' --reporter=playwright-ctrf-json-reporter,html; node convertToLineProtocol.js\"",
     "test_1": "powershell -Command \"npx playwright test --reporter=playwright-ctrf-json-reporter; node convertToLineProtocol.js\"",
     "test22": "powershell -Command \"npx playwright test --reporter=playwright-ctrf-json-reporter,html; if ($?) { node convertToLineProtocol.js }\""
   },
