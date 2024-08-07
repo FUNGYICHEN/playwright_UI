@@ -516,7 +516,7 @@ test.describe('Q0 WAP 測試', () => {
 
 
 
-    test.only('Q0首頁檢查', async () => {
+    test('Q0首頁檢查', async () => {
         const page = await globalThis.context.newPage();
         // 打開目標頁面
         await page.goto('https://wap-q0.qbpink01.com/');
