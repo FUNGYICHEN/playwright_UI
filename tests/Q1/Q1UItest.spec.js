@@ -1,7 +1,7 @@
 const { test, expect, devices } = require('@playwright/test');
 const { userRecordKey, userRecordValue } = require('./Q1constants'); // 確保路徑正確
 
-test.describe('WAP 測試', () => {
+test.describe('@WAP Q1 測試', () => {
 
     test.beforeAll(async ({ browser }) => {
         const context = await browser.newContext({

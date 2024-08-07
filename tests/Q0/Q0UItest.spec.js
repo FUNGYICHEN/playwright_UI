@@ -3,7 +3,7 @@ const { userRecordKey, userRecordValue } = require('./Q0constants');
 const { randomHongKongPhoneNumber, randomUsername } = require('./phoneNumbers');
 const { fetchVerificationCode } = require('./Q0phonecode'); // 引入验证码获取函数
 
-test.describe('Q0 WAP 測試', () => {
+test.describe('@WAP Q0 測試', () => {
     test.beforeAll(async ({ browser }) => {
         globalThis.context = await browser.newContext({
             ...devices['iPhone 11'],
@@ -108,11 +108,6 @@ test.describe('Q0 WAP 測試', () => {
 
         expect(errors.length).toBe(0); // 確保沒有錯誤
     });
-
-
-
-
-
 
 
 

@@ -1,26 +1,30 @@
-const { test, expect } = require('@playwright/test');
+const { test, expect, devices } = require('@playwright/test');
 const { userRecordKey, userRecordValue } = require('./Q2constants');
 // const { randomHongKongPhoneNumber, randomUsername } = require('./phoneNumbers');
 // const { fetchVerificationCode } = require('./Q6phonecode'); // 引入验证码获取函数
 
-test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    globalThis.context = context;
+test.describe('@WAP Q2 測試', () => {
+
+    test.beforeAll(async ({ browser }) => {
+        const context = await browser.newContext({
+            ...devices['iPhone 11']
+        });
+        globalThis.context = context;
+    });
+
+    test.beforeEach(async () => {
+        const page = await globalThis.context.newPage();
+
+        await page.addInitScript(({ key, value }) => {
+            localStorage.setItem(key, value);
+        }, { key: userRecordKey, value: userRecordValue });
+
+        await page.goto('https://wap-q2.qbpink01.com');
+        await page.waitForLoadState('networkidle');
+
+        await page.close();
+    });
 });
-
-test.beforeEach(async () => {
-    const page = await globalThis.context.newPage();
-
-    await page.addInitScript(({ key, value }) => {
-        localStorage.setItem(key, value);
-    }, { key: userRecordKey, value: userRecordValue });
-
-    await page.goto('https://wap-q2.qbpink01.com');
-    await page.waitForLoadState('networkidle');
-
-    await page.close();
-});
-
 
 
 
