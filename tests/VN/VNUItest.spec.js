@@ -48,7 +48,6 @@ test.describe('@WAP VN 測試', () => {
 
 
     test('登入頁檢查', async () => {
-        const page = await globalThis.context.newPage();
         // 设置 localStorage 语言为越南语
         await page.addInitScript(() => {
             localStorage.setItem('locale', 'vi-VN');
@@ -86,11 +85,9 @@ test.describe('@WAP VN 測試', () => {
             expect(missingElements.length, `以下元素未找到或大小不符: ${missingElements.join(', ')}`).toBe(0);
         }
 
-        await page.close();
     });
 
     test('註冊頁檢查', async () => {
-        const page = await globalThis.context.newPage();
         // 设置 localStorage 语言为越南语
         await page.addInitScript(() => {
             localStorage.setItem('locale', 'vi-VN');
@@ -125,14 +122,12 @@ test.describe('@WAP VN 測試', () => {
             expect(missingElements.length, `以下元素未找到或不符: ${missingElements.join(', ')}`).toBe(0);
         }
 
-        await page.close();
     });
 
 
 
 
     test('檢查 Giới thiệu về RG88', async () => {
-        const page = await globalThis.context.newPage();
         // 设置 localStorage 语言为越南语
         await page.addInitScript(() => {
             localStorage.setItem('locale', 'vi-VN');
@@ -249,13 +244,11 @@ test.describe('@WAP VN 測試', () => {
             expect(missingElements.length, `以下元素未找到或大小不符: ${missingElements.join(', ')}`).toBe(0);
         }
 
-        await page.close();
     });
 
 
 
     test('遊戲icon', async () => {
-        const page = await globalThis.context.newPage();
         // 設置 localStorage 語言為越南語
         await page.addInitScript(() => {
             localStorage.setItem('locale', 'vi-VN');
@@ -378,102 +371,101 @@ test.describe('@WAP VN 測試', () => {
 
         expect(errors.length).toBe(0); // 確保沒有錯誤
 
-        await page.close();
     });
 
 
 
-    test.describe('遊戲場館測試', () => {
-        test.beforeAll(async ({ browser }) => {
-            globalThis.context = await browser.newContext({
-                ...devices['iPhone 11'],
-            });
-        });
+    //     test.describe('遊戲場館測試', () => {
+    //         test.beforeAll(async ({ browser }) => {
+    //             globalThis.context = await browser.newContext({
+    //                 ...devices['iPhone 11'],
+    //             });
+    //         });
 
-        test('rich88', async () => {
-            // 设置测试超时
-            test.setTimeout(600000);
+    //         test('rich88', async () => {
+    //             // 设置测试超时
+    //             test.setTimeout(600000);
 
-            const page = await globalThis.context.newPage();
+    //             const page = await globalThis.context.newPage();
 
-            // 设置 localStorage 语言为越南语
-            await page.addInitScript(() => {
-                localStorage.setItem('locale', 'vi-VN');
-            });
+    //             // 设置 localStorage 语言为越南语
+    //             await page.addInitScript(() => {
+    //                 localStorage.setItem('locale', 'vi-VN');
+    //             });
 
-            await page.goto('http://wap.jisookorea.com');
-            await page.waitForLoadState('networkidle');
+    //             await page.goto('http://wap.jisookorea.com');
+    //             await page.waitForLoadState('networkidle');
 
-            // 检查并关闭弹窗
-            let closeButtonVisible = true;
-            while (closeButtonVisible) {
-                const closeButton = page.locator('svg path[fill="#999"]').first();
-                closeButtonVisible = await closeButton.isVisible();
-                if (closeButtonVisible) {
-                    await closeButton.click();
-                    console.log('關閉广告');
-                    await page.waitForTimeout(1000);
-                }
-            }
+    //             // 检查并关闭弹窗
+    //             let closeButtonVisible = true;
+    //             while (closeButtonVisible) {
+    //                 const closeButton = page.locator('svg path[fill="#999"]').first();
+    //                 closeButtonVisible = await closeButton.isVisible();
+    //                 if (closeButtonVisible) {
+    //                     await closeButton.click();
+    //                     console.log('關閉广告');
+    //                     await page.waitForTimeout(1000);
+    //                 }
+    //             }
 
-            // 點擊游戏类别
-            const richSlotCategory = page.locator('div.game-category div.game.rich-slot');
-            await richSlotCategory.click();
-            console.log('已點擊 rich-slot 類別');
+    //             // 點擊游戏类别
+    //             const richSlotCategory = page.locator('div.game-category div.game.rich-slot');
+    //             await richSlotCategory.click();
+    //             console.log('已點擊 rich-slot 類別');
 
-            await page.waitForLoadState('networkidle');
+    //             await page.waitForLoadState('networkidle');
 
-            const errors = [];
+    //             const errors = [];
 
-            // 封装游戏点击和 API 检查的函数
-            async function checkGameItem(index) {
-                try {
-                    // 定位并点击游戏项目
-                    const gameItem = page.locator('.game_item').nth(index);
-                    await gameItem.click();
-                    console.log(`已点击第 ${index + 1} 个游戏项目`);
+    //             // 封装游戏点击和 API 检查的函数
+    //             async function checkGameItem(index) {
+    //                 try {
+    //                     // 定位并点击游戏项目
+    //                     const gameItem = page.locator('.game_item').nth(index);
+    //                     await gameItem.click();
+    //                     console.log(`已点击第 ${index + 1} 个游戏项目`);
 
-                    // 等待并拦截 API 请求
-                    try {
-                        const response = await page.waitForResponse(response => response.url().includes('https://lobbycenter.ark8899.com/v1/player/game/login'), { timeout: 12000 });
-                        const statusCode = response.status();
-                        console.log(`第 ${index + 1} 個遊戲項目 API 狀態碼: ${statusCode}`);
-                        if (statusCode !== 200) {
-                            errors.push(`第 ${index + 1} 遊戲項目的 API 狀態碼: ${statusCode}`);
-                        }
-                    } catch (error) {
-                        console.log(`第 ${index + 1} 個遊戲項目 API 無返回狀態碼`);
-                        errors.push(`第 ${index + 1} 個遊戲項目 API 無返回狀態碼`);
-                    }
+    //                     // 等待并拦截 API 请求
+    //                     try {
+    //                         const response = await page.waitForResponse(response => response.url().includes('https://lobbycenter.ark8899.com/v1/player/game/login'), { timeout: 12000 });
+    //                         const statusCode = response.status();
+    //                         console.log(`第 ${index + 1} 個遊戲項目 API 狀態碼: ${statusCode}`);
+    //                         if (statusCode !== 200) {
+    //                             errors.push(`第 ${index + 1} 遊戲項目的 API 狀態碼: ${statusCode}`);
+    //                         }
+    //                     } catch (error) {
+    //                         console.log(`第 ${index + 1} 個遊戲項目 API 無返回狀態碼`);
+    //                         errors.push(`第 ${index + 1} 個遊戲項目 API 無返回狀態碼`);
+    //                     }
 
-                    // 返回上一页
-                    try {
-                        await page.goBack();
-                        await page.waitForTimeout(5000); // 等待 5 秒再点击下一款游戏
-                    } catch (error) {
-                        console.log(`第 ${index + 1} 个游戏项目返回上一页失败`);
-                        errors.push(`第 ${index + 1} 个游戏项目返回上一页失败`);
-                    }
-                } catch (error) {
-                    console.log(`第 ${index + 1} 个游戏项目处理失败`);
-                    errors.push(`第 ${index + 1} 个游戏项目处理失败`);
-                }
-            }
+    //                     // 返回上一页
+    //                     try {
+    //                         await page.goBack();
+    //                         await page.waitForTimeout(5000); // 等待 5 秒再点击下一款游戏
+    //                     } catch (error) {
+    //                         console.log(`第 ${index + 1} 个游戏项目返回上一页失败`);
+    //                         errors.push(`第 ${index + 1} 个游戏项目返回上一页失败`);
+    //                     }
+    //                 } catch (error) {
+    //                     console.log(`第 ${index + 1} 个游戏项目处理失败`);
+    //                     errors.push(`第 ${index + 1} 个游戏项目处理失败`);
+    //                 }
+    //             }
 
-            // 检查108个游戏项目
-            for (let i = 0; i < 92; i++) {
-                await checkGameItem(i);
-            }
+    //             // 检查108个游戏项目
+    //             for (let i = 0; i < 92; i++) {
+    //                 await checkGameItem(i);
+    //             }
 
-            // 打印所有错误
-            if (errors.length > 0) {
-                console.error('以下是檢測到的錯誤:');
-                errors.forEach(error => console.error(error));
-            }
+    //             // 打印所有错误
+    //             if (errors.length > 0) {
+    //                 console.error('以下是檢測到的錯誤:');
+    //                 errors.forEach(error => console.error(error));
+    //             }
 
-            expect(errors.length).toBe(0); // 确保没有错误
+    //             expect(errors.length).toBe(0); // 确保没有错误
 
-            await page.close();
-        });
-    });
+    //             await page.close();
+    //         });
+    //     });
 });

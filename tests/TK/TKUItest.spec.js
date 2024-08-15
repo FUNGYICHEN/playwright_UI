@@ -48,7 +48,6 @@ test.describe('@WAP TK 測試', () => {
 
 
     test('檢查 Acerca de Castillo', async () => {
-        const page = await globalThis.context.newPage();
         // 设置 localStorage 语言为越南语
         await page.addInitScript(() => {
             localStorage.setItem('locale', 'mx');
@@ -179,7 +178,6 @@ test.describe('@WAP TK 測試', () => {
             expect(missingElements.length, `以下元素未找到或大小不符: ${missingElements.join(', ')}`).toBe(0);
         }
 
-        await page.close();
     });
 
 
@@ -190,8 +188,6 @@ test.describe('@WAP TK 測試', () => {
 
 
     test('检查 About Castillo(EN)', async () => {
-        const page = await globalThis.context.newPage();
-
         await page.addInitScript(() => {
             localStorage.setItem('locale', 'en');
         });
@@ -322,7 +318,6 @@ test.describe('@WAP TK 測試', () => {
             expect(missingElements.length, `以下元素未找到或大小不符: ${missingElements.join(', ')}`).toBe(0);
         }
 
-        await page.close();
     });
 
 

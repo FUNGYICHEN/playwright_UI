@@ -2006,7 +2006,7 @@ test.describe('@WAP Q8 測試', () => {
 
 
 
-    test.only('檢查個人頁icon圖片(EN)', async () => {
+    test('檢查個人頁icon圖片(EN)', async () => {
         // 设置 localStorage 语言为英文
         await page.addInitScript(() => {
             localStorage.setItem('locale', 'en');

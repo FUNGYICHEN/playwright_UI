@@ -49,7 +49,6 @@ test.describe('@WAP SG 測試', () => {
 
 
     test('檢查 关於 Betone', async () => {
-        const page = await globalThis.context.newPage();
         // 设置 localStorage 语言为中文
         await page.addInitScript(() => {
             localStorage.setItem('locale', 'zh-CN');
@@ -141,7 +140,7 @@ test.describe('@WAP SG 測試', () => {
             expect(missingElements.length, `以下元素未找到或大小不符: ${missingElements.join(', ')}`).toBe(0);
         }
 
-        await page.close();
+
     });
 
 
@@ -149,7 +148,6 @@ test.describe('@WAP SG 測試', () => {
 
 
     test('檢查 About Betone(EN)', async () => {
-        const page = await globalThis.context.newPage();
         // 设置 localStorage 语言为英文
         await page.addInitScript(() => {
             localStorage.setItem('locale', 'en');
@@ -241,14 +239,12 @@ test.describe('@WAP SG 測試', () => {
             expect(missingElements.length, `以下元素未找到或大小不符: ${missingElements.join(', ')}`).toBe(0);
         }
 
-        await page.close();
     });
 
 
 
 
     test('檢查 Mengenai Bet One(MY)', async () => {
-        const page = await globalThis.context.newPage();
         // 设置 localStorage 语言为英文
         await page.addInitScript(() => {
             localStorage.setItem('locale', 'my');
@@ -340,6 +336,5 @@ test.describe('@WAP SG 測試', () => {
             expect(missingElements.length, `以下元素未找到或大小不符: ${missingElements.join(', ')}`).toBe(0);
         }
 
-        await page.close();
     });
 });
