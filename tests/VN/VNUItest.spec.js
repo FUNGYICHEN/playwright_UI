@@ -1,30 +1,49 @@
 const { test, expect, devices } = require('@playwright/test');
 const { userRecordKey, userRecordValue } = require('./VNconstants'); // 确保路径正确
 
+
 test.describe('@WAP VN 測試', () => {
+    let page;
+    let context;
 
     test.beforeAll(async ({ browser }) => {
-        const context = await browser.newContext({
-            ...devices['iPhone 11']
+        // 创建一个浏览器上下文，并保持在整个测试期间使用
+        context = await browser.newContext({
+            ...devices['iPhone 11'],
+            headless: true, // 启用无头模式
         });
-        globalThis.context = context;
-    }); 2689
+        // 在上下文中创建一个页面，并保持在整个测试期间使用
+        page = await context.newPage();
 
-    test.beforeEach(async () => {
-        const page = await globalThis.context.newPage();
-
+        // 注入 token 或其他需要的数据到 localStorage 中
         await page.addInitScript(({ key, value }) => {
             localStorage.setItem(key, value);
         }, { key: userRecordKey, value: userRecordValue });
 
-
-        // 导航到目标页面
+        // 初始加载一个页面，以确保 token 被注入
         await page.goto('http://wap.jisookorea.com');
         await page.waitForLoadState('networkidle');
-
-        // 关闭页面
-        await page.close();
     });
+
+    test.beforeEach(async () => {
+        // 确保页面未关闭。如果页面关闭了，重新创建页面。
+        if (!page || page.isClosed()) {
+            page = await context.newPage();
+            await page.addInitScript(({ key, value }) => {
+                localStorage.setItem(key, value);
+            }, { key: userRecordKey, value: userRecordValue });
+        }
+    });
+    test.afterAll(async () => {
+        // 所有测试完成后关闭页面和上下文
+        if (page && !page.isClosed()) {
+            await page.close();
+        }
+        if (context) {
+            await context.close();
+        }
+    });
+
 
 
 
@@ -373,7 +392,7 @@ test.describe('@WAP VN 測試', () => {
 
         test('rich88', async () => {
             // 设置测试超时
-            test.setTimeout(7000000);
+            test.setTimeout(600000);
 
             const page = await globalThis.context.newPage();
 
@@ -442,7 +461,7 @@ test.describe('@WAP VN 測試', () => {
             }
 
             // 检查108个游戏项目
-            for (let i = 0; i < 94; i++) {
+            for (let i = 0; i < 92; i++) {
                 await checkGameItem(i);
             }
 

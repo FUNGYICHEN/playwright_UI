@@ -4,30 +4,49 @@ const { userRecordKey, userRecordValue } = require('./JCconstants');
 // const { fetchVerificationCode } = require('./JCphonecode'); // 引入验证码获取函数
 
 test.describe('@WAP JC 測試', () => {
+    let page;
+    let context;
 
     test.beforeAll(async ({ browser }) => {
-        const context = await browser.newContext({
-            ...devices['iPhone 11']
+        // 创建一个浏览器上下文，并保持在整个测试期间使用
+        context = await browser.newContext({
+            ...devices['iPhone 11'],
+            headless: true, // 启用无头模式
         });
-        globalThis.context = context;
-    });
+        // 在上下文中创建一个页面，并保持在整个测试期间使用
+        page = await context.newPage();
 
-    test.beforeEach(async () => {
-        const page = await globalThis.context.newPage();
-
+        // 注入 token 或其他需要的数据到 localStorage 中
         await page.addInitScript(({ key, value }) => {
             localStorage.setItem(key, value);
         }, { key: userRecordKey, value: userRecordValue });
 
+        // 初始加载一个页面，以确保 token 被注入
         await page.goto('http://wapv2.jc-uat.qit1.net');
         await page.waitForLoadState('networkidle');
-
-        await page.close();
     });
 
+    test.beforeEach(async () => {
+        // 确保页面未关闭。如果页面关闭了，重新创建页面。
+        if (!page || page.isClosed()) {
+            page = await context.newPage();
+            await page.addInitScript(({ key, value }) => {
+                localStorage.setItem(key, value);
+            }, { key: userRecordKey, value: userRecordValue });
+        }
+    });
+
+    test.afterAll(async () => {
+        // 所有测试完成后关闭页面和上下文
+        if (page && !page.isClosed()) {
+            await page.close();
+        }
+        if (context) {
+            await context.close();
+        }
+    });
 
     test('登入頁檢查', async () => {
-        const page = await globalThis.context.newPage();
 
         await page.goto('http://wapv2.jc-uat.qit1.net/login');
         await page.waitForLoadState('networkidle');
@@ -99,14 +118,14 @@ test.describe('@WAP JC 測試', () => {
             expect(missingElements.length, `以下元素未找到或大小不符: ${missingElements.join(', ')}`).toBe(0);
         }
 
-        await page.close();
+
     });
 
 
 
 
     test('首頁檢查', async () => {
-        const page = await globalThis.context.newPage();
+
         try {
             await page.goto('http://wapv2.jc-uat.qit1.net/hall');
             await page.waitForLoadState('networkidle');
@@ -210,7 +229,7 @@ test.describe('@WAP JC 測試', () => {
             console.error('發生錯誤:', error);
             throw error;
         } finally {
-            await page.close();
+
         }
     });
 
@@ -219,10 +238,8 @@ test.describe('@WAP JC 測試', () => {
 
 
     test('首頁跑馬燈與排行榜檢查', async () => {
-        const page = await globalThis.context.newPage();
         try {
             await page.goto('http://wapv2.jc-uat.qit1.net/hall');
-            console.log('成功導航到首頁');
             await page.waitForLoadState('networkidle');
 
             const missingElements = [];
@@ -357,7 +374,7 @@ test.describe('@WAP JC 測試', () => {
             console.error('發生錯誤:', error.message);
             throw error;
         } finally {
-            await page.close();
+
         }
     });
 
@@ -365,7 +382,6 @@ test.describe('@WAP JC 測試', () => {
 
 
     test('場館icon檢查', async () => {
-        const page = await globalThis.context.newPage();
         try {
             await page.goto('http://wapv2.jc-uat.qit1.net/hall');
             console.log('成功導航到首頁');
@@ -436,7 +452,6 @@ test.describe('@WAP JC 測試', () => {
             console.error('發生錯誤:', error.message);
             throw error;
         } finally {
-            await page.close();
         }
     });
 
@@ -444,10 +459,8 @@ test.describe('@WAP JC 測試', () => {
 
 
     test('真人遊戲商圖片檢查', async () => {
-        const page = await globalThis.context.newPage();
         try {
             await page.goto('http://wapv2.jc-uat.qit1.net/hall');
-            console.log('成功導航到首頁');
             await page.waitForLoadState('networkidle');
 
             const missingElements = [];
@@ -514,7 +527,7 @@ test.describe('@WAP JC 測試', () => {
             console.error('發生錯誤:', error.message);
             throw error;
         } finally {
-            await page.close();
+
         }
     });
 });

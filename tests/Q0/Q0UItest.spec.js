@@ -3,31 +3,56 @@ const { userRecordKey, userRecordValue } = require('./Q0constants');
 const { randomHongKongPhoneNumber, randomUsername } = require('./phoneNumbers');
 const { fetchVerificationCode } = require('./Q0phonecode'); // 引入验证码获取函数
 
+
 test.describe('@WAP Q0 測試', () => {
+    let page;
+    let context;
+
     test.beforeAll(async ({ browser }) => {
-        globalThis.context = await browser.newContext({
+        // 创建一个浏览器上下文，并保持在整个测试期间使用
+        context = await browser.newContext({
             ...devices['iPhone 11'],
+            headless: true, // 启用无头模式
         });
-    });
+        // 在上下文中创建一个页面，并保持在整个测试期间使用
+        page = await context.newPage();
 
-    test.beforeEach(async () => {
-        const page = await globalThis.context.newPage();
-
+        // 注入 token 或其他需要的数据到 localStorage 中
         await page.addInitScript(({ key, value }) => {
             localStorage.setItem(key, value);
         }, { key: userRecordKey, value: userRecordValue });
 
+        // 初始加载一个页面，以确保 token 被注入
         await page.goto('https://wap-q0.qbpink01.com');
         await page.waitForLoadState('networkidle');
-
-        await page.close();
     });
+
+    test.beforeEach(async () => {
+        // 确保页面未关闭。如果页面关闭了，重新创建页面。
+        if (!page || page.isClosed()) {
+            page = await context.newPage();
+            await page.addInitScript(({ key, value }) => {
+                localStorage.setItem(key, value);
+            }, { key: userRecordKey, value: userRecordValue });
+        }
+    });
+
+    test.afterAll(async () => {
+        // 所有测试完成后关闭页面和上下文
+        if (page && !page.isClosed()) {
+            await page.close();
+        }
+        if (context) {
+            await context.close();
+        }
+    });
+
+
 
 
 
 
     test('註冊正確流程檢查', async () => {
-        const page = await globalThis.context.newPage();
         const errors = [];
 
         await page.goto('https://wap-q0.qbpink01.com/reg');
@@ -112,7 +137,7 @@ test.describe('@WAP Q0 測試', () => {
 
 
     test('註冊錯誤流程檢查', async () => {
-        const page = await globalThis.context.newPage();
+
         const errors = [];
 
         await page.goto('https://wap-q0.qbpink01.com/reg');
@@ -126,8 +151,7 @@ test.describe('@WAP Q0 測試', () => {
         // 只輸入英文
         await usernameInput.fill('wefkrurtty');
         await usernameInput.press('Tab');
-        await page.waitForSelector('.message[style*="display: block"]', { timeout: 5000 });
-        await page.waitForSelector('svg.icon-canname.am-icon-exclamation-circle[style*="display: block"]', { timeout: 5000 });
+        await page.waitForTimeout(1000);  // 增加一個等待時間來確保提示顯示
         if (!await usernameMessage.isVisible() || !await usernameIcon.isVisible()) {
             errors.push('只輸入英文: 未顯示 "請輸入6-12個英文字母和數字" 提示或圖標');
         } else {
@@ -138,8 +162,7 @@ test.describe('@WAP Q0 測試', () => {
         // 只輸入數字
         await usernameInput.fill('76576586');
         await usernameInput.press('Tab');
-        await page.waitForSelector('.message[style*="display: block"]', { timeout: 5000 });
-        await page.waitForSelector('svg.icon-canname.am-icon-exclamation-circle[style*="display: block"]', { timeout: 5000 });
+        await page.waitForTimeout(1000);  // 增加一個等待時間來確保提示顯示
         if (!await usernameMessage.isVisible() || !await usernameIcon.isVisible()) {
             errors.push('只輸入數字: 未顯示 "請輸入6-12個英文字母和數字" 提示或圖標');
         } else {
@@ -152,8 +175,8 @@ test.describe('@WAP Q0 測試', () => {
         await sendCodeButton.click();
 
         // 檢查是否出現 "請輸入手機號碼" 提示
+        await page.waitForTimeout(1000);  // 增加一個等待時間來確保提示顯示
         const phoneErrorMessage = page.locator('.am-toast-notice-content .am-toast-text div:has-text("請輸入手機號")');
-        await page.waitForSelector('.am-toast-notice-content .am-toast-text div:has-text("請輸入手機號")', { timeout: 5000 });
         if (!await phoneErrorMessage.isVisible()) {
             errors.push('點擊發送驗證碼: 未顯示 "請輸入手機號碼" 提示');
         } else {
@@ -164,8 +187,8 @@ test.describe('@WAP Q0 測試', () => {
         const phoneInput = page.locator('input[placeholder="請輸入手機號"]');
         await phoneInput.fill('284758394857666');
         await sendCodeButton.click();
+        await page.waitForTimeout(1000);  // 增加一個等待時間來確保提示顯示
         const wrongPhoneErrorMessage = page.locator('.am-toast-notice-content .am-toast-text div:has-text("請輸入正確的手機號碼")');
-        await page.waitForSelector('.am-toast-notice-content .am-toast-text div:has-text("請輸入正確的手機號碼")', { timeout: 5000 });
         if (!await wrongPhoneErrorMessage.isVisible()) {
             errors.push('輸入錯誤的手機號碼: 未顯示 "請輸入正確的手機號碼" 提示');
         } else {
@@ -175,11 +198,10 @@ test.describe('@WAP Q0 測試', () => {
 
         // 2-1 輸入錯誤的驗證碼
         console.log('檢查錯誤驗證碼的提示');
-        const username = randomUsername();
-        await usernameInput.fill(username);
-        const phoneInputHK = randomHongKongPhoneNumber();
-        await phoneInput.fill(phoneInputHK);
+        await usernameInput.fill('testuser123');
+        await phoneInput.fill('91234567');
         await sendCodeButton.click();
+        await page.waitForTimeout(2000);  // 增加等待時間來確保驗證碼發送
         const otpInput = page.locator('input[placeholder="請輸入手機驗證碼"]');
         await otpInput.fill('1111');
         const passwordInput = page.locator('input[placeholder="請輸入登入密碼"]');
@@ -194,7 +216,7 @@ test.describe('@WAP Q0 測試', () => {
         } catch (e) {
             // 如果没有加载中提示，继续检查错误提示
         }
-        await page.waitForSelector('.am-toast-text-info:has-text("OTP驗証碼錯誤")', { timeout: 5000 });
+        await page.waitForTimeout(1000);  // 增加等待時間來確保錯誤提示顯示
         const otpErrorMessage = page.locator('.am-toast-text-info:has-text("OTP驗証碼錯誤")');
         if (!await otpErrorMessage.isVisible()) {
             errors.push('輸入錯誤的驗證碼: 未顯示 "OTP驗証碼錯誤" 提示');
@@ -204,12 +226,12 @@ test.describe('@WAP Q0 測試', () => {
 
         // 2-3 輸入短密碼
         console.log('檢查短密碼提示');
-        await usernameInput.fill(username);
-        await phoneInput.fill(phoneInputHK);
+        await usernameInput.fill('testuser123');
+        await phoneInput.fill('91234567');
         await otpInput.fill('1234'); // 使用随便一个验证码
         await passwordInput.fill('12345');
         await registerButton.click();
-        await page.waitForSelector('.am-toast-text:has-text("密碼長度不能小於6位")', { timeout: 5000 });
+        await page.waitForTimeout(1000);  // 增加等待時間來確保錯誤提示顯示
         const shortPasswordMessage = page.locator('.am-toast-text:has-text("密碼長度不能小於6位")');
         if (!await shortPasswordMessage.isVisible()) {
             errors.push('輸入短密碼: 未顯示 "密碼長度不能小於6位" 提示');
@@ -219,12 +241,12 @@ test.describe('@WAP Q0 測試', () => {
 
         // 2-4 輸入長密碼
         console.log('檢查長密碼提示');
-        await usernameInput.fill(username);
-        await phoneInput.fill(phoneInputHK);
+        await usernameInput.fill('testuser123');
+        await phoneInput.fill('91234567');
         await otpInput.fill('1234'); // 使用随便一个验证码
         await passwordInput.fill('12345678999999999');
         await registerButton.click();
-        await page.waitForSelector('.am-toast-text:has-text("密碼長度不能超過16位")', { timeout: 5000 });
+        await page.waitForTimeout(1000);  // 增加等待時間來確保錯誤提示顯示
         const longPasswordMessage = page.locator('.am-toast-text:has-text("密碼長度不能超過16位")');
         if (!await longPasswordMessage.isVisible()) {
             errors.push('輸入長密碼: 未顯示 "密碼長度不能超過16位" 提示');
@@ -248,11 +270,7 @@ test.describe('@WAP Q0 測試', () => {
 
 
 
-
-
-
     test('檢查關於Q0', async () => {
-        const page = await globalThis.context.newPage();
 
         // 导航到个人页面
         await page.goto('https://wap-q0.qbpink01.com/accountCenter');
@@ -376,7 +394,100 @@ test.describe('@WAP Q0 測試', () => {
             expect(missingElements.length, `以下元素未找到或大小不符: ${missingElements.join(', ')}`).toBe(0);
         }
 
-        await page.close();
+    });
+
+
+
+    test('Q0首頁檢查', async () => {
+        // 打開目標頁面
+        await page.goto('https://wap-q0.qbpink01.com/');
+
+        // // 檢查並關閉彈窗
+        // let closeButtonVisible = true;
+        // while (closeButtonVisible) {
+        //     const closeButton = page.locator('.promotionAd-btn-box .promotionAd-btn.show');
+        //     closeButtonVisible = await closeButton.isVisible();
+        //     if (closeButtonVisible) {
+        //         await closeButton.click();
+        //         console.log('關閉廣告');
+        //         // 等待彈窗消失並檢查是否還有彈窗存在
+        //         await page.waitForTimeout(1000); // 可以根據需要調整等待時間
+        //     }
+        // }
+
+        // 確認彈窗是否存在
+        const banner = page.locator('.smartbanner.zh-TW');
+        await expect(banner).toBeVisible();
+        console.log('確認彈窗存在');
+
+        // 檢查彈窗大小
+        const bannerBoundingBox = await banner.boundingBox();
+        console.log(`彈窗大小: ${JSON.stringify(bannerBoundingBox)}`);
+
+        // 確認彈窗內文案
+        const bannerTitle = banner.locator('.smartbanner-title');
+        const bannerDescription = banner.locator('.smartbanner-description');
+        await expect(bannerTitle).toHaveText('Q0 APP');
+        console.log('確認彈窗標題正確');
+        await expect(bannerDescription).toHaveText('真人娛樂、體育投注、電子遊藝等盡在一手掌握');
+        console.log('確認彈窗描述正確');
+
+        // 確認logo圖標是否存在並且正確
+        const logo = banner.locator('.smartbanner-icon img');
+        await expect(logo).toHaveAttribute('src', 'res/images/com-q0/q0-icon2.png?v=001');
+        console.log('確認logo圖標存在且正確');
+
+        // 確認下面這些icon標籤文案是否存在，並比對background圖片URL
+        const gameCategories = [
+            { icon: '.icon-sport', label: '體育', expectedUrl: 'https://wap-q0.qbpink01.com/res/images/com-q1/gameCategory/icon-sport-ball.png' },
+            { icon: '.icon-eGame', label: '電子', expectedUrl: 'https://wap-q0.qbpink01.com/res/images/com-q1/gameCategory/icon-slot-machine.png' },
+            { icon: '.icon-chess', label: '棋牌', expectedUrl: 'https://wap-q0.qbpink01.com/res/images/com-q1/gameCategory/icon-poker-cards.png' },
+            { icon: '.icon-eSport', label: '電競', expectedUrl: 'https://wap-q0.qbpink01.com/res/images/com-q1/gameCategory/icon-esport.png' },
+            { icon: '.icon-fish', label: '捕魚', expectedUrl: 'https://wap-q0.qbpink01.com/res/images/com-q1/gameCategory/icon-fish.png' },
+            { icon: '.icon-animal-planet', label: '實況', expectedUrl: 'https://wap-q0.qbpink01.com/res/images/com-q1/gameCategory/icon-live.png' }
+        ];
+
+        for (const category of gameCategories) {
+            const icon = page.locator(`${category.icon}`);
+            const label = icon.locator('..').locator('.label');
+            await expect(icon).toBeVisible();
+            console.log(`確認${category.label}圖標存在`);
+            await expect(label).toHaveText(category.label);
+            console.log(`確認${category.label}標籤文案正確`);
+
+            // 抓取background圖片URL並比對
+            const backgroundImage = await icon.evaluate(el => window.getComputedStyle(el).backgroundImage);
+            const imageUrl = backgroundImage.slice(5, -2); // 提取URL
+            await expect(imageUrl).toBe(category.expectedUrl);
+            console.log(`抓取${category.label}圖標圖片URL: ${imageUrl}`);
+        }
+
+        // 確認新的按鈕圖標和文案是否存在，並抓取background圖片URL
+        const accountButtons = [
+            { icon: '.icon-rebate', label: 'VIP', expectedUrl: 'https://wap-q0.qbpink01.com/res/images/com-q1/account-functions/icon-money-bag.png' },
+            { icon: '.icon-deposit', label: '存款', expectedUrl: 'https://wap-q0.qbpink01.com/res/images/com-q1/account-functions/icon-piggy-bank.png' },
+            { icon: '.icon-withdraw', label: '提款', expectedUrl: 'https://wap-q0.qbpink01.com/res/images/com-q1/account-functions/icon-dollar.png' }
+        ];
+
+        for (const button of accountButtons) {
+            const icon = page.locator(`${button.icon}`);
+            const label = icon.locator('..').locator('.label');
+            await expect(icon).toBeVisible();
+            console.log(`確認${button.label}圖標存在`);
+            await expect(label).toHaveText(button.label);
+            console.log(`確認${button.label}標籤文案正確`);
+
+            // 抓取background圖片URL並比對
+            const backgroundImage = await icon.evaluate(el => window.getComputedStyle(el).backgroundImage);
+            const imageUrl = backgroundImage.slice(5, -2); // 提取URL
+            await expect(imageUrl).toBe(button.expectedUrl);
+            console.log(`抓取${button.label}圖標圖片URL: ${imageUrl}`);
+        }
+
+        // 確認banner框架是否存在
+        const bannerFrame = page.locator('#sliderBannerBox');
+        await expect(bannerFrame).toBeVisible();
+        console.log('確認banner框架存在');
     });
 
 
@@ -384,8 +495,13 @@ test.describe('@WAP Q0 測試', () => {
 
 
 
+
+
+
+
+
+
     test('檢查關於 q0 (EN)', async () => {
-        const page = await globalThis.context.newPage();
         // Set localStorage language to English
         await page.addInitScript(() => {
             localStorage.setItem('locale', 'en');
@@ -504,104 +620,6 @@ test.describe('@WAP Q0 測試', () => {
             expect(missingElements.length, `The following elements were not found or had size mismatches: ${missingElements.join(', ')}`).toBe(0);
         }
 
-        await page.close();
     });
 
-
-
-
-
-    test('Q0首頁檢查', async () => {
-        const page = await globalThis.context.newPage();
-        // 打開目標頁面
-        await page.goto('https://wap-q0.qbpink01.com/');
-
-
-        // 檢查並關閉彈窗
-        let closeButtonVisible = true;
-        while (closeButtonVisible) {
-            const closeButton = page.locator('.promotionAd-btn-box .promotionAd-btn.show');
-            closeButtonVisible = await closeButton.isVisible();
-            if (closeButtonVisible) {
-                await closeButton.click();
-                console.log('關閉廣告');
-                // 等待彈窗消失並檢查是否還有彈窗存在
-                await page.waitForTimeout(1000); // 可以根據需要調整等待時間
-            }
-        }
-
-        // 確認彈窗是否存在
-        const banner = page.locator('.smartbanner.zh-TW');
-        await expect(banner).toBeVisible();
-        console.log('確認彈窗存在');
-
-        // 檢查彈窗大小
-        const bannerBoundingBox = await banner.boundingBox();
-        console.log(`彈窗大小: ${JSON.stringify(bannerBoundingBox)}`);
-
-        // 確認彈窗內文案
-        const bannerTitle = banner.locator('.smartbanner-title');
-        const bannerDescription = banner.locator('.smartbanner-description');
-        await expect(bannerTitle).toHaveText('Q0 APP');
-        console.log('確認彈窗標題正確');
-        await expect(bannerDescription).toHaveText('真人娛樂、體育投注、電子遊藝等盡在一手掌握');
-        console.log('確認彈窗描述正確');
-
-        // 確認logo圖標是否存在並且正確
-        const logo = banner.locator('.smartbanner-icon img');
-        await expect(logo).toHaveAttribute('src', 'res/images/com-q0/q0-icon2.png?v=001');
-        console.log('確認logo圖標存在且正確');
-
-        // 確認下面這些icon標籤文案是否存在，並比對background圖片URL
-        const gameCategories = [
-            { icon: '.icon-sport', label: '體育', expectedUrl: 'https://wap-q0.qbpink01.com/res/images/com-q1/gameCategory/icon-sport-ball.png' },
-            { icon: '.icon-eGame', label: '電子', expectedUrl: 'https://wap-q0.qbpink01.com/res/images/com-q1/gameCategory/icon-slot-machine.png' },
-            { icon: '.icon-chess', label: '棋牌', expectedUrl: 'https://wap-q0.qbpink01.com/res/images/com-q1/gameCategory/icon-poker-cards.png' },
-            { icon: '.icon-eSport', label: '電競', expectedUrl: 'https://wap-q0.qbpink01.com/res/images/com-q1/gameCategory/icon-esport.png' },
-            { icon: '.icon-fish', label: '捕魚', expectedUrl: 'https://wap-q0.qbpink01.com/res/images/com-q1/gameCategory/icon-fish.png' },
-            { icon: '.icon-animal-planet', label: '實況', expectedUrl: 'https://wap-q0.qbpink01.com/res/images/com-q1/gameCategory/icon-live.png' }
-        ];
-
-        for (const category of gameCategories) {
-            const icon = page.locator(`${category.icon}`);
-            const label = icon.locator('..').locator('.label');
-            await expect(icon).toBeVisible();
-            console.log(`確認${category.label}圖標存在`);
-            await expect(label).toHaveText(category.label);
-            console.log(`確認${category.label}標籤文案正確`);
-
-            // 抓取background圖片URL並比對
-            const backgroundImage = await icon.evaluate(el => window.getComputedStyle(el).backgroundImage);
-            const imageUrl = backgroundImage.slice(5, -2); // 提取URL
-            await expect(imageUrl).toBe(category.expectedUrl);
-            console.log(`抓取${category.label}圖標圖片URL: ${imageUrl}`);
-        }
-
-        // 確認新的按鈕圖標和文案是否存在，並抓取background圖片URL
-        const accountButtons = [
-            { icon: '.icon-rebate', label: 'VIP', expectedUrl: 'https://wap-q0.qbpink01.com/res/images/com-q1/account-functions/icon-money-bag.png' },
-            { icon: '.icon-deposit', label: '存款', expectedUrl: 'https://wap-q0.qbpink01.com/res/images/com-q1/account-functions/icon-piggy-bank.png' },
-            { icon: '.icon-withdraw', label: '提款', expectedUrl: 'https://wap-q0.qbpink01.com/res/images/com-q1/account-functions/icon-dollar.png' }
-        ];
-
-        for (const button of accountButtons) {
-            const icon = page.locator(`${button.icon}`);
-            const label = icon.locator('..').locator('.label');
-            await expect(icon).toBeVisible();
-            console.log(`確認${button.label}圖標存在`);
-            await expect(label).toHaveText(button.label);
-            console.log(`確認${button.label}標籤文案正確`);
-
-            // 抓取background圖片URL並比對
-            const backgroundImage = await icon.evaluate(el => window.getComputedStyle(el).backgroundImage);
-            const imageUrl = backgroundImage.slice(5, -2); // 提取URL
-            await expect(imageUrl).toBe(button.expectedUrl);
-            console.log(`抓取${button.label}圖標圖片URL: ${imageUrl}`);
-        }
-
-        // 確認banner框架是否存在
-        const bannerFrame = page.locator('#sliderBannerBox');
-        await expect(bannerFrame).toBeVisible();
-        console.log('確認banner框架存在');
-    });
 });

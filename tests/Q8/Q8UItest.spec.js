@@ -3,33 +3,54 @@ const { userRecordKey, userRecordValue } = require('./Q8constants');
 const { randomHongKongPhoneNumber, randomUsername } = require('./phoneNumbers');
 const { fetchVerificationCode } = require('./Q8phonecode');// 引入验证码获取函数 // 引入验证码获取函数
 
+
 test.describe('@WAP Q8 測試', () => {
+    let page;
+    let context;
 
     test.beforeAll(async ({ browser }) => {
-        const context = await browser.newContext({
-            ...devices['iPhone 11']
+        // 创建一个浏览器上下文，并保持在整个测试期间使用
+        context = await browser.newContext({
+            ...devices['iPhone 11'],
+            headless: true, // 启用无头模式
         });
-        globalThis.context = context;
-    });
+        // 在上下文中创建一个页面，并保持在整个测试期间使用
+        page = await context.newPage();
 
-    test.beforeEach(async () => {
-        const page = await globalThis.context.newPage();
-
+        // 注入 token 或其他需要的数据到 localStorage 中
         await page.addInitScript(({ key, value }) => {
             localStorage.setItem(key, value);
         }, { key: userRecordKey, value: userRecordValue });
 
+        // 初始加载一个页面，以确保 token 被注入
         await page.goto('http://wap-q8-npf2.qit1.net');
         await page.waitForLoadState('networkidle');
+    });
 
-        await page.close();
+    test.beforeEach(async () => {
+        // 确保页面未关闭。如果页面关闭了，重新创建页面。
+        if (!page || page.isClosed()) {
+            page = await context.newPage();
+            await page.addInitScript(({ key, value }) => {
+                localStorage.setItem(key, value);
+            }, { key: userRecordKey, value: userRecordValue });
+        }
+    });
+
+    test.afterAll(async () => {
+        // 所有测试完成后关闭页面和上下文
+        if (page && !page.isClosed()) {
+            await page.close();
+        }
+        if (context) {
+            await context.close();
+        }
     });
 
 
 
 
     test('登入頁檢查', async () => {
-        const page = await globalThis.context.newPage();
 
         await page.goto('http://wap-q8-npf2.qit1.net/login');
         await page.waitForLoadState('networkidle');
@@ -166,12 +187,10 @@ test.describe('@WAP Q8 測試', () => {
             expect(missingElements.length, `以下元素未找到或大小不符: ${missingElements.join(', ')}`).toBe(0);
         }
 
-        await page.close();
+
     });
 
     test('註冊頁檢查', async () => {
-        const page = await globalThis.context.newPage();
-
         await page.goto('http://wap-q8-npf2.qit1.net/reg');
         await page.waitForLoadState('networkidle');
 
@@ -224,13 +243,11 @@ test.describe('@WAP Q8 測試', () => {
             expect(missingElements.length, `以下元素未找到或文本不符: ${missingElements.join(', ')}`).toBe(0);
         }
 
-        await page.close();
     });
 
 
 
     test('註冊正確流程檢查', async () => {
-        const page = await globalThis.context.newPage();
         const errors = [];
 
         await page.goto('http://wap-q8-npf2.qit1.net/reg');
@@ -316,7 +333,6 @@ test.describe('@WAP Q8 測試', () => {
 
 
     test('註冊錯誤流程檢查', async () => {
-        const page = await globalThis.context.newPage();
         const errors = [];
 
         await page.goto('http://wap-q8-npf2.qit1.net/reg');
@@ -330,8 +346,10 @@ test.describe('@WAP Q8 測試', () => {
         // 只輸入英文
         await usernameInput.fill('wefkrurtty');
         await usernameInput.press('Tab');
-        await page.waitForTimeout(1000); // 增加等待时间
-        if (!await usernameMessage.isVisible() || !await usernameIcon.isVisible()) {
+        await page.waitForTimeout(1000); // 增加等待時間以確保反應
+        const isUsernameMessageVisible = await usernameMessage.isVisible();
+        const isUsernameIconVisible = await usernameIcon.isVisible();
+        if (!isUsernameMessageVisible || !isUsernameIconVisible) {
             errors.push('只輸入英文: 未顯示 "請輸入6-12個英文字母和數字" 提示或圖標');
         }
         await usernameInput.fill('');
@@ -339,8 +357,10 @@ test.describe('@WAP Q8 測試', () => {
         // 只輸入數字
         await usernameInput.fill('76576586');
         await usernameInput.press('Tab');
-        await page.waitForTimeout(1000); // 增加等待时间
-        if (!await usernameMessage.isVisible() || !await usernameIcon.isVisible()) {
+        await page.waitForTimeout(1000); // 增加等待時間以確保反應
+        const isUsernameMessageVisible2 = await usernameMessage.isVisible();
+        const isUsernameIconVisible2 = await usernameIcon.isVisible();
+        if (!isUsernameMessageVisible2 || !isUsernameIconVisible2) {
             errors.push('只輸入數字: 未顯示 "請輸入6-12個英文字母和數字" 提示或圖標');
         }
         await usernameInput.fill('');
@@ -350,9 +370,10 @@ test.describe('@WAP Q8 測試', () => {
         await sendCodeButton.click();
 
         // 檢查是否出現 "請輸入手機號碼" 提示
-        await page.waitForTimeout(1000); // 增加等待时间
+        await page.waitForTimeout(1000); // 增加等待時間
         const phoneErrorMessage = page.locator('.am-toast-notice-content .am-toast-text div:has-text("輸入手機號")');
-        if (!await phoneErrorMessage.isVisible()) {
+        const isPhoneErrorMessageVisible = await phoneErrorMessage.isVisible();
+        if (!isPhoneErrorMessageVisible) {
             errors.push('點擊發送驗證碼: 未顯示 "輸入手機號" 提示');
         }
 
@@ -360,21 +381,22 @@ test.describe('@WAP Q8 測試', () => {
         const phoneInput = page.locator('input[placeholder="輸入手機號"]');
         await phoneInput.fill('284758394857666');
         await sendCodeButton.click();
-        await page.waitForTimeout(1000); // 增加等待时间
+        await page.waitForTimeout(1000); // 增加等待時間
         const wrongPhoneErrorMessage = page.locator('.am-toast-notice-content .am-toast-text div:has-text("請輸入正確的手機號碼")');
-        if (!await wrongPhoneErrorMessage.isVisible()) {
+        const isWrongPhoneErrorMessageVisible = await wrongPhoneErrorMessage.isVisible();
+        if (!isWrongPhoneErrorMessageVisible) {
             errors.push('輸入錯誤的手機號碼: 未顯示 "請輸入正確的手機號碼" 提示');
         }
         await phoneInput.fill('');
 
         // 2-1 輸入錯誤的驗證碼
         console.log('檢查錯誤驗證碼的提示');
-        const username = randomUsername();
+        const username = randomUsername(); // 確保這個函數返回的是一個有效且唯一的用戶名
         await usernameInput.fill(username);
-        const phoneInputHK = randomHongKongPhoneNumber();
+        const phoneInputHK = randomHongKongPhoneNumber(); // 確保這個函數返回的是一個有效且唯一的香港手機號碼
         await phoneInput.fill(phoneInputHK);
         await sendCodeButton.click();
-        await page.waitForTimeout(1000); // 增加等待时间
+        await page.waitForTimeout(1000); // 增加等待時間
         const otpInput = page.locator('input[placeholder="輸入手機驗證碼"]');
         await otpInput.fill('1111');
         const passwordInput = page.locator('input[placeholder="密碼為6~16位字符之間"]');
@@ -384,16 +406,17 @@ test.describe('@WAP Q8 測試', () => {
         const registerButton = page.locator('div.submitBtn');
         await registerButton.click();
 
-        // 等待“加载中”提示消失或“OTP驗証碼錯誤”提示出現
+        // 等待“載入中”提示消失或“OTP驗証碼錯誤”提示出現
         try {
             await page.waitForSelector('.am-toast-text-info:has-text("載入中")', { state: 'hidden', timeout: 10000 });
         } catch (e) {
-            // 如果没有加载中提示，继续检查错误提示
+            // 如果沒有“載入中”提示，則直接繼續檢查錯誤提示
         }
-        await page.waitForTimeout(1000); // 增加等待时间
+        await page.waitForTimeout(1000); // 增加等待時間
 
         const otpErrorMessage = page.locator('.am-toast-text-info:has-text("OTP驗証碼錯誤")');
-        if (!await otpErrorMessage.isVisible()) {
+        const isOtpErrorMessageVisible = await otpErrorMessage.isVisible();
+        if (!isOtpErrorMessageVisible) {
             errors.push('輸入錯誤的驗證碼: 未顯示 "OTP驗証碼錯誤" 提示');
         }
 
@@ -401,14 +424,15 @@ test.describe('@WAP Q8 測試', () => {
         console.log('檢查不一致的密碼提示');
         await usernameInput.fill(username);
         await phoneInput.fill(phoneInputHK);
-        await otpInput.fill('1234'); // 使用随便一个验证码
+        await otpInput.fill('1234'); // 使用隨便一個驗證碼
         await passwordInput.fill('123456');
         await confirmPasswordInput.fill('1234567');
         await registerButton.click();
-        await page.waitForTimeout(1000); // 增加等待时间
+        await page.waitForTimeout(1000); // 增加等待時間
 
         const passwordMismatchMessage = page.locator('.am-toast-text:has-text("您兩次輸入的密碼不一致")');
-        if (!await passwordMismatchMessage.isVisible()) {
+        const isPasswordMismatchMessageVisible = await passwordMismatchMessage.isVisible();
+        if (!isPasswordMismatchMessageVisible) {
             errors.push('輸入不一致的密碼: 未顯示 "您兩次輸入的密碼不一致" 提示');
         }
 
@@ -416,14 +440,15 @@ test.describe('@WAP Q8 測試', () => {
         console.log('檢查短密碼提示');
         await usernameInput.fill(username);
         await phoneInput.fill(phoneInputHK);
-        await otpInput.fill('1234'); // 使用随便一个验证码
+        await otpInput.fill('1234'); // 使用隨便一個驗證碼
         await passwordInput.fill('12345');
         await confirmPasswordInput.fill('12345');
         await registerButton.click();
-        await page.waitForTimeout(1000); // 增加等待时间
+        await page.waitForTimeout(1000); // 增加等待時間
 
         const shortPasswordMessage = page.locator('.am-toast-text:has-text("密碼長度不能小於6位")');
-        if (!await shortPasswordMessage.isVisible()) {
+        const isShortPasswordMessageVisible = await shortPasswordMessage.isVisible();
+        if (!isShortPasswordMessageVisible) {
             errors.push('輸入短密碼: 未顯示 "密碼長度不能小於6位" 提示');
         }
 
@@ -440,11 +465,7 @@ test.describe('@WAP Q8 測試', () => {
 
 
 
-
-
     test('首頁體育下注(注额15)', async () => {
-        const page = await globalThis.context.newPage();
-
         await page.goto('http://wap-q8-npf2.qit1.net/hall');
         await page.waitForLoadState('networkidle');
 
@@ -505,8 +526,7 @@ test.describe('@WAP Q8 測試', () => {
 
         if (successMessageVisible) {
             console.log('投注成功');
-            await page.close();
-            return; // 测试通过，结束测试
+            expect(successMessageVisible).toBeTruthy(); // 确保测试通过
         } else {
             const errorMessage = await page.locator(errorMessageSelector).innerText();
             console.log(`提示訊息: ${errorMessage}`);
@@ -521,23 +541,19 @@ test.describe('@WAP Q8 測試', () => {
 
             if (successMessageVisible) {
                 console.log('投注成功');
-                await page.close();
-                return;
+                expect(successMessageVisible).toBeTruthy(); // 确保测试通过
             } else {
                 const secondErrorMessage = await page.locator(errorMessageSelector).innerText();
                 console.log(`第二次提示訊息: ${secondErrorMessage}`);
                 expect(successMessageVisible, `投注失败，提示信息: ${secondErrorMessage}`).toBeTruthy();
             }
         }
-
-        await page.close();
     });
 
 
 
-    test('檢查首頁', async () => {
-        const page = await globalThis.context.newPage();
 
+    test('檢查首頁', async () => {
         // 導航到目標頁面
         await page.goto('https://wap-q8-npf2.qit1.net/hall');
         await page.waitForLoadState('networkidle');
@@ -648,8 +664,6 @@ test.describe('@WAP Q8 測試', () => {
             }
         }
 
-        await page.close();
-
         if (missingElements.length > 0) {
             console.error(`以下元素不存在: ${missingElements.join(', ')}`);
         }
@@ -665,7 +679,6 @@ test.describe('@WAP Q8 測試', () => {
 
 
     test('檢查娛樂城', async () => {
-        const page = await globalThis.context.newPage();
         // 導航到首頁
         await page.goto('http://wap-q8-npf2.qit1.net/sportEvents');
         await page.waitForLoadState('networkidle');
@@ -769,7 +782,6 @@ test.describe('@WAP Q8 測試', () => {
         const luckyWheelExists = await luckyWheel.count() > 0;
         console.log(`幸運輪: ${luckyWheelExists}`);
         expect(luckyWheelExists, '未找到幸運輪').toBeTruthy();
-        await page.close();
     });
 
 
@@ -777,23 +789,22 @@ test.describe('@WAP Q8 測試', () => {
 
 
     test('檢查個人頁icon圖片', async () => {
-        const page = await globalThis.context.newPage();
         // 导航到个人页面
         await page.goto('http://wap-q8-npf2.qit1.net/accountCenter');
         await page.waitForLoadState('networkidle');
 
         const iconsToCheck = [
-            { text: '優惠活動', class: 'icon-promotion', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-promotion2.png' },
-            { text: '加入我們', class: 'icon-friend', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-friend.png' },
-            { text: '返水領取', class: 'icon-getrebate', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-getrebate.png' },
-            { text: 'VIP福利', class: 'icon-rebate', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-rebate.png' },
-            { text: '每日盈虧數據', class: 'icon-profit', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-profit.png' },
-            { text: '充提記錄', class: 'icon-history', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-history.png' },
-            { text: '錢包交易紀錄', class: 'icon-statement', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-statement.png' },
-            { text: '綁定銀行卡', class: 'icon-bank-card', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-bank-card.png' },
-            { text: '遊戲投注數據', class: 'icon-record', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-record.png' },
-            { text: '賽果查詢', class: 'icon-game-result', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-game-result.png' },
-            { text: '語言選擇', class: 'icon-language', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-language.png' }
+            { text: '優惠活動', class: 'icon-promotion', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-promotion2.png' },
+            { text: '加入我們', class: 'icon-friend', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-friend.png' },
+            { text: '返水領取', class: 'icon-getrebate', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-getrebate.png' },
+            { text: 'VIP福利', class: 'icon-rebate', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-rebate.png' },
+            { text: '每日盈虧數據', class: 'icon-profit', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-profit.png' },
+            { text: '充提記錄', class: 'icon-history', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-history.png' },
+            { text: '錢包交易紀錄', class: 'icon-statement', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-statement.png' },
+            { text: '綁定銀行卡', class: 'icon-bank-card', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-bank-card.png' },
+            { text: '遊戲投注數據', class: 'icon-record', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-record.png' },
+            { text: '賽果查詢', class: 'icon-game-result', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-game-result.png' },
+            { text: '語言選擇', class: 'icon-language', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-language.png' }
         ];
 
         const errors = [];
@@ -803,13 +814,12 @@ test.describe('@WAP Q8 測試', () => {
             const iconExists = await iconElement.count() > 0;
             console.log(`${text} 是否存在: ${iconExists}`);
 
-            // 如果元素不存在，记录错误信息
             if (!iconExists) {
                 errors.push(`${text} 图标不存在`);
                 continue;
             }
 
-            // 如果元素存在，检查其背景图片是否存在
+            // 获取背景图片的实际 URL
             let backgroundImage = '';
             if (iconExists) {
                 backgroundImage = await iconElement.evaluate(el => {
@@ -832,7 +842,6 @@ test.describe('@WAP Q8 測試', () => {
 
             console.log(`${text} 图片大小: 宽度=${width}px, 高度=${height}px`);
 
-            // 断言图片大小是否正确
             if (width !== 27 || height !== 27) {
                 errors.push(`${text} 图片大小不正确，宽度=${width}px, 高度=${height}px`);
             }
@@ -854,26 +863,22 @@ test.describe('@WAP Q8 測試', () => {
             console.log(`${text} 图片文件状态码: ${statusCode}`);
             console.log(`${text} 图片文件大小: ${isNaN(fileSize) ? 'NaN' : `${fileSize} bytes`}`);
 
-            // 断言状态码是否正确
             if (!/^2/.test(statusCode)) {
                 errors.push(`${text} 文件加载失败，状态码: ${statusCode}`);
             }
         }
 
-        // 打印所有错误
         if (errors.length > 0) {
             console.error('以下是检测到的错误:');
             errors.forEach(error => console.error(error));
         }
 
-        // 确保没有错误
         expect(errors.length, `以下是检测到的错误: ${errors.join(', ')}`).toBe(0);
     });
 
 
 
     test('檢查個人頁並點擊各個鏈接', async () => {
-        const page = await globalThis.context.newPage();
         const missingCategories = [];
         const errorMessages = [];
         const checkedLabels = new Set();
@@ -991,14 +996,11 @@ test.describe('@WAP Q8 測試', () => {
         }
 
         // 強制關閉頁面
-        await page.close();
     });
 
 
 
     test('檢查個人頁並點擊錢包中心', async () => {
-        const page = await globalThis.context.newPage();
-
         // 导航到个人页面
         await page.goto('http://wap-q8-npf2.qit1.net/accountCenter');
         await page.waitForLoadState('networkidle');
@@ -1092,15 +1094,12 @@ test.describe('@WAP Q8 測試', () => {
         console.log(`轉換消息: ${successMessage}`);
         expect(successMessage).toBe('轉換成功');
 
-        await page.close();
     });
 
 
 
 
     test('檢查個人頁並點擊存款', async () => {
-        const page = await globalThis.context.newPage();
-
         // 导航到个人页面
         await page.goto('http://wap-q8-npf2.qit1.net/accountCenter');
         await page.waitForLoadState('networkidle');
@@ -1175,14 +1174,11 @@ test.describe('@WAP Q8 測試', () => {
             expect(missingElements.length, `元素未找到或icon大小不正确: ${missingElements.join(', ')}`).toBe(0);
         }
 
-        await page.close();
     });
 
 
 
     test('檢查關於樂古娛樂', async () => {
-        const page = await globalThis.context.newPage();
-
         // 导航到个人页面
         await page.goto('http://wap-q8-npf2.qit1.net/accountCenter');
         await page.waitForLoadState('networkidle');
@@ -1297,17 +1293,15 @@ test.describe('@WAP Q8 測試', () => {
             expect(missingElements.length, `以下元素未找到或大小不符: ${missingElements.join(', ')}`).toBe(0);
         }
 
-        await page.close();
     });
 
 
     test('檢查走地頁', async () => {
-        const page = await globalThis.context.newPage();
-        // 導航到首頁
+        // 导航到首页
         await page.goto('http://wap-q8-npf2.qit1.net/showSportEvents/sportEvents/20003');
         await page.waitForLoadState('networkidle');
 
-        // 要檢查的類別和數值對應的元素選擇器
+        // 要检查的类别和数值对应的元素选择器
         const categories = [
             { selector: '.categoryTabs_menu:has(span:has-text("即將"))', description: '即將' },
             { selector: '.categoryTabs_menu:has(span:has-text("今日"))', description: '今日' },
@@ -1322,10 +1316,11 @@ test.describe('@WAP Q8 測試', () => {
             console.log(`${category.description} 標籤: ${categoryExists}`);
             expect(categoryExists, `未找到 ${category.description} 標籤`).toBeTruthy();
 
-            // 點擊元素
+            // 点击元素
             await categoryElement.click();
             console.log(`點擊 ${category.description}`);
         }
+
         // 找到第一个 dynamicData_nav 元素并点击
         await page.waitForSelector('.sportContent .dynamicData .dynamicData_nav');
         const dynamicDataNav = page.locator('.sportContent .dynamicData .dynamicData_nav').first();
@@ -1334,6 +1329,7 @@ test.describe('@WAP Q8 測試', () => {
         expect(dynamicDataNavExists, '未找到賽事').toBeTruthy();
         await dynamicDataNav.click();
         console.log('展開赛事下注列表');
+
         // 找到第二个 .gameRate-card 元素
         const gameRateCards = page.locator('.gameRate-card');
         const targetCard = gameRateCards.nth(1);
@@ -1383,7 +1379,7 @@ test.describe('@WAP Q8 測試', () => {
         // 跳过“投注中”消息
         await page.waitForSelector('.am-toast-text-info:has-text("投注中")', { state: 'hidden' });
 
-        // 检查第二个提示消息并确认是否为“投注成功”
+        // 检查提示消息并确认是否为“投注成功”
         const successMessageSelector = '.am-toast-notice-content .am-toast-text div:has-text("投注成功")';
         const errorMessageSelector = '.am-toast-text:has(svg.am-icon-fail) .am-toast-text-info';
 
@@ -1391,8 +1387,7 @@ test.describe('@WAP Q8 測試', () => {
 
         if (successMessageVisible) {
             console.log('投注成功');
-            await page.close();
-            return; // 测试通过，结束测试
+            expect(successMessageVisible).toBeTruthy(); // 确保测试通过
         } else {
             const errorMessage = await page.locator(errorMessageSelector).innerText();
             console.log(`提示訊息: ${errorMessage}`);
@@ -1402,27 +1397,22 @@ test.describe('@WAP Q8 測試', () => {
             // 再次跳过“投注中”消息
             await page.waitForSelector('.am-toast-text-info:has-text("投注中")', { state: 'hidden' });
 
-            // 再次检查第二个提示消息
+            // 再次检查提示消息
             successMessageVisible = await page.isVisible(successMessageSelector);
 
             if (successMessageVisible) {
                 console.log('投注成功');
-                await page.close();
-                return;
+                expect(successMessageVisible).toBeTruthy(); // 确保测试通过
             } else {
                 const secondErrorMessage = await page.locator(errorMessageSelector).innerText();
                 console.log(`第二次提示訊息: ${secondErrorMessage}`);
                 expect(successMessageVisible, `投注失败，提示信息: ${secondErrorMessage}`).toBeTruthy();
             }
         }
-
-        await page.close();
     });
 
 
-
     test('登入頁檢查(EN)', async () => {
-        const page = await globalThis.context.newPage();
         // 设置 localStorage 语言为英文
         await page.addInitScript(() => {
             localStorage.setItem('locale', 'en');
@@ -1506,11 +1496,9 @@ test.describe('@WAP Q8 測試', () => {
             expect(missingElements.length, `以下元素未找到或大小不符: ${missingElements.join(', ')}`).toBe(0);
         }
 
-        await page.close();
     });
 
     test('註冊頁檢查(EN)', async () => {
-        const page = await globalThis.context.newPage();
         // 设置 localStorage 语言为英文
         await page.addInitScript(() => {
             localStorage.setItem('locale', 'en');
@@ -1569,13 +1557,11 @@ test.describe('@WAP Q8 測試', () => {
             expect(missingElements.length, `以下元素未找到或文本不符: ${missingElements.join(', ')}`).toBe(0);
         }
 
-        await page.close();
     });
 
 
 
     test('首頁檢查(EN)', async () => {
-        const page = await globalThis.context.newPage();
         // 设置 localStorage 语言为英文
         await page.addInitScript(() => {
             localStorage.setItem('locale', 'en');
@@ -1736,7 +1722,6 @@ test.describe('@WAP Q8 測試', () => {
 
 
     test('檢查娛樂城(EN)', async () => {
-        const page = await globalThis.context.newPage();
         // 设置 localStorage 语言为英文
         await page.addInitScript(() => {
             localStorage.setItem('locale', 'en');
@@ -1895,13 +1880,11 @@ test.describe('@WAP Q8 測試', () => {
 
         expect(errors.length).toBe(0); // 確保沒有错误
 
-        await page.close();
     });
 
 
 
     test('檢查個人頁並點擊各個鏈接(EN)', async () => {
-        const page = await globalThis.context.newPage();
         // 设置 localStorage 语言为英文
         await page.addInitScript(() => {
             localStorage.setItem('locale', 'en');
@@ -2018,14 +2001,12 @@ test.describe('@WAP Q8 測試', () => {
             expect(errorMessages.length, `以下標籤點擊跳轉過去後報錯: ${errorMessages.join(', ')}`).toBe(0);
         }
 
-        await page.close();
     });
 
 
 
 
-    test('檢查個人頁icon圖片(EN)', async () => {
-        const page = await globalThis.context.newPage();
+    test.only('檢查個人頁icon圖片(EN)', async () => {
         // 设置 localStorage 语言为英文
         await page.addInitScript(() => {
             localStorage.setItem('locale', 'en');
@@ -2036,22 +2017,22 @@ test.describe('@WAP Q8 測試', () => {
         await page.waitForLoadState('networkidle');
 
         const iconsToCheck = [
-            { text: 'Profit', class: 'icon-promotion', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-promotion2.png' },
-            // { text: 'Agency Commission', class: 'icon-moneyback', url: 'https://wap-q6-npf2.qit1.net/res/images/com-q6/account-center/icon-friend.png' },
-            { text: 'Rebate', class: 'icon-getrebate', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-getrebate.png' },
-            { text: 'VIP', class: 'icon-rebate', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-rebate.png' },
-            { text: 'Profit', class: 'icon-profit', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-profit.png' },
-            { text: 'Deposit & Withdrawal', class: 'icon-history', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-history.png' },
-            { text: 'Transaction Record', class: 'icon-statement', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-statement.png' },
-            { text: 'Bank Card Management', class: 'icon-bank-card', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-bank-card.png' },
-            { text: 'Bet History', class: 'icon-record', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-record.png' },
+            { text: 'Profit', class: 'icon-promotion', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-promotion2.png' },
+            // { text: 'Agency Commission', class: 'icon-moneyback', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-friend.png' },
+            { text: 'Rebate', class: 'icon-getrebate', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-getrebate.png' },
+            { text: 'VIP', class: 'icon-rebate', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-rebate.png' },
+            { text: 'Profit', class: 'icon-profit', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-profit.png' },
+            { text: 'Deposit & Withdrawal', class: 'icon-history', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-history.png' },
+            { text: 'Transaction Record', class: 'icon-statement', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-statement.png' },
+            { text: 'Bank Card Management', class: 'icon-bank-card', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-bank-card.png' },
+            { text: 'Bet History', class: 'icon-record', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-record.png' },
             // { text: 'Refer a Friend', class: 'icon-invitefriend', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-friend2.png?t=21491204' },
             // { text: 'National agent', class: 'icon-friend2', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-friend2.png' },
             // { text: 'Recommend friends', class: 'icon-friend2', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-friend2.png' },
             // { text: 'Friend promotion link', class: 'icon-friend2', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-friend2.png' },
-            { text: 'Game Result', class: 'icon-game-result', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-game-result.png' },
-            { text: 'Language Selection', class: 'icon-language', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-language.png' },
-            { text: 'Join us', class: 'icon-friend', url: 'https://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-friend.png' }
+            { text: 'Game Result', class: 'icon-game-result', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-game-result.png' },
+            { text: 'Language Selection', class: 'icon-language', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-language.png' },
+            { text: 'Join us', class: 'icon-friend', url: 'http://wap-q8-npf2.qit1.net/res/images/com-q8/account-center/icon-friend.png' }
         ];
 
         const errors = [];
@@ -2106,7 +2087,6 @@ test.describe('@WAP Q8 測試', () => {
 
 
     test('檢查About Luk gu(EN)', async () => {
-        const page = await globalThis.context.newPage();
         // 设置 localStorage 语言为英文
         await page.addInitScript(() => {
             localStorage.setItem('locale', 'en');
@@ -2223,100 +2203,96 @@ test.describe('@WAP Q8 測試', () => {
             console.log(`以下元素未找到或大小不符: ${missingElements.join(', ')}`);
             expect(missingElements.length, `以下元素未找到或大小不符: ${missingElements.join(', ')}`).toBe(0);
         }
-
-        await page.close();
     });
 
 
 
-    test('檢查遊戲開啟(EN)', async () => {
-        const page = await globalThis.context.newPage();
-        // 设置 localStorage 语言为英文
-        await page.addInitScript(() => {
-            localStorage.setItem('locale', 'en');
-        });
+    // test('檢查遊戲開啟(EN)', async () => {
+    //     // 设置 localStorage 语言为英文
+    //     await page.addInitScript(() => {
+    //         localStorage.setItem('locale', 'en');
+    //     });
 
-        // 导航到游戏页面
-        await page.goto('http://wap-q8-npf2.qit1.net/sportEvents');
-        await page.waitForLoadState('networkidle');
+    //     // 导航到游戏页面
+    //     await page.goto('http://wap-q8-npf2.qit1.net/sportEvents');
+    //     await page.waitForLoadState('networkidle');
 
-        const gamesToCheck = [
-            {
-                buttonSelector: '.enter-game-button.bk-ka-slot.en',
-                gameName: 'KA Slots',
-                iconSelector: 'li .game_item img[alt="KA All Star Sports Day"][src="https://rmpseaiconcdn.kaga88.com/kaga/gameIcon?game=KAAllStarSportsDay&lang=zh&type=circular_framed"]',
-                expectedWidth: 150,
-                expectedHeight: 150
-            },
-            // {
-            //     buttonSelector: '.enter-game-button.bk-jdb-slot.en',
-            //     gameName: 'JDB Slots',
-            //     iconSelector: 'li .game_item img[alt="Flirting Scholar Tang"][src="https://dl.lfyanwei.com/jdb-assetsv3/games/8002/8002_en.png"]',
-            //     expectedWidth: 150,
-            //     expectedHeight: 150
-            // },
-            // {
-            //     buttonSelector: '.enter-game-button.bk-pp-slot.en',
-            //     gameName: 'PP Slots',
-            //     iconSelector: 'li .game_item img[alt="Fortune Ace"][src="https://api.prerelease-env.biz/game_pic/square/200/vs1024fortune.png"]',
-            //     expectedWidth: 150,
-            //     expectedHeight: 150
-            // },
-            // {
-            //     buttonSelector: '.enter-game-button.bk-swg-slot.en',
-            //     gameName: 'SWG Slots',
-            //     iconSelector: 'li .game_item img[alt="FortuneGems"][src="http://wap-q6-npf2.qit1.net/photo/SWG_icon/5003_en.png"]',
-            //     expectedWidth: 150,
-            //     expectedHeight: 150
-            // }
-        ];
+    //     const gamesToCheck = [
+    //         {
+    //             buttonSelector: '.enter-game-button.bk-ka-slot.en',
+    //             gameName: 'KA Slots',
+    //             iconSelector: 'li .game_item img[alt="KA All Star Sports Day"][src="https://rmpseaiconcdn.kaga88.com/kaga/gameIcon?game=KAAllStarSportsDay&lang=zh&type=circular_framed"]',
+    //             expectedWidth: 150,
+    //             expectedHeight: 150
+    //         },
+    // {
+    //     buttonSelector: '.enter-game-button.bk-jdb-slot.en',
+    //     gameName: 'JDB Slots',
+    //     iconSelector: 'li .game_item img[alt="Flirting Scholar Tang"][src="https://dl.lfyanwei.com/jdb-assetsv3/games/8002/8002_en.png"]',
+    //     expectedWidth: 150,
+    //     expectedHeight: 150
+    // },
+    // {
+    //     buttonSelector: '.enter-game-button.bk-pp-slot.en',
+    //     gameName: 'PP Slots',
+    //     iconSelector: 'li .game_item img[alt="Fortune Ace"][src="https://api.prerelease-env.biz/game_pic/square/200/vs1024fortune.png"]',
+    //     expectedWidth: 150,
+    //     expectedHeight: 150
+    // },
+    // {
+    //     buttonSelector: '.enter-game-button.bk-swg-slot.en',
+    //     gameName: 'SWG Slots',
+    //     iconSelector: 'li .game_item img[alt="FortuneGems"][src="http://wap-q6-npf2.qit1.net/photo/SWG_icon/5003_en.png"]',
+    //     expectedWidth: 150,
+    //     expectedHeight: 150
+    // }
+    //     ];
 
-        const errors = [];
+    //     const errors = [];
 
-        for (const game of gamesToCheck) {
-            // 点击指定的游戏场馆
-            await page.click(game.buttonSelector);
+    //     for (const game of gamesToCheck) {
+    //         // 点击指定的游戏场馆
+    //         await page.click(game.buttonSelector);
 
-            // 等待页面加载并检查游戏图标
-            await page.waitForSelector(game.iconSelector);
-            const gameIcon = page.locator(game.iconSelector);
-            const gameIconExists = await gameIcon.count() > 0;
-            console.log(`${game.gameName} 游戏图标是否存在: ${gameIconExists}`);
-            expect(gameIconExists, `${game.gameName} 游戏图标不存在`).toBeTruthy();
+    //         // 等待页面加载并检查游戏图标
+    //         await page.waitForSelector(game.iconSelector);
+    //         const gameIcon = page.locator(game.iconSelector);
+    //         const gameIconExists = await gameIcon.count() > 0;
+    //         console.log(`${game.gameName} 游戏图标是否存在: ${gameIconExists}`);
+    //         expect(gameIconExists, `${game.gameName} 游戏图标不存在`).toBeTruthy();
 
-            if (gameIconExists) {
-                const gameIconSize = await gameIcon.evaluate(el => {
-                    return {
-                        width: el.clientWidth,
-                        height: el.clientHeight
-                    };
-                });
-                console.log(`${game.gameName} 游戏图标大小: 宽度=${gameIconSize.width}px, 高度=${gameIconSize.height}px`);
+    //         if (gameIconExists) {
+    //             const gameIconSize = await gameIcon.evaluate(el => {
+    //                 return {
+    //                     width: el.clientWidth,
+    //                     height: el.clientHeight
+    //                 };
+    //             });
+    //             console.log(`${game.gameName} 游戏图标大小: 宽度=${gameIconSize.width}px, 高度=${gameIconSize.height}px`);
 
-                if (gameIconSize.width !== game.expectedWidth || gameIconSize.height !== game.expectedHeight) {
-                    console.error(`${game.gameName} 游戏图标大小不正确，宽度=${gameIconSize.width}px, 高度=${gameIconSize.height}px`);
-                    errors.push(`${game.gameName} 游戏图标大小不正确，宽度=${gameIconSize.width}px, 高度=${gameIconSize.height}px`);
-                } else {
-                    console.log(`${game.gameName} 游戏图标大小正确`);
-                }
+    //             if (gameIconSize.width !== game.expectedWidth || gameIconSize.height !== game.expectedHeight) {
+    //                 console.error(`${game.gameName} 游戏图标大小不正确，宽度=${gameIconSize.width}px, 高度=${gameIconSize.height}px`);
+    //                 errors.push(`${game.gameName} 游戏图标大小不正确，宽度=${gameIconSize.width}px, 高度=${gameIconSize.height}px`);
+    //             } else {
+    //                 console.log(`${game.gameName} 游戏图标大小正确`);
+    //             }
 
-                expect(gameIconSize.width).toBe(game.expectedWidth);
-                expect(gameIconSize.height).toBe(game.expectedHeight);
-            }
+    //             expect(gameIconSize.width).toBe(game.expectedWidth);
+    //             expect(gameIconSize.height).toBe(game.expectedHeight);
+    //         }
 
-            // 返回游戏页面
-            await page.goto('http://wap-q8-npf2.qit1.net/sportEvents');
-            await page.waitForLoadState('networkidle');
-        }
+    //         // 返回游戏页面
+    //         await page.goto('http://wap-q8-npf2.qit1.net/sportEvents');
+    //         await page.waitForLoadState('networkidle');
+    //     }
 
-        // 打印所有错误
-        if (errors.length > 0) {
-            console.error('以下是检测到的错误:');
-            errors.forEach(error => console.error(error));
-        }
+    //     // 打印所有错误
+    //     if (errors.length > 0) {
+    //         console.error('以下是检测到的错误:');
+    //         errors.forEach(error => console.error(error));
+    //     }
 
-        expect(errors.length).toBe(0); // 确保没有错误
+    //     expect(errors.length).toBe(0); // 确保没有错误
 
-        await page.close();
-    });
+    // });
 });

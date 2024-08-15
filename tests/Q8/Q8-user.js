@@ -4,7 +4,7 @@ const path = require('path');
 const constantsPath = path.resolve(__dirname, './Q8constants.js');
 
 async function setupQ8() {
-    const browser = await chromium.launch({ headless: false });
+    const browser = await chromium.launch({ headless: true });
     const device = devices['iPhone 11'];
     const context = await browser.newContext({ ...device });
 
