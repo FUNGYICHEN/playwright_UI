@@ -3,6 +3,7 @@ const { setupQ0 } = require('./tests/Q0/Q0-user');
 const { setupQ1 } = require('./tests/Q1/Q1-user');
 const { setupQ2 } = require('./tests/Q2/Q2-user');
 const { setupQ3 } = require('./tests/Q3/Q3-user');
+const { setupQ5 } = require('./tests/Q5/Q5-user');
 const { setupQ6 } = require('./tests/Q6/Q6-user');
 const { setupQ8 } = require('./tests/Q8/Q8-user');
 const { setupVN } = require('./tests/VN/VN-user');
@@ -17,6 +18,7 @@ const globalSetup = async () => {
     await setupQ1();
     await setupQ2();
     await setupQ3();
+    await setupQ5();
     await setupQ6();
     await setupQ8();
     await setupVN();
@@ -32,6 +34,7 @@ const setupMapping = {
     'Q1': setupQ1,
     'Q2': setupQ2,
     'Q3': setupQ3,
+    'Q5': setupQ5,
     'Q6': setupQ6,
     'Q8': setupQ8,
     'VN': setupVN,

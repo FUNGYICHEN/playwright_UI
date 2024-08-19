@@ -2,32 +2,54 @@ const { test, expect, devices } = require('@playwright/test');
 const { userRecordKey, userRecordValue } = require('./Q1constants'); // 確保路徑正確
 
 test.describe('@WAP Q1 測試', () => {
+    let page;
+    let context;
 
     test.beforeAll(async ({ browser }) => {
-        const context = await browser.newContext({
-            ...devices['iPhone 11']
+        // 创建一个浏览器上下文，并保持在整个测试期间使用
+        context = await browser.newContext({
+            ...devices['iPhone 11'],
+            headless: true, // 启用无头模式
         });
-        globalThis.context = context;
-    });
+        // 在上下文中创建一个页面，并保持在整个测试期间使用
+        page = await context.newPage();
 
-    test.beforeEach(async () => {
-        const page = await globalThis.context.newPage();
-
+        // 注入 token 或其他需要的数据到 localStorage 中
         await page.addInitScript(({ key, value }) => {
             localStorage.setItem(key, value);
         }, { key: userRecordKey, value: userRecordValue });
 
-        await page.goto('https://wap-q1-npf2.qit1.net');
+        // 初始加载一个页面，以确保 token 被注入
+        await page.goto('https://wap-q1.qbpink01.com/');
         await page.waitForLoadState('networkidle');
-
-        await page.close();
     });
 
+    test.beforeEach(async () => {
+        // 确保页面未关闭。如果页面关闭了，重新创建页面。
+        if (!page || page.isClosed()) {
+            page = await context.newPage();
+            await page.addInitScript(({ key, value }) => {
+                localStorage.setItem(key, value);
+            }, { key: userRecordKey, value: userRecordValue });
+        }
+    });
+
+    test.afterAll(async () => {
+        // 所有测试完成后关闭页面和上下文
+        if (page && !page.isClosed()) {
+            await page.close();
+        }
+        if (context) {
+            await context.close();
+        }
+    });
+
+
+    
     test('檢查關於betone', async () => {
-        const page = await globalThis.context.newPage();
 
         // 導航到個人頁面
-        await page.goto('https://wap-q1-npf2.qit1.net/accountCenter');
+        await page.goto('https://wap-q1.qbpink01.com/accountCenter');
         await page.waitForLoadState('networkidle');
 
         const missingElements = [];
@@ -69,7 +91,7 @@ test.describe('@WAP Q1 測試', () => {
         const textsToCheck = [
             { text: '博彩責任', tag: 'div.about-heading' },
             { text: '博彩責任', tag: 'p.about-heading' },
-            'betone致力於忠誠與可信賴的博彩保證。我們公司遵從遠端博彩管理當局的適用法規以及指引，而且努力成為對社會負責任的遠端博彩運營公司。遠程博彩是全球數以百萬玩家的合法娛樂體驗。對大多數玩家來說，遠端博彩是一項令人愉快的體驗，不過，我們也接受這樣的現實，少部分沈迷在遠端博彩的玩家可能會未達到法定年齡或者出現由於博彩而影響了他們的生活或財務狀況的問題。作為一個對社會負責的公司意味著要關注我們的玩家，意味著要對可能對社會產生影響的問題採用主動的方法去解決。這正是為何港體會會採用並完全承諾執行以下最嚴格的程式和限制。',
+            '本平台致力於忠誠與可信賴的博彩保證。我們公司遵從遠端博彩管理當局的適用法規以及指引，而且努力成為對社會負責任的遠端博彩運營公司。遠程博彩是全球數以百萬玩家的合法娛樂體驗。對大多數玩家來說，遠端博彩是一項令人愉快的體驗，不過，我們也接受這樣的現實，少部分沈迷在遠端博彩的玩家可能會未達到法定年齡或者出現由於博彩而影響了他們的生活或財務狀況的問題。作為一個對社會負責的公司意味著要關注我們的玩家，意味著要對可能對社會產生影響的問題採用主動的方法去解決。這正是為何港體會會採用並完全承諾執行以下最嚴格的程式和限制。',
             '執行政策',
             '對未成年人的訪問限制',
             '我們承諾將盡我們所能而同時也需要您的協助做到以下這些',
@@ -80,8 +102,8 @@ test.describe('@WAP Q1 測試', () => {
             '5、在電腦上為未成年人建立獨立的登入檔案，令他們登入時無法訪問您的資料。',
             '6、如果您知道有人未滿18歲（或未滿他們所屬司法管轄地區法定年齡）但錯誤地註冊成為我們的玩家，請立刻通知我們。',
             '運營資質',
-            'betone要求新客戶申明他們已經達到他們所屬的司法管轄地區規定的法定年齡且至少年滿18歲。當我們懷疑客戶可能虛假申報或可能有未成年人試圖使用我們的服務時，我們會使用合理的方法進一步進行驗證。',
-            'betone不會允許任何未滿18歲的人士使用我們的服務。此政策完全遵從並滿足監管和給我們發放運營牌照的遠端博彩管理當局，First Cagayan Leisure and Resort Corporation (FCRLC) for the Cagayan Economic Zone Authority (CEZA), of Santa Ana, Cagayan，Philippines的規則和規定；',
+            '本平台要求新客戶申明他們已經達到他們所屬的司法管轄地區規定的法定年齡且至少年滿18歲。當我們懷疑客戶可能虛假申報或可能有未成年人試圖使用我們的服務時，我們會使用合理的方法進一步進行驗證。',
+            '本平台不會允許任何未滿18歲的人士使用我們的服務。此政策完全遵從並滿足監管和給我們發放運營牌照的遠端博彩管理當局，First Cagayan Leisure and Resort Corporation (FCRLC) for the Cagayan Economic Zone Authority (CEZA), of Santa Ana, Cagayan，Philippines的規則和規定；',
             '我們承諾將盡我們所能而同時也需要您的協助做到以下這些',
             '1、使用兒童保護軟體從可能被未成年人使用的電腦上遮罩遠端博彩網站。',
             '2、當您的電腦登入到遠端博彩網站時不要讓電腦處於無人在旁的狀況。',
@@ -147,27 +169,24 @@ test.describe('@WAP Q1 測試', () => {
             console.log(`以下元素未找到或大小不符: ${missingElements.join(', ')}`);
             expect(missingElements.length, `以下元素未找到或大小不符: ${missingElements.join(', ')}`).toBe(0);
         }
-
-        await page.close();
     });
 
 
 
 
 
-    test('檢查關於 betone (EN)', async () => {
-        const page = await globalThis.context.newPage();
+    test('檢查about betone (EN)', async () => {
         // 設置 localStorage 語言為英文
         await page.addInitScript(() => {
             localStorage.setItem('locale', 'en');
         });
-
+    
         // 導航到個人中心頁面
         await page.goto('https://wap-q1-npf2.qit1.net/accountCenter');
         await page.waitForLoadState('networkidle');
-
+    
         const missingElements = [];
-
+    
         // 檢查 betone 標誌和尺寸
         const logo = page.locator('.icon.icon-alert.logo').first();
         const logoVisible = await logo.isVisible();
@@ -183,7 +202,7 @@ test.describe('@WAP Q1 測試', () => {
         } else {
             missingElements.push('icon');
         }
-
+    
         // 檢查並點擊 "About betone" 按鈕
         const aboutButton = page.locator('.main-label .main-label-text', { hasText: 'About betone' }).first();
         const aboutButtonVisible = await aboutButton.isVisible();
@@ -193,53 +212,53 @@ test.describe('@WAP Q1 測試', () => {
         } else {
             await aboutButton.click();
         }
-
+    
         // 檢查彈出窗口中的文本和圖片大小
         await page.waitForSelector('.about-container', { state: 'visible' });
-
+    
         const textsToCheck = [
             'Responsible Gambling',
-            'betone is committed to loyal and trustworthy gambling guarantees...',
+            'Our platform is committed to loyal and trustworthy gambling guarantees. Our company complies with applicable regulations and guidelines from remote gaming authorities and strives to be a socially responsible remote gaming operator. Remote gambling is a legal entertainment experience for millions of players around the world. For most players, remote gambling is an enjoyable experience. However, we also accept the reality that a small number of players who indulge in remote gambling may be under the legal age or suffer from gambling-related impairments, problems with their lives, or financial situations. Being a socially responsible company means paying attention to our players, and it means taking a proactive approach to issues that may have an impact on society. That is why our platform has adopted and is fully committed to enforcing the strictest procedures and restrictions below.',
             'Execution policy',
             'Access restrictions for minors',
-            'betone requires new customers to declare...',
-            'betone will not allow anyone under the age of 18...',
+            'Our platform requires new customers to declare that they are of legal age in their jurisdiction and are at least 18 years old. When we suspect that a customer may have made a false declaration or that a minor may be trying to use our services, we will use reasonable methods for further verification.',
+            'Our platform will not allow anyone under the age of 18 to use our services. This policy fully complies with and meets the rules and regulations of the remote gaming authority that regulates and licenses our operations, First Cagayan Leisure and Resort Corporation (FCRLC) for the Cagayan Economic Zone Authority (CEZA), of Santa Ana, Cagayan, Philippines.',
             'We promise to do our best and need your help to do the following',
-            '1. Use child protection software to block...',
-            '2. Do not leave your computer unattended...',
-            '3. Do not share your credit card or bank account details...',
-            '4. Do not enable the "Save Password" option...',
-            '5. Create a separate login file for minors...',
-            '6. If you know of anyone under the age of 18...',
+            '1. Use child protection software to block remote gambling websites from computers that may be used by minors.',
+            '2. When your computer logs into a remote gambling website, do not leave the computer unattended.',
+            '3. Do not disclose your credit card or bank account details to minors.',
+            '4. Do not enable the "Save Password" option on the our platform login page.',
+            '5. Create a separate login file for minors on the computer so that they cannot access your information when they log in.',
+            '6. If you know of someone under the age of 18 (or under the legal age in their jurisdiction) who has mistakenly registered as our player, please notify us immediately.',
             'Operation Qualification'
         ];
-
+    
         const normalizeText = (text) => {
-            return text.replace(/[^\w\s]/gi, '').replace(/\s+/g, '');
+            return text.replace(/[^\w\s]/gi, '').replace(/\s+/g, '').toLowerCase();
         };
-
+    
         for (const item of textsToCheck) {
             const normalizedItem = normalizeText(item);
-            const textVisible = await page.locator('body').evaluate((body, text) => {
-                const regex = new RegExp(text, 'i');
-                return regex.test(body.innerText.replace(/[^\w\s]/gi, '').replace(/\s+/g, ''));
+            const textVisible = await page.locator('body').evaluate((body, normalizedText) => {
+                const pageText = body.innerText.replace(/[^\w\s]/gi, '').replace(/\s+/g, '').toLowerCase();
+                return pageText.includes(normalizedText);
             }, normalizedItem);
             console.log(`Text "${item}" visible: ${textVisible}`);
             if (!textVisible) missingElements.push(`Text "${item}"`);
         }
-
+    
         // 檢查圖片尺寸
         const imagesToCheck = [
             { selector: 'img[src="/res/images/about-footer-1.png"]', description: 'icon_1', expectedWidth: 391, expectedHeight: 50 },
             { selector: 'img[src="/res/images/about-footer-2.png"]', description: 'icon_2', expectedWidth: 181, expectedHeight: 48 }
         ];
-
+    
         for (const image of imagesToCheck) {
             const imgSize = await page.evaluate(selector => {
                 const img = document.querySelector(selector);
                 return img ? { width: img.naturalWidth, height: img.naturalHeight } : null;
             }, image.selector);
-
+    
             if (imgSize) {
                 console.log(`${image.description} size: ${imgSize.width}x${imgSize.height}`);
                 if (imgSize.width !== image.expectedWidth || imgSize.height !== image.expectedHeight) {
@@ -250,19 +269,14 @@ test.describe('@WAP Q1 測試', () => {
                 missingElements.push(image.description);
             }
         }
-
+    
         // 打印所有檢查結果
         if (missingElements.length > 0) {
             console.log(`以下元素未找到或大小不符: ${missingElements.join(', ')}`);
             expect(missingElements.length, `以下元素未找到或大小不符: ${missingElements.join(', ')}`).toBe(0);
         }
-
-        await page.close();
     });
-
 });
-
-
 // test.describe('WEB 測試', () => {
 
 //     test.beforeAll(async ({ browser }) => {
