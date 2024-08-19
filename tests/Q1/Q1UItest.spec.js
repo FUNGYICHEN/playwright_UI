@@ -182,7 +182,7 @@ test.describe('@WAP Q1 測試', () => {
         });
     
         // 導航到個人中心頁面
-        await page.goto('https://wap-q1-npf2.qit1.net/accountCenter');
+        await page.goto('https://wap-q1.qbpink01.com/accountCenter');
         await page.waitForLoadState('networkidle');
     
         const missingElements = [];
