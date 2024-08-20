@@ -1,5 +1,6 @@
 const { test, expect, devices } = require('@playwright/test');
 const { userState, userValue } = require('./Q5constants');
+const axios = require('axios');
 
 test.describe('@WAP Q5 测试', () => {
     let page;
@@ -367,6 +368,124 @@ test.describe('@WAP Q5 测试', () => {
 
 
 
+    test('幸運輪檢查', async () => {
+        // 導航到個人頁面
+        await page.goto('https://wap-q4.qbpink01.com/');
+        await page.waitForLoadState('networkidle');
+
+        const missingElements = [];
+
+        // 優化後的圖片定位和檢查方法，包括入口圖片
+        const imageElementsToCheck = [
+            {
+                selector: 'img[src="https://wap-q4.qbpink01.com/assets/entrance-tw-v2-CjJc0Z1K.png"]',
+                url: 'https://wap-q4.qbpink01.com/assets/entrance-tw-v2-CjJc0Z1K.png',
+                description: '幸運輪入口圖片',
+                action: async () => {
+                    const entranceImage = page.locator('img[src="https://wap-q4.qbpink01.com/assets/entrance-tw-v2-CjJc0Z1K.png"]');
+                    if (await entranceImage.isVisible()) {
+                        await entranceImage.click({ force: true });
+                        await page.waitForLoadState('load');
+                        if (page.url() !== 'https://wap-q4.qbpink01.com/lucky-wheel') {
+                            missingElements.push('幸運輪入口點擊後未跳轉到預期頁面');
+                        } else {
+                            console.log('幸運輪入口點擊後跳轉正常');
+                        }
+                    } else {
+                        missingElements.push('幸運輪入口圖片不可見或未找到');
+                    }
+                }
+            },
+            {
+                selector: 'img[src="https://wap-q4.qbpink01.com/assets/heading-tw-CzQsNVS7.png"]',
+                url: 'https://wap-q4.qbpink01.com/assets/heading-tw-CzQsNVS7.png',
+                description: '幸運輪標題圖片'
+            },
+            {
+                selector: 'img[src="https://wap-q4.qbpink01.com/assets/wheel-v1-D0FcBpZT.png"]',
+                url: 'https://wap-q4.qbpink01.com/assets/wheel-v1-D0FcBpZT.png',
+                description: '幸運輪主圖'
+            }
+        ];
+
+        for (const { selector, url, description, action } of imageElementsToCheck) {
+            try {
+                await page.waitForSelector(selector, { timeout: 5000 });
+                const element = page.locator(selector);
+                if (await element.isVisible()) {
+                    console.log(`${description}可見`);
+
+                    const response = await axios.get(url, { responseType: 'arraybuffer' });
+                    if (response.status !== 200) {
+                        missingElements.push(`${description}的API狀態碼不為200: ${response.status}`);
+                    } else {
+                        console.log(`${description}的API狀態碼為: ${response.status}`);
+                    }
+                    const fileSizeInKB = response.data.byteLength / 1024;
+                    console.log(`${description}的文件大小: ${fileSizeInKB.toFixed(2)}KB`);
+
+                    if (action) {
+                        await action();
+                    }
+                } else {
+                    missingElements.push(`${description}不可見或未找到`);
+                }
+            } catch (error) {
+                missingElements.push(`${description}的API請求失敗: ${error.message}`);
+            }
+        }
+
+        // 定義要檢查的文案內容，使用更简潔的選擇器
+        const textElementsToCheck = [
+            {
+                locator: page.locator('h2:has-text("中獎記錄")'),
+                description: '中獎記錄標題',
+                expectedText: '中獎記錄'
+            },
+            {
+                locator: page.locator('h2:has-text("注意事項")'),
+                description: '注意事項標題',
+                expectedText: '注意事項'
+            },
+            {
+                locator: page.locator('h3:has-text("活動時間") + p'),
+                description: '活動時間文案',
+                expectedText: '即日起'
+            },
+            {
+                locator: page.locator('h3:has-text("結束時間") + p'),
+                description: '結束時間文案',
+                expectedText: '以官網通知為準'
+            },
+            {
+                locator: page.locator('h3:has-text("活動條件") + p'),
+                description: '活動條件文案',
+                expectedText: '當日累計充值0元及累計投注0元方可擁有一次抽獎機會。(每日40次)'
+            },
+            {
+                locator: page.locator('h3:has-text("活動規則") + div'),
+                description: '活動規則文案',
+                expectedText: '1 所贈送的彩金只需1倍投注，即可提款。2 中獎彩金系統會自動派送，無需申請！3 此活動僅適用於BETRIX實質玩家，任何套利團隊或個人均不適用此優惠。4 部分一倍流水，套利、違反公司條例會員、不在贈送名單之內。5 BETRIX保有最終修改、變更、活動解釋及取消本活動之權利，若有相關異動，將公告於網站， 恕不另行通知。'
+            }
+        ];
+
+        for (const { locator, description, expectedText } of textElementsToCheck) {
+            const innerText = await locator.textContent();
+            const normalizedText = innerText.replace(/[^a-zA-Z\u4e00-\u9fa5]/g, '');  // 移除空格、標點符號和特殊字符，只保留中文和字母
+            const normalizedExpected = expectedText.replace(/[^a-zA-Z\u4e00-\u9fa5]/g, '');  // 同樣處理期望文本
+            if (!normalizedText.includes(normalizedExpected)) {
+                missingElements.push(`${description}的文本不匹配: 預期包含 ${expectedText}, 實際 ${innerText}`);
+            } else {
+                console.log(`${description}文本內容匹配`);
+            }
+        }
+
+        // 輸出所有未找到或不匹配的元素
+        if (missingElements.length > 0) {
+            console.log(`以下元素未找到或不可見: ${missingElements.join(', ')}`);
+            expect(missingElements.length, `以下元素未找到或不可見: ${missingElements.join(', ')}`).toBe(0);
+        }
+    });
 
 
     test('檢查about BETRIX', async () => {
