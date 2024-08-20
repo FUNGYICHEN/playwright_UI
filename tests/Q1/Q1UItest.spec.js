@@ -146,7 +146,7 @@ test.describe('@WAP Q1 測試', () => {
     
 
 
-    test.only('檢查about betone (EN)', async () => {
+    test('檢查about betone (EN)', async () => {
         // 設置 localStorage 語言為英文
         await page.addInitScript(() => {
             localStorage.setItem('locale', 'en');
