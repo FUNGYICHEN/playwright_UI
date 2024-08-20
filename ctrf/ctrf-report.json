@@ -5,43 +5,43 @@
     },
     "summary": {
       "tests": 2,
-      "passed": 1,
-      "failed": 1,
+      "passed": 2,
+      "failed": 0,
       "pending": 0,
       "skipped": 0,
       "other": 0,
-      "start": 1724062533948,
-      "stop": 1724062648621,
+      "start": 1724119918102,
+      "stop": 1724119938130,
       "suites": 0
     },
     "tests": [
       {
-        "name": "檢查關於betone",
+        "name": "檢查關於 BETRIX",
         "status": "passed",
-        "duration": 4356,
-        "start": 1724062534,
-        "stop": 1724062539,
+        "duration": 5400,
+        "start": 1724119918,
+        "stop": 1724119924,
         "rawStatus": "passed",
         "tags": [],
         "type": "e2e",
-        "filePath": "C:\\Users\\luekc\\Desktop\\playwright_UI-master\\tests\\Q1\\Q1UItest.spec.js",
+        "filePath": "C:\\Users\\luekc\\Desktop\\playwright_UI-master\\tests\\Q5\\Q5UItest.spec.js",
         "retries": 0,
         "flaky": false,
-        "suite": "Q1\\Q1UItest.spec.js > @WAP Q1 測試"
+        "suite": "Q5\\Q5UItest.spec.js > @WAP Q5 测试"
       },
       {
-        "name": "檢查about betone (EN)",
-        "status": "failed",
-        "duration": 100002,
-        "start": 1724062546,
-        "stop": 1724062646,
-        "rawStatus": "timedOut",
+        "name": "檢查about BETRIX",
+        "status": "passed",
+        "duration": 3936,
+        "start": 1724119932,
+        "stop": 1724119936,
+        "rawStatus": "passed",
         "tags": [],
         "type": "e2e",
-        "filePath": "C:\\Users\\luekc\\Desktop\\playwright_UI-master\\tests\\Q1\\Q1UItest.spec.js",
+        "filePath": "C:\\Users\\luekc\\Desktop\\playwright_UI-master\\tests\\Q5\\Q5UItest.spec.js",
         "retries": 0,
         "flaky": false,
-        "suite": "Q1\\Q1UItest.spec.js > @WAP Q1 測試"
+        "suite": "Q5\\Q5UItest.spec.js > @WAP Q5 测试"
       }
     ]
   }
