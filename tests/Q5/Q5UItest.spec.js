@@ -155,6 +155,220 @@ test.describe('@WAP Q5 测试', () => {
 
 
 
+    test('檢查首頁', async () => {
+        // 导航到个人页面
+        await page.goto('https://wap-q4.qbpink01.com/');
+        await page.waitForLoadState('networkidle');
+
+        const missingElements = [];
+
+        // 檢查 base64 圖片大小，並使用 .first() 確保只選擇第一個匹配元素
+        const imgElement = page.locator('img[src="data:image/png;base64,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"]').first();
+        const imageVisible = await imgElement.isVisible();
+        const imageBoundingBox = await imgElement.boundingBox();
+
+        if (imageVisible && imageBoundingBox) {
+            console.log(`logo尺寸: ${imageBoundingBox.width}x${imageBoundingBox.height}`);
+            const expectedWidth = 110;  // 替换为期望的宽度
+            const expectedHeight = 37; // 替换为期望的高度
+            if (imageBoundingBox.width !== expectedWidth || imageBoundingBox.height !== expectedHeight) {
+                missingElements.push(`圖片尺寸不符: 預期 ${expectedWidth}x${expectedHeight}, 實際 ${imageBoundingBox.width}x${imageBoundingBox.height}`);
+            }
+        } else {
+            missingElements.push('圖片不可見或未找到');
+        }
+
+        // 檢查 http 圖片的狀態碼和大小
+        const filesToCheck = [
+            { description: '每週抽獎圖片', url: 'https://wap-q4.qbpink01.com/assets/weeklyRaffle-bg2-CcSX2q5Q.png' }
+        ];
+
+        for (const file of filesToCheck) {
+            let statusCode = 0;
+            let fileSize = 0;
+
+            try {
+                const response = await page.request.get(file.url);
+                statusCode = response.status();
+                if (statusCode === 200) {
+                    const buffer = await response.body();
+                    fileSize = buffer.byteLength;
+                }
+            } catch (error) {
+                statusCode = '無狀態碼';
+            }
+
+            console.log(`${file.description} 狀態碼: ${statusCode}`);
+            console.log(`${file.description} 文件大小: ${fileSize} bytes`);
+
+            if (statusCode !== 200) {
+                missingElements.push(`${file.description} 文件加載失敗，狀態碼: ${statusCode}`);
+            }
+
+            if (fileSize === 0) {
+                missingElements.push(`${file.description} 文件大小不正確，文件大小: ${fileSize} bytes`);
+            }
+        }
+
+        // 檢查第一個和第二個具有 'flex items-center gap-1' 的 SVG 图标
+        const svgElements = page.locator('.flex.items-center.gap-1 svg');
+
+        const firstSvgElement = svgElements.first();
+        const firstSvgVisible = await firstSvgElement.isVisible();
+        if (!firstSvgVisible) {
+            missingElements.push('第一個SVG圖標不可見或未找到');
+        } else {
+            console.log('第一個SVG圖標可見');
+        }
+
+        const secondSvgElement = svgElements.nth(1);
+        const secondSvgVisible = await secondSvgElement.isVisible();
+        if (!secondSvgVisible) {
+            missingElements.push('第二個SVG圖標不可見或未找到');
+        } else {
+            console.log('第二個SVG圖標可見');
+        }
+
+        // 檢查VIP文案
+        const textsToCheck = [
+            { text: '歡迎回來 uitest001', selector: 'h1.mb-2.text-left.font-semibold.leading-normal.text-white.md\\:mb-6.md\\:text-center' },
+            { text: '你的 VIP 進度', selector: 'span.font-bold:has-text("你的 VIP 進度")' },
+            { text: '累積存款', selector: 'span.font-bold:has-text("累積存款")' },
+            { text: '流水要求', selector: 'span.font-bold:has-text("流水要求")' },
+            { text: 'VIP 0', selector: 'span.text-base.font-semibold.text-secondary:has-text("VIP 0")' },
+            { text: 'VIP 1', selector: 'span.text-base.font-semibold.text-secondary:has-text("VIP 1")' }
+        ];
+
+        for (const item of textsToCheck) {
+            const element = page.locator(item.selector);
+            const elementText = await element.innerText();
+            console.log(`檢查文本: 預期 "${item.text}", 實際 "${elementText.trim()}"`);
+            if (elementText.trim() !== item.text.trim()) {
+                missingElements.push(`文本不符: 預期 "${item.text}", 實際 "${elementText.trim()}"`);
+            }
+        }
+
+        // 打印所有检查结果
+        if (missingElements.length > 0) {
+            console.log(`以下元素未找到或大小不符: ${missingElements.join(', ')}`);
+            expect(missingElements.length, `以下元素未找到或大小不符: ${missingElements.join(', ')}`).toBe(0);
+        }
+    });
+
+
+    test('檢查首頁_2', async () => {
+        // 導航到個人頁面
+        await page.goto('https://wap-q4.qbpink01.com/');
+        await page.waitForLoadState('networkidle');
+
+        const missingElements = [];
+
+        // 定義要檢查的元素及其描述
+        const elementsToCheck = [
+            {
+                element: page.locator('.flex.h-9.items-center.overflow-hidden.rounded-lg'),
+                description: '金額框架',
+                child: {
+                    element: page.locator('.flex.h-9.items-center.overflow-hidden.rounded-lg svg.h-4.w-4'),
+                    description: '金額框架中的SVG圖標'
+                }
+            },
+            {
+                element: page.locator('.flex.items-center.justify-end.gap-4 button').nth(0),
+                description: '個人圖標'
+            },
+            {
+                element: page.locator('.flex.items-center.justify-end.gap-4 button').nth(1),
+                description: '通知圖標'
+            },
+            {
+                element: page.locator('button', { has: page.locator('svg') }).filter({ hasText: '' }).nth(2),
+                description: '廣播圖標'
+            },
+            // 新增的按鈕檢查項
+            {
+                element: page.locator('button').filter({ hasText: '真人' }),
+                description: '真人類型按鈕'
+            },
+            {
+                element: page.locator('button').filter({ hasText: '棋牌' }),
+                description: '棋牌類型按鈕'
+            },
+            {
+                element: page.locator('button').filter({ hasText: '電子' }),
+                description: '電子類型按鈕'
+            },
+            {
+                element: page.locator('button').filter({ hasText: '捕魚' }),
+                description: '捕魚類型按鈕'
+            }
+        ];
+
+        for (const { element, description, child } of elementsToCheck) {
+            const isVisible = await element.isVisible();
+            if (!isVisible) {
+                missingElements.push(`${description}不可見或未找到`);
+            } else {
+                console.log(`${description}可見`);
+                if (child) {
+                    const childVisible = await child.element.isVisible();
+                    if (!childVisible) {
+                        missingElements.push(`${child.description}不可見或未找到`);
+                    } else {
+                        console.log(`${child.description}可見`);
+                    }
+                }
+            }
+        }
+
+        // 定義要檢查的圖片URL
+        const imageUrls = [
+            'https://wap-q4.qbpink01.com/assets/mga-C6f_vx-x.png',
+            'https://wap-q4.qbpink01.com/assets/ecogra-Bcw9SZsE.png',
+            'https://wap-q4.qbpink01.com/assets/alderney-GQ98HrX4.png',
+            'https://wap-q4.qbpink01.com/assets/gamCare-CSARi_rK.png',
+            'https://wap-q4.qbpink01.com/assets/pagcor-Dfv0B7Cd.png',
+            'https://wap-q4.qbpink01.com/assets/ecba-HEesVkK2.png',
+            // 新增的圖片URL
+            'https://wap-q4.qbpink01.com/assets/gambling-Ch4KiT90.png',
+            'https://wap-q4.qbpink01.com/assets/curacao-DqarkfvE.png',
+            'https://wap-q4.qbpink01.com/assets/itech-DEa5e_Wu.png',
+            'https://wap-q4.qbpink01.com/assets/gibralter-DYKE-65K.png'
+        ];
+
+        for (const url of imageUrls) {
+            const response = await page.request.get(url);
+            const status = response.status();
+            const size = (await response.body()).byteLength;
+
+            if (status !== 200) {
+                missingElements.push(`圖片 ${url} 的API狀態碼為 ${status}`);
+            } else {
+                console.log(`圖片 ${url} 的API狀態碼為200`);
+            }
+
+            if (size === 0) {
+                missingElements.push(`圖片 ${url} 的文件大小為0`);
+            } else {
+                console.log(`圖片 ${url} 的文件大小為 ${size} bytes`);
+            }
+        }
+
+        // 打印所有檢查結果
+        if (missingElements.length > 0) {
+            console.log(`以下元素未找到或不可見: ${missingElements.join(', ')}`);
+            expect(missingElements.length, `以下元素未找到或不可見: ${missingElements.join(', ')}`).toBe(0);
+        }
+    });
+
+
+
+
+
+
+
+
+
     test('檢查about BETRIX', async () => {
         // 设置 localStorage 语言为英语
         await page.addInitScript(() => {
